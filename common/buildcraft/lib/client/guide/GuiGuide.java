@@ -143,7 +143,7 @@ public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
     public static final GuiIcon SEARCH_TAB_CLOSED = new GuiIcon(ICONS_2, 58, 196, 14, 6);
     public static final GuiIcon SEARCH_TAB_OPEN = new GuiIcon(ICONS_2, 40, 209, 106, 14);
 
-    public static final GuiIcon[] ORDERS = {ORDER_TYPE, ORDER_MOD_TYPE, ORDER_ALPHABETICAL};
+    public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_MOD_TYPE, ORDER_ALPHABETICAL };
 
     public static final GuiRectangle BACK_POSITION = new GuiRectangle(
             PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height
@@ -476,6 +476,10 @@ public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
             );
         }
 
+        // Calen 1.18.2 to avoid items rendered above contents menu
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 400);
+
         boolean drawContents = true;
         boolean smallScreen = isSmallScreen();
         if (smallScreen) {
@@ -513,6 +517,9 @@ public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
                 chapterIndex += chapter.draw(guiGraphics, chapterIndex, partialTicks, smallScreen);
             }
         }
+
+        // Calen 1.18.2 to avoid items rendered above contents menu
+        guiGraphics.pose().popPose();
 
         // Draw the back button if there are any pages on the stack
         if (!pages.isEmpty()) {

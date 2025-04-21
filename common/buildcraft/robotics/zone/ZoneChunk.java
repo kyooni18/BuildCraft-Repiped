@@ -10,11 +10,11 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.RandomSource;
 import org.joml.Vector2i;
 
 import java.util.BitSet;
 import java.util.List;
-import java.util.Random;
 
 public class ZoneChunk {
     public BitSet property;
@@ -91,7 +91,7 @@ public class ZoneChunk {
         }
     }
 
-    public BlockPos getRandomBlockPos(Random rand) {
+    public BlockPos getRandomBlockPos(RandomSource rand) {
         int x, z;
 
         if (fullSet) {

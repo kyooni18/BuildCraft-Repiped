@@ -5,7 +5,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class ContainerGuide extends AbstractContainerMenu {
     public ContainerGuide(@Nullable MenuType<?> menuType, int id) {

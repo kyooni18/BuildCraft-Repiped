@@ -330,7 +330,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         // Compute the tiles requesting power that are not power pipes
         for (Direction face : Direction.VALUES) {
-            if (pipe.getConnectedType(face) != ConnectedType.TILE) {
+            // if (pipe.getConnectedType(face) != ConnectedType.TILE)
+            if (pipe.getConnectedType(face) != ConnectedType.TILE && pipe.getHolder().getPluggable(face) == null) {
                 continue;
             }
             IMjReceiver recv = pipe.getHolder().getCapabilityFromPipe(face, MjAPI.CAP_RECEIVER);

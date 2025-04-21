@@ -83,8 +83,8 @@ public class BCCoreBlocks {
             );
             decoratedMap.put(decoratedBlock, reg);
         }
-        markerVolume = HELPER.addBlockAndItem("block.marker.volume", BlockPropertiesCreator.decoration().strength(0.25F).noOcclusion().noCollission(), BlockMarkerVolume::new);
-        markerPath = HELPER.addBlockAndItem("block.marker.path", BlockPropertiesCreator.decoration().strength(0.25F).noOcclusion().noCollission(), BlockMarkerPath::new);
+        markerVolume = HELPER.addBlockAndItem("block.marker.volume", BlockPropertiesCreator.decoration().strength(0.25F).noOcclusion().noCollission().lightLevel(state -> 1), BlockMarkerVolume::new);
+        markerPath = HELPER.addBlockAndItem("block.marker.path", BlockPropertiesCreator.decoration().strength(0.25F).noOcclusion().noCollission().lightLevel(state -> 1), BlockMarkerPath::new);
         if (BCLib.DEV) {
             powerTester = HELPER.addBlockAndItem("block.power_tester", BlockPropertiesCreator.metal(), BlockPowerConsumerTester::new);
         }
@@ -110,6 +110,7 @@ public class BCCoreBlocks {
         String regName = TagManager.getTag("block.engine.bc." + type.getSerializedName(), TagManager.EnumTagType.REGISTRY_NAME).replace(BCCore.MODID + ":", "");
         if (RegistryConfig.isEnabled(
                 "engines",
+                BCCore.MODID,
                 type.name().toLowerCase(Locale.ROOT),
                 TagManager.getTag("block.engine.bc." + type.getSerializedName(), TagManager.EnumTagType.UNLOCALIZED_NAME)
         )) {

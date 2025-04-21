@@ -11,6 +11,7 @@ import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
@@ -30,7 +31,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -128,7 +128,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 // Calen
                 // containing items
                 items = new ListTag();
-                tileEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(c ->
+                tileEntity.getCapability(CapUtil.CAP_ITEMS).ifPresent(c ->
                 {
                     for (int index = 0; index < c.getSlots(); index++) {
                         ItemStack stack = c.getStackInSlot(index);

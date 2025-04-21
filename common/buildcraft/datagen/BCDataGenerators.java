@@ -10,24 +10,13 @@ import buildcraft.datagen.energy.*;
 import buildcraft.datagen.factory.*;
 import buildcraft.datagen.lib.LibCraftingRecipeGenerator;
 import buildcraft.datagen.lib.LibItemModelProvider;
-import buildcraft.datagen.robotics.RoboticsBlockStateGenerator;
-import buildcraft.datagen.robotics.RoboticsCraftingRecipeGenerator;
-import buildcraft.datagen.robotics.RoboticsItemModelGenerator;
+import buildcraft.datagen.robotics.*;
 import buildcraft.datagen.silicon.*;
 import buildcraft.datagen.transport.*;
-import buildcraft.energy.generation.biome.BCBiomes;
-import buildcraft.energy.generation.structure.OilStructureRegistry;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.Util;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -65,19 +54,21 @@ public class BCDataGenerators {
         packGenerator.addProvider(packOutput -> new BCBiomeTagsGenerator(packOutput, lookupProvider, existingFileHelper));
 
         // Crafting Recipes
-        packGenerator.addProvider(packOutput -> new BuildersCraftingRecipeGenerator(packOutput));
-        packGenerator.addProvider(packOutput -> new CoreCraftingRecipeGenerator(packOutput));
-        packGenerator.addProvider(packOutput -> new EnergyCraftingRecipeGenerator(packOutput));
-        packGenerator.addProvider(packOutput -> new FactoryCraftingRecipeGenerator(packOutput));
-        packGenerator.addProvider(packOutput -> new LibCraftingRecipeGenerator(packOutput));
-        packGenerator.addProvider(packOutput -> new SiliconCraftingRecipeGenerator(packOutput));
-        packGenerator.addProvider(packOutput -> new TransportCraftingRecipeGenerator(packOutput));
+        packGenerator.addProvider(BuildersCraftingRecipeGenerator::new);
+        packGenerator.addProvider(CoreCraftingRecipeGenerator::new);
+        packGenerator.addProvider(EnergyCraftingRecipeGenerator::new);
+        packGenerator.addProvider(FactoryCraftingRecipeGenerator::new);
+        packGenerator.addProvider(LibCraftingRecipeGenerator::new);
+        packGenerator.addProvider(SiliconCraftingRecipeGenerator::new);
+        packGenerator.addProvider(TransportCraftingRecipeGenerator::new);
         packGenerator.addProvider(RoboticsCraftingRecipeGenerator::new);
         // Mod Recipes
-        packGenerator.addProvider(packOutput -> new SiliconFacadeSwapRecipeGenerator(packOutput));
-        packGenerator.addProvider(packOutput -> new EnergyOilRecipeGenerator(packOutput));
-        packGenerator.addProvider(packOutput -> new SiliconAssemblyRecipeGenerator(packOutput));
-        packGenerator.addProvider(packOutput -> new TransportAssemblyRecipeGenerator(packOutput));
+        packGenerator.addProvider(SiliconFacadeSwapRecipeGenerator::new);
+        packGenerator.addProvider(EnergyOilRecipeGenerator::new);
+        packGenerator.addProvider(SiliconAssemblyRecipeGenerator::new);
+        packGenerator.addProvider(TransportAssemblyRecipeGenerator::new);
+        packGenerator.addProvider(RoboticsIntegrationRecipeGenerator::new);
+        packGenerator.addProvider(RoboticsProgrammingRecipeGenerator::new);
 
         // Advancement
         packGenerator.addProvider(packOutput -> new CoreAdvancementGenerator(packOutput, existingFileHelper));

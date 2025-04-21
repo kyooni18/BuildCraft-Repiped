@@ -281,7 +281,7 @@ public class FakeWorld extends IFakeWorld {
     }
 
     @Override
-    protected LevelEntityGetter<Entity> getEntities() {
+    public LevelEntityGetter<Entity> getEntities() {
         return ENTITY_GETTER;
     }
 

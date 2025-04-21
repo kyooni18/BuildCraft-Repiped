@@ -150,6 +150,10 @@ public class BuildersItemModelGenerator extends BCBaseItemModelGenerator {
                 .predicate(BuildersItemModelPredicates.PREDICATE_USED, 1)
                 .end();
 
+        // markerConstruction
+        withExistingParent(BCBuildersBlocks.markerConstruction.get().getRegistryName().toString(), GENERATED)
+                .texture("layer0", "buildcraftbuilders:item/construction_marker_block/recording")
+        ;
     }
 
     @Nonnull

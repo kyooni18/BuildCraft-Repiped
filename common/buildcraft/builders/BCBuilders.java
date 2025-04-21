@@ -5,10 +5,7 @@
 package buildcraft.builders;
 
 import buildcraft.builders.client.BuildersItemModelPredicates;
-import buildcraft.builders.client.render.RenderArchitectTable;
-import buildcraft.builders.client.render.RenderBuilder;
-import buildcraft.builders.client.render.RenderFiller;
-import buildcraft.builders.client.render.RenderQuarry;
+import buildcraft.builders.client.render.*;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.RulesLoader;
 import buildcraft.core.BCCore;
@@ -104,6 +101,7 @@ public class BCBuilders {
         BlockEntityRenderers.register(BCBuildersBlocks.builderTile.get(), RenderBuilder::new);
         BlockEntityRenderers.register(BCBuildersBlocks.fillerTile.get(), RenderFiller::new);
         BlockEntityRenderers.register(BCBuildersBlocks.quarryTile.get(), RenderQuarry::new);
+        BlockEntityRenderers.register(BCBuildersBlocks.markerConstructionTile.get(), RenderMarkerConstruction::new);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -153,6 +151,7 @@ public class BCBuilders {
 //                .model("frame");
         registerTag("item.block.quarry").reg("quarry").locale("quarryBlock");
 //                .model("quarry");
+        registerTag("item.block.marker.construction").reg("marker_construction").locale("constructionMarkerBlock");
         // Blocks
         registerTag("block.architect").reg("architect").locale("architectBlock");
 //                .model("architect");
@@ -168,6 +167,7 @@ public class BCBuilders {
 //                .model("frame");
         registerTag("block.quarry").reg("quarry").locale("quarryBlock");
 //                .model("quarry");
+        registerTag("block.marker.construction").reg("marker_construction").locale("constructionMarkerBlock");
         // Tiles
         registerTag("tile.architect").reg("architect");
         registerTag("tile.builder").reg("builder");
@@ -175,6 +175,7 @@ public class BCBuilders {
         registerTag("tile.replacer").reg("replacer");
         registerTag("tile.filler").reg("filler");
         registerTag("tile.quarry").reg("quarry");
+        registerTag("tile.marker.construction").reg("marker_construction");
 
 //        endBatch(TagManager.prependTags("buildcraftbuilders:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
         endBatch(TagManager.prependTags("buildcraftbuilders:", EnumTagType.REGISTRY_NAME).andThen(TagManager.setTab("buildcraft.main")));

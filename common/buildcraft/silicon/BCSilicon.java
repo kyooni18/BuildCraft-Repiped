@@ -5,10 +5,14 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.imc.BcImcMessage;
 import buildcraft.api.recipes.IAssemblyRecipe;
+import buildcraft.api.recipes.IProgrammingRecipe;
+import buildcraft.api.recipes.IntegrationRecipe;
 import buildcraft.core.BCCore;
 import buildcraft.lib.recipe.assembly.AssemblyRecipe;
 import buildcraft.lib.recipe.assembly.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.assembly.AssemblyRecipeSerializer;
+import buildcraft.lib.recipe.integration.IntegrationRecipeSerializer;
+import buildcraft.lib.recipe.programming.ProgrammingRecipeSerializer;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.RegistryConfig;
@@ -140,6 +144,8 @@ public class BCSilicon {
             ForgeRegistries.RECIPE_TYPES.register(IAssemblyRecipe.TYPE_ID, IAssemblyRecipe.TYPE);
             ForgeRegistries.RECIPE_SERIALIZERS.register(AssemblyRecipe.TYPE_ID, AssemblyRecipeSerializer.INSTANCE);
             ForgeRegistries.RECIPE_SERIALIZERS.register(FacadeSwapRecipe.TYPE_ID, FacadeSwapRecipeSerializer.INSTANCE);
+            ForgeRegistries.RECIPE_SERIALIZERS.register(IProgrammingRecipe.TYPE_ID, ProgrammingRecipeSerializer.INSTANCE);
+            ForgeRegistries.RECIPE_SERIALIZERS.register(IntegrationRecipe.TYPE_ID, IntegrationRecipeSerializer.INSTANCE);
 
             AssemblyRecipeRegistry.FACADE_ASSEMBLY_RECIPE = FacadeAssemblyRecipes.INSTANCE;
 
@@ -156,7 +162,7 @@ public class BCSilicon {
         ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.integrationTable.get(), RenderType.cutout());
         // Calen: 1.12.2 not impl……
         ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.chargingTable.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.programmingTable.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.programmingTable.get(), RenderType.translucent());
 
         SiliconItemModelPredicates.register(event);
     }
@@ -176,6 +182,7 @@ public class BCSilicon {
 //                .model("chipset_redstone/");
         registerTag("item.chipset.diamond").reg("chipset_diamond").locale("chipset_diamond");
 //                .model("chipset_redstone/");
+        registerTag("item.redstone_crystal").reg("redstone_crystal").locale("redstoneCrystal");
         registerTag("item.gate_copier").reg("gate_copier").locale("gateCopier");
 //                .model("gatecopier_");
         registerTag("item.plug.gate").reg("plug_gate").locale("gate")

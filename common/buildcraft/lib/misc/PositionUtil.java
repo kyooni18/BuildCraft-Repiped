@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Vec3i;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.Vec3;
 
@@ -567,7 +568,7 @@ public class PositionUtil {
         );
     }
 
-    public static BlockPos randomBlockPos(Random rand, BlockPos min, BlockPos max) {
+    public static BlockPos randomBlockPos(RandomSource rand, BlockPos min, BlockPos max) {
         return new BlockPos(//
                 min.getX() + rand.nextInt(max.getX() - min.getX()), //
                 min.getY() + rand.nextInt(max.getY() - min.getY()), //

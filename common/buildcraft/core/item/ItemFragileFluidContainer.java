@@ -4,6 +4,7 @@ import buildcraft.api.items.IItemFluidShard;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.BCFluidAttributes;
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
@@ -154,7 +155,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
 //        public <T> T getCapability(Capability<T> capability, Direction facing)
         public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final @Nullable Direction side) {
             if (capability == ForgeCapabilities.FLUID_HANDLER_ITEM
-                    || capability == ForgeCapabilities.FLUID_HANDLER) {
+                    || capability == CapUtil.CAP_FLUIDS) {
                 return LazyOptional.of(() -> this).cast();
             }
             return LazyOptional.empty();

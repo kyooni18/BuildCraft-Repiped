@@ -206,7 +206,7 @@ public class StackUtil {
             return 0;
         }
         if (doMerge) {
-            mergeTarget.setCount(mergeTarget.getCount() + mergeCount);
+            mergeTarget.grow(mergeCount);
         }
         return mergeCount;
     }
@@ -479,5 +479,10 @@ public class StackUtil {
 
     public static boolean isSameTag(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
         return stack1.isEmpty() && stack2.isEmpty() ? true : Objects.equals(stack1.getTag(), stack2.getTag()) && stack1.areCapsCompatible(stack2);
+    }
+
+    public static boolean isSameItemSameDamageSameTagSameCount(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
+        // damage is a tag value
+        return stack1.getCount() == stack2.getCount() && ItemStack.isSameItemSameTags(stack1, stack2);
     }
 }

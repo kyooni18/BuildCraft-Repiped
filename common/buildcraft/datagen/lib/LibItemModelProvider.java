@@ -1,8 +1,8 @@
 package buildcraft.datagen.lib;
 
 import buildcraft.datagen.base.BCBaseItemModelGenerator;
+import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
-import buildcraft.transport.BCTransport;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 public class LibItemModelProvider extends BCBaseItemModelGenerator {
     public LibItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, BCTransport.MODID, existingFileHelper);
+        super(output, BCLib.MODID, existingFileHelper);
     }
 
     @Override

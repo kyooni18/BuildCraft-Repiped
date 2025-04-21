@@ -3,6 +3,7 @@ package buildcraft.silicon;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.facades.IFacadeItem;
+import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemPluggableSimple;
 import buildcraft.lib.item.ItemPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
@@ -29,6 +30,8 @@ public class BCSiliconItems {
     public static RegistryObject<ItemRedstoneChipset> chipsetQuartz;
     public static RegistryObject<ItemRedstoneChipset> chipsetDiamond;
 
+    public static RegistryObject<ItemBC_Neptune> redstoneCrystal;
+
     public static RegistryObject<ItemGateCopier> gateCopier;
 
     // public static RegistryObject<ItemPluggableGate> plugGate;
@@ -38,13 +41,14 @@ public class BCSiliconItems {
     public static RegistryObject<ItemPluggableSimple> plugLightSensor;
     public static RegistryObject<? extends IFacadeItem> plugFacade;
 
-
     public static void preInit() {
         chipsetRedstone = HELPER.addItem("item.chipset.redstone", ItemPropertiesCreator.common64(), (idBC, properties) -> new ItemRedstoneChipset(idBC, properties, EnumRedstoneChipset.RED));
         chipsetIron = HELPER.addItem("item.chipset.iron", ItemPropertiesCreator.common64(), (idBC, properties) -> new ItemRedstoneChipset(idBC, properties, EnumRedstoneChipset.IRON));
         chipsetGold = HELPER.addItem("item.chipset.gold", ItemPropertiesCreator.common64(), (idBC, properties) -> new ItemRedstoneChipset(idBC, properties, EnumRedstoneChipset.GOLD));
         chipsetQuartz = HELPER.addItem("item.chipset.quartz", ItemPropertiesCreator.common64(), (idBC, properties) -> new ItemRedstoneChipset(idBC, properties, EnumRedstoneChipset.QUARTZ));
         chipsetDiamond = HELPER.addItem("item.chipset.diamond", ItemPropertiesCreator.common64(), (idBC, properties) -> new ItemRedstoneChipset(idBC, properties, EnumRedstoneChipset.DIAMOND));
+
+        redstoneCrystal = HELPER.addItem("item.redstone_crystal", ItemPropertiesCreator.common64(), ItemBC_Neptune::new);
 
         gateCopier = HELPER.addItem("item.gate_copier", ItemPropertiesCreator.common1(), ItemGateCopier::new);
 

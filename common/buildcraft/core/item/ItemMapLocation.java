@@ -89,8 +89,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             }
             case AREA: {
                 if (cpt.contains("xMin") && cpt.contains("yMin") && cpt.contains("zMin") && cpt.contains("xMax")
-                        && cpt.contains("yMax") && cpt.contains("zMax"))
-                {
+                        && cpt.contains("yMax") && cpt.contains("zMax")) {
                     int x = cpt.getInt("xMin");
                     int y = cpt.getInt("yMin");
                     int z = cpt.getInt("zMin");
@@ -322,6 +321,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                 plan.readFromNBT(cpt);
                 return plan;
             }
+            case SPOT:
             case AREA: {
                 return getBox(item);
             }

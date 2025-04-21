@@ -176,7 +176,7 @@ public class FluidUtilBC {
         if (held.isEmpty()) {
             return InteractionResult.PASS;
         }
-        boolean replace = !player.isCreative(); // 非创造模式
+        boolean replace = !player.isCreative();
         boolean single = held.getCount() == 1;
         IFluidHandlerItem flItem = null;
         if (replace && single) {
@@ -217,7 +217,6 @@ public class FluidUtilBC {
                 held.shrink(1);
                 ItemHandlerHelper.giveItemToPlayer(player, flItem.getContainer());
             }
-            // TODO Calen inventoryMenu or getInventory()???
 //            player.inventoryContainer.detectAndSendChanges();
             player.inventoryMenu.broadcastChanges();
         }

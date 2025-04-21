@@ -12,11 +12,15 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector2i;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ZonePlan implements IZone {
     private final HashMap<ChunkPos, ZoneChunk> chunkMapping = new HashMap<>();
@@ -169,7 +173,7 @@ public class ZonePlan implements IZone {
     }
 
     @Override
-    public BlockPos getRandomBlockPos(Random rand) {
+    public BlockPos getRandomBlockPos(RandomSource rand) {
         if (chunkMapping.size() == 0) {
             return null;
         }

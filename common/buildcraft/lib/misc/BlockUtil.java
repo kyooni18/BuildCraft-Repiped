@@ -13,6 +13,7 @@ import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.compat.CompatManager;
 import buildcraft.lib.inventory.TransactorEntityItem;
 import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.oredictionarytag.OreDictionaryTags;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
@@ -53,6 +54,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
@@ -684,5 +686,21 @@ public final class BlockUtil {
 
     public static ResourceLocation getRegistryName(Block block) {
         return block.builtInRegistryHolder().key().location();
+    }
+
+    public static boolean isReplaceable(BlockState blockState) {
+        return blockState.isAir() || blockState.canBeReplaced();
+    }
+
+    public static boolean isSoftBlock(Level world, BlockPos pos) {
+        return isSoftBlock(world.getBlockState(pos));
+    }
+
+    public static boolean isSoftBlock(BlockState blockState) {
+        return blockState.is(OreDictionaryTags.SOFT) ||
+                blockState.getBlock() instanceof IFluidBlock ||
+                blockState.getBlock() instanceof LiquidBlock ||
+                blockState.getBlock() instanceof IPlantable ||
+                blockState.canBeReplaced();
     }
 }

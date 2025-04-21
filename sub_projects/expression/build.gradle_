@@ -47,7 +47,8 @@ sourceSets {
 }
 
 task srcJar (type:Jar) {
-    classifier = "sources"
+//    classifier = "sources"
+    archiveClassifier.set('sources')
     from sourceSets.main.allSource
 }
 
@@ -92,5 +93,3 @@ publishing {
         }
     }
 }
-
-

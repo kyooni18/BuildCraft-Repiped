@@ -45,7 +45,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -186,7 +185,6 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable,
         return this.getBlockState().getBlock().getName();
     }
 
-    @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new ContainerChute(BCFactoryMenuTypes.CHUTE, id, player, this);

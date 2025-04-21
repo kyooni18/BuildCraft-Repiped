@@ -64,7 +64,7 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
     }
 
     public TileTank(BlockPos pos, BlockState blockState, int capacity) {
-        this(pos, blockState, new Tank("tank", capacity, null));
+        this(pos, blockState, new Tank("tank", capacity, (BlockEntity) null));
     }
 
     public TileTank(BlockPos pos, BlockState blockState, Tank tank) {

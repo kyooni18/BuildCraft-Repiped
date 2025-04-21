@@ -7,6 +7,7 @@
 package buildcraft.transport.pipe.flow;
 
 import buildcraft.api.core.*;
+import buildcraft.api.robots.IDockingStationProvider;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.PipeApi.FluidTransferInfo;
@@ -1010,7 +1011,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         @Override
         public int fill(FluidStack resource, FluidAction doFill) {
-            if (!getCurrentDirection().canInput() || !pipe.isConnected(part.face) || resource == null) {
+            if (!getCurrentDirection().canInput() || (!pipe.isConnected(part.face) && !(pipe.getHolder().getPluggable(part.face) instanceof IDockingStationProvider)) || resource == null || resource.isEmpty()) {
                 return 0;
             }
             resource = resource.copy();

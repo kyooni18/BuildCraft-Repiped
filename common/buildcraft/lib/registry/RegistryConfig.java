@@ -62,27 +62,28 @@ public class RegistryConfig {
     public static boolean isEnabledItem(String idBC) {
 //        return isEnabled(getCategory(item), item.getRegistryName().getPath(),
 //                item.getRegistryName() + ".name");
-        String regPath = TagManager.getTag(idBC, TagManager.EnumTagType.REGISTRY_NAME).split(":")[1];
-        return isEnabled("items", regPath, "item." + TagManager.getTag(idBC).getSingleTag(TagManager.EnumTagType.UNLOCALIZED_NAME) + ".name");
+        String regName = TagManager.getTag(idBC, TagManager.EnumTagType.REGISTRY_NAME);
+        return isEnabled("items", regName.split(":")[0], regName.split(":")[1], "item." + TagManager.getTag(idBC).getSingleTag(TagManager.EnumTagType.UNLOCALIZED_NAME) + ".name");
     }
 
     // Calen: in 1.12.2 pipe items are forced
     // this #isEnabled is never used on pipes
     public static boolean isEnabledPipeItemItem(String idBC) {
-        String regPath = TagManager.getTag(idBC, TagManager.EnumTagType.REGISTRY_NAME).split(":")[1];
-        return isEnabled("pipes", regPath, "item." + TagManager.getTag(idBC).getSingleTag(TagManager.EnumTagType.UNLOCALIZED_NAME) + ".name");
+        String regName = TagManager.getTag(idBC, TagManager.EnumTagType.REGISTRY_NAME);
+        return isEnabled("pipes", regName.split(":")[0], regName.split(":")[1], "item." + TagManager.getTag(idBC).getSingleTag(TagManager.EnumTagType.UNLOCALIZED_NAME) + ".name");
     }
 
     // public static boolean isEnabled(Block block)
     public static boolean isEnabledBlock(String idBC) {
 //        return isEnabled(getCategory(block), block.getRegistryName().getPath(),
 //                block.getRegistryName() + ".name");
-        String regPath = TagManager.getTag(idBC, TagManager.EnumTagType.REGISTRY_NAME).split(":")[1];
-        return isEnabled("blocks", regPath, "tile." + TagManager.getTag(idBC).getSingleTag(TagManager.EnumTagType.UNLOCALIZED_NAME) + ".name");
+        String regName = TagManager.getTag(idBC, TagManager.EnumTagType.REGISTRY_NAME);
+        return isEnabled("blocks", regName.split(":")[0], regName.split(":")[1], "tile." + TagManager.getTag(idBC).getSingleTag(TagManager.EnumTagType.UNLOCALIZED_NAME) + ".name");
     }
 
-    public static boolean isEnabled(String category, String resourcePath, String langKey) {
-        return isEnabled(getActiveMod(), category, resourcePath, langKey);
+    public static boolean isEnabled(String category, String modId, String resourcePath, String langKey) {
+        // return isEnabled(getActiveMod(), category, resourcePath, langKey);
+        return isEnabled(getMod(modId), category, resourcePath, langKey);
     }
 
     public static boolean hasItemBeenDisabled(ResourceLocation loc) {
@@ -95,7 +96,7 @@ public class RegistryConfig {
 
     /**
      * @return True if the given location has been passed to {@link #isEnabledBlock(String)}, {@link #isEnabledItem(String)}, or
-     * {@link #isEnabled(String, String, String)}, and it returned false (because it has been disabled in the
+     * {@link #isEnabled(String, String, String, String)}, and it returned false (because it has been disabled in the
      * appropriate mod's config)
      */
     public static boolean hasObjectBeenDisabled(String category, ResourceLocation loc) {
