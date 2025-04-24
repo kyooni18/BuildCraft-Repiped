@@ -324,13 +324,7 @@
     {
       "faces": {
         "up": {
-          "texture": "#glass",
-          "uv": [
-            0.0,
-            0.0,
-            16.0,
-            16.0
-          ]
+          "texture": "#glass"
         }
       },
       "from": [
@@ -348,7 +342,7 @@
   "textures": {
     "bottom": "buildcraftsilicon:block/table/programming/bottom",
     "center": "buildcraftsilicon:block/table/programming/center",
-    "glass": "buildcraftsilicon:block/table/programming/transparent",
+    "glass": "minecraft:block/white_stained_glass",
     "middle": "buildcraftsilicon:block/table/programming/middle",
     "particle": "buildcraftsilicon:block/table/programming/top",
     "side": "buildcraftsilicon:block/table/programming/side",

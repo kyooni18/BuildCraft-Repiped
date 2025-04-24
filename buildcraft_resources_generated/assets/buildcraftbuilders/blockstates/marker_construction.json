@@ -1,0 +1,60 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/marker_construction"
+      },
+      "when": {
+        "facing": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/marker_construction",
+        "x": 180
+      },
+      "when": {
+        "facing": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/marker_construction",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/marker_construction",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/marker_construction",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/marker_construction",
+        "x": 90
+      },
+      "when": {
+        "facing": "north"
+      }
+    }
+  ]
+}

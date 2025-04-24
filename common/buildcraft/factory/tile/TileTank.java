@@ -9,15 +9,15 @@ package buildcraft.factory.tile;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.api.tiles.IBCTileMenuProvider;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.ITickable;
 import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.BCFactoryMenuTypes;
+import buildcraft.factory.container.ContainerTank;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.AdvancementUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.*;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -28,7 +28,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -39,12 +41,13 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
 
-public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandlerAdv, ITickable {
+public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandlerAdv, ITickable, IBCTileMenuProvider {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("tank");
     public static final int NET_FLUID_DELTA = IDS.allocId("FLUID_DELTA");
 
@@ -162,7 +165,13 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
         if (didChange == InteractionResult.SUCCESS && !player.level().isClientSide && amountBefore < tank.getFluidAmount()) {
             AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_STORE_FLUIDS);
         }
-        return didChange;
+        if (didChange != InteractionResult.SUCCESS) {
+            if (!level.isClientSide) {
+                // BCFactoryGuis.TANK.openGUI(player, pos);
+                MessageUtil.serverOpenTileGui(player, this);
+            }
+        }
+        return InteractionResult.SUCCESS;
     }
 
     // Networking
@@ -175,6 +184,8 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
                 writePayload(NET_FLUID_DELTA, buffer, side);
             } else if (id == NET_FLUID_DELTA) {
                 smoothedTank.writeInit(buffer);
+            } else if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
+                tankManager.writeData(buffer);
             }
         }
     }
@@ -188,6 +199,8 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
                 smoothedTank.resetSmoothing(getLevel());
             } else if (id == NET_FLUID_DELTA) {
                 smoothedTank.handleMessage(getLevel(), buffer);
+            } else if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
+                tankManager.readData(buffer);
             }
         }
     }
@@ -449,5 +462,18 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
         }
 //        return total == null ? StackUtil.EMPTY_FLUID : total;
         return total.isEmpty() ? StackUtil.EMPTY_FLUID : total;
+    }
+
+    // MenuProvider
+
+    @Override
+    public Component getDisplayName() {
+        return this.getBlockState().getBlock().getName();
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new ContainerTank(BCFactoryMenuTypes.TANK, id, player, this);
     }
 }

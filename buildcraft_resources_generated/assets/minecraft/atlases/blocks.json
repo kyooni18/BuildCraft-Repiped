@@ -2,11 +2,47 @@
   "sources": [
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_sandstone"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/items_stripes"
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_quartz"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/fluids_clay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_iron_m0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_iron_m4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_iron_m8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_iron_m16"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_iron_m32"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_iron_m64"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_iron_m128"
     },
     {
       "type": "minecraft:single",
@@ -34,11 +70,23 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_cobblestone"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/fluids_cobblestone"
     },
     {
       "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/power_gold"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_diamond_wood_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_diamond_wood_filled"
     },
     {
       "type": "minecraft:single",
@@ -67,6 +115,14 @@
     {
       "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/fluids_wood_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_wood_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_wood_filled"
     },
     {
       "type": "minecraft:single",
@@ -146,7 +202,39 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_gold"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/fluids_void"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_diamond_m0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_diamond_m4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_diamond_m8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_diamond_m16"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_diamond_m32"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_diamond_m64"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_diamond_m128"
     },
     {
       "type": "minecraft:single",
@@ -186,11 +274,67 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_diamond_m0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_diamond_m4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_diamond_m8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_diamond_m16"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_diamond_m32"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_diamond_m64"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_diamond_m128"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/items_emzuli_clear"
     },
     {
       "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/items_emzuli_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_iron_m0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_iron_m4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_iron_m8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_iron_m16"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_iron_m32"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_iron_m64"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_iron_m128"
     },
     {
       "type": "minecraft:single",
@@ -235,6 +379,14 @@
     {
       "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/items_diamond_itemstack"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_diamond_wood_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_diamond_wood_filled"
     },
     {
       "type": "minecraft:single",
@@ -346,6 +498,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_stone"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:pipes/fluids_quartz"
     },
     {
@@ -398,7 +554,15 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_rf_limiter_m2"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftcore:triggers/trigger_dir_up"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_station_request_items"
     },
     {
       "type": "minecraft:single",
@@ -410,15 +574,19 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "buildcraftcore:triggers/trigger_engineheat_yellow"
-    },
-    {
-      "type": "minecraft:single",
       "resource": "buildcraftcore:item/paintbrush/light_gray"
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_engineheat_yellow"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftbuilders:block/frame/default"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_rf_limiter_m0"
     },
     {
       "type": "minecraft:single",
@@ -430,11 +598,19 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "buildcraftcore:item/paintbrush/light_blue"
+      "resource": "buildcrafttransport:triggers/trigger_rf_limiter_m8"
     },
     {
       "type": "minecraft:single",
-      "resource": "buildcraftcore:triggers/action_machinecontrol_loop"
+      "resource": "buildcrafttransport:triggers/trigger_limiter_m16"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_station_provide_fluids"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/light_blue"
     },
     {
       "type": "minecraft:single",
@@ -442,7 +618,15 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/action_machinecontrol_loop"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftbuilders:filler/parameters/axis_z"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_robot_filter_tool"
     },
     {
       "type": "minecraft:single",
@@ -478,7 +662,23 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/trigger_robot_reserved"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/rf_flow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_robot_work_in_area"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftbuilders:block/scan"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:triggers/trigger_timer_long"
     },
     {
       "type": "minecraft:single",
@@ -506,6 +706,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_robot_goto_station"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftcore:item/paintbrush/lime"
     },
     {
@@ -519,6 +723,10 @@
     {
       "type": "minecraft:single",
       "resource": "buildcrafttransport:triggers/trigger_pipesignal_blue_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_station_machine_request"
     },
     {
       "type": "minecraft:single",
@@ -566,6 +774,14 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_rf_limiter_m16"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_station_robot_forbidden"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftbuilders:filler/parameters/face_east"
     },
     {
@@ -590,6 +806,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_station_accept_items"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftlib:icons/engine_warm"
     },
     {
@@ -611,6 +831,10 @@
     {
       "type": "minecraft:single",
       "resource": "buildcraftcore:lasers/stripes_read"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_station_provide_items"
     },
     {
       "type": "minecraft:single",
@@ -722,6 +946,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_limiter_m0"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftcore:triggers/parameter_redstone_10"
     },
     {
@@ -746,6 +974,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_robot_load_unload_area"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftbuilders:filler/patterns/sphere"
     },
     {
@@ -766,11 +998,19 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_robot_wakeup"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:triggers/trigger_pipesignal_gray_active"
     },
     {
       "type": "minecraft:single",
       "resource": "buildcraftbuilders:filler/parameters/filled_inner"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_station_accept_fluids"
     },
     {
       "type": "minecraft:single",
@@ -818,11 +1058,19 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_limiter_m128"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftlib:icons/warning_minor"
     },
     {
       "type": "minecraft:single",
       "resource": "buildcraftcore:triggers/trigger_true"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_robot_filter"
     },
     {
       "type": "minecraft:single",
@@ -858,7 +1106,19 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_limiter_m256"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_limiter_m8"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftcore:triggers/trigger_inventory_space"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_limiter_m2"
     },
     {
       "type": "minecraft:single",
@@ -871,6 +1131,10 @@
     {
       "type": "minecraft:single",
       "resource": "buildcraftlib:icons/ledger_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_rf_limiter_m64"
     },
     {
       "type": "minecraft:single",
@@ -934,6 +1198,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_rf_limiter_m128"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftbuilders:filler/patterns/2d_arc"
     },
     {
@@ -942,11 +1210,15 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "buildcraftcore:lasers/power_high"
+      "resource": "buildcraftrobotics:triggers/trigger_robot_sleep"
     },
     {
       "type": "minecraft:single",
       "resource": "buildcrafttransport:triggers/trigger_pipesignal_orange_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/power_high"
     },
     {
       "type": "minecraft:single",
@@ -1010,6 +1282,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_rf_limiter_m256"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:triggers/trigger_pipesignal_green_inactive"
     },
     {
@@ -1027,6 +1303,10 @@
     {
       "type": "minecraft:single",
       "resource": "buildcraftcore:lasers/marker_volume_possible"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_limiter_m64"
     },
     {
       "type": "minecraft:single",
@@ -1058,6 +1338,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/action_station_robot_mandatory"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:triggers/extraction_preset_blue"
     },
     {
@@ -1078,11 +1362,19 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "buildcraftcore:lasers/power_full"
+      "resource": "buildcraftrobotics:triggers/trigger_robot_linked"
     },
     {
       "type": "minecraft:single",
       "resource": "buildcraftcore:item/paintbrush/brown"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/power_full"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:triggers/trigger_robot_in_station"
     },
     {
       "type": "minecraft:single",
@@ -1094,11 +1386,15 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_dir_east"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcrafttransport:wires/magenta"
     },
     {
       "type": "minecraft:single",
-      "resource": "buildcraftcore:triggers/trigger_dir_east"
+      "resource": "buildcraftsilicon:triggers/trigger_timer_short"
     },
     {
       "type": "minecraft:single",
@@ -1218,6 +1514,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcraftsilicon:triggers/trigger_timer_medium"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftcore:triggers/trigger_redstoneinput_active"
     },
     {
@@ -1226,11 +1526,11 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "buildcrafttransport:triggers/trigger_pipesignal_purple_active"
+      "resource": "buildcraftcore:triggers/action_machinecontrol_off"
     },
     {
       "type": "minecraft:single",
-      "resource": "buildcraftcore:triggers/action_machinecontrol_off"
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_purple_active"
     },
     {
       "type": "minecraft:single",
@@ -1286,11 +1586,7 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "buildcrafttransport:pipes/plug"
-    },
-    {
-      "type": "minecraft:single",
-      "resource": "buildcrafttransport:pipes/power_adapter"
+      "resource": "buildcraftsilicon:plugs/timer"
     },
     {
       "type": "minecraft:single",
@@ -1323,6 +1619,26 @@
     {
       "type": "minecraft:single",
       "resource": "buildcraftcore:block/engine/creative/side"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftenergy:block/engine/rf/back"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftenergy:block/engine/rf/side"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftenergy:block/mj_dynamo/back"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftenergy:block/mj_dynamo/side"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftenergy:block/mj_dynamo/front"
     },
     {
       "type": "minecraft:single",
@@ -1419,6 +1735,50 @@
     {
       "type": "minecraft:single",
       "resource": "buildcraftsilicon:plugs/filter"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/plug"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_adapter"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:station/base"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:station/state_reserved"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:station/state_linked_cb"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:station/state_available_cb"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:station/state_available"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:station/state_none"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:station/state_reserved_cb"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:station/state_linked"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftrobotics:station/state_none_cb"
     }
   ]
 }

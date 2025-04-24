@@ -1,0 +1,16 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "output": {
+    "item": "buildcraftsilicon:redstone_crystal"
+  },
+  "requiredMicroJoules": 1000000000000,
+  "requiredStacks": [
+    {
+      "count": 1,
+      "ingredient": {
+        "tag": "forge:storage_blocks/redstone"
+      }
+    }
+  ],
+  "subType": "BASIC"
+}

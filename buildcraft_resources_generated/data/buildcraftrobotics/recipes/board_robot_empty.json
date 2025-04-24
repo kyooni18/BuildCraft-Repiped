@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftfactory",
+  "key": {
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PRP",
+    "PPP"
+  ],
+  "result": {
+    "item": "buildcraftrobotics:board_robot_empty"
+  },
+  "show_notification": true
+}

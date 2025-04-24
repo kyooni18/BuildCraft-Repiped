@@ -9,10 +9,14 @@ package buildcraft.energy;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.core.block.BlockEngine_BC8;
+import buildcraft.energy.client.render.RenderDynamoMJ;
 import buildcraft.energy.client.render.RenderEngineIron;
+import buildcraft.energy.client.render.RenderEngineRF;
 import buildcraft.energy.client.render.RenderEngineStone;
 import buildcraft.energy.event.ChristmasHandler;
+import buildcraft.energy.tile.TileDynamoMJ;
 import buildcraft.energy.tile.TileEngineIron_BC8;
+import buildcraft.energy.tile.TileEngineRF;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
@@ -52,6 +56,8 @@ public class BCEnergyModels {
 
     private static final ModelHolderVariable ENGINE_STONE;
     private static final ModelHolderVariable ENGINE_IRON;
+    private static final ModelHolderVariable ENGINE_RF;
+    private static final ModelHolderVariable MJ_DYNAMO;
 
     static {
         FunctionContext fnCtx = new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
@@ -71,6 +77,15 @@ public class BCEnergyModels {
                 fnCtx
         );
         BlockEngine_BC8.setModel(EnumEngineType.IRON, ENGINE_IRON); // Calen
+        ENGINE_RF = new ModelHolderVariable(
+                "buildcraftenergy:models/tile/engine_rf.jsonbc",
+                fnCtx
+        );
+        BlockEngine_BC8.setModel(EnumEngineType.RF, ENGINE_RF); // Calen
+        MJ_DYNAMO = new ModelHolderVariable(
+                "buildcraftenergy:models/tile/mj_dynamo.jsonbc",
+                fnCtx
+        );
     }
 
     public static void fmlPreInit() {
@@ -84,6 +99,8 @@ public class BCEnergyModels {
     public static void onTesrReg(RegisterRenderers event) {
         BlockEntityRenderers.register(BCEnergyBlocks.engineStoneTile.get(), RenderEngineStone::new);
         BlockEntityRenderers.register(BCEnergyBlocks.engineIronTile.get(), RenderEngineIron::new);
+        BlockEntityRenderers.register(BCEnergyBlocks.engineRfTile.get(), RenderEngineRF::new);
+        BlockEntityRenderers.register(BCEnergyBlocks.mjDynamoTile.get(), RenderDynamoMJ::new);
     }
 
     @SubscribeEvent
@@ -146,6 +163,39 @@ public class BCEnergyModels {
                         spriteTasks::add
                 )
         );
+        varData.setNodes(ENGINE_RF.createTickableNodes());
+        varData.tick();
+        varData.refresh();
+        event.getModels().put(
+                // new ModelResourceLocation(EnumEngineType.RF.getItemModelLocation(), "inventory"),
+                new ModelResourceLocation(BCEnergyBlocks.engineRf.getId(), "inventory"),
+                new ModelItemSimple(
+                        new LazyLoadedValue<>(
+                                () -> Arrays.stream(ENGINE_RF.getCutoutQuads())
+                                        .map(MutableQuad::toBakedItem)
+                                        .collect(Collectors.toList())
+                        ),
+                        ModelItemSimple.TRANSFORM_BLOCK,
+                        true,
+                        spriteTasks::add
+                )
+        );
+        varData.setNodes(MJ_DYNAMO.createTickableNodes());
+        varData.tick();
+        varData.refresh();
+        event.getModels().put(
+                new ModelResourceLocation(BCEnergyBlocks.mjDynamo.getId(), "inventory"),
+                new ModelItemSimple(
+                        new LazyLoadedValue<>(
+                                () -> Arrays.stream(MJ_DYNAMO.getCutoutQuads())
+                                        .map(MutableQuad::toBakedItem)
+                                        .collect(Collectors.toList())
+                        ),
+                        ModelItemSimple.TRANSFORM_BLOCK,
+                        true,
+                        spriteTasks::add
+                )
+        );
 
         ChristmasHandler.replaceBucketNoFlipModel(event);
     }
@@ -169,5 +219,20 @@ public class BCEnergyModels {
 
     public static MutableQuad[] getIronEngineQuads(TileEngineIron_BC8 tile, float partialTicks) {
         return getEngineQuads(ENGINE_IRON, tile, partialTicks);
+    }
+
+    public static MutableQuad[] getRfEngineQuads(TileEngineRF tile, float partialTicks) {
+        return getEngineQuads(ENGINE_RF, tile, partialTicks);
+    }
+
+    public static MutableQuad[] getMjDynamoQuads(TileDynamoMJ tile, float partialTicks) {
+        ENGINE_PROGRESS.value = tile.getProgressClient(partialTicks);
+        ENGINE_STAGE.value = tile.getPowerStage();
+        ENGINE_FACING.value = tile.getCurrentDirection();
+        if (tile.clientModelData.hasNoNodes()) {
+            tile.clientModelData.setNodes(MJ_DYNAMO.createTickableNodes());
+        }
+        tile.clientModelData.refresh();
+        return MJ_DYNAMO.getCutoutQuads();
     }
 }

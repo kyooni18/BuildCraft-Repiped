@@ -51,6 +51,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class BCSiliconModels {
     public static final ModelHolderStatic LIGHT_SENSOR;
+    public static final ModelHolderStatic TIMER;
 
     public static final ModelHolderVariable GATE_STATIC;
     public static final ModelHolderVariable GATE_DYNAMIC;
@@ -65,6 +66,7 @@ public class BCSiliconModels {
     public static final ModelHolderVariable PULSAR_DYNAMIC;
 
     public static final IPluggableStaticBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR;
+    public static final IPluggableStaticBaker<KeyPlugTimer> BAKER_PLUG_TIMER;
     public static final IPluggableStaticBaker<KeyPlugLightSensor> BAKER_PLUG_LIGHT_SENSOR;
 
     static {
@@ -72,12 +74,14 @@ public class BCSiliconModels {
         ExpressionCompat.setup();
 
         LIGHT_SENSOR = getStaticModel("plugs/light_sensor");
+        TIMER = getStaticModel("plugs/timer");
         GATE_STATIC = getModel("plugs/gate", PluggableGate.MODEL_FUNC_CTX_STATIC);
         GATE_DYNAMIC = getModel("plugs/gate_dynamic", PluggableGate.MODEL_FUNC_CTX_DYNAMIC);
         PULSAR_STATIC = getStaticModel("plugs/pulsar_static");
         PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic", PluggablePulsar.MODEL_FUNC_CTX);
 
         BAKER_PLUG_PULSAR = new PlugBakerSimple<>(PULSAR_STATIC::getCutoutQuads);
+        BAKER_PLUG_TIMER = new PlugBakerSimple<>(TIMER::getCutoutQuads);
         BAKER_PLUG_LIGHT_SENSOR = new PlugBakerSimple<>(LIGHT_SENSOR::getCutoutQuads);
 
         {
@@ -117,6 +121,7 @@ public class BCSiliconModels {
             pipeRegistryClient.registerBaker(KeyPlugGate.class, PlugGateBaker.INSTANCE);
             pipeRegistryClient.registerBaker(KeyPlugPulsar.class, BAKER_PLUG_PULSAR);
             pipeRegistryClient.registerBaker(KeyPlugLightSensor.class, BAKER_PLUG_LIGHT_SENSOR);
+            pipeRegistryClient.registerBaker(KeyPlugTimer.class, BAKER_PLUG_TIMER);
             pipeRegistryClient.registerBaker(KeyPlugLens.class, PlugBakerLens.INSTANCE);
             pipeRegistryClient.registerBaker(KeyPlugFacade.class, PlugBakerFacade.INSTANCE);
 
@@ -165,6 +170,8 @@ public class BCSiliconModels {
         putModel(event, "plug_pulsar#inventory", new ModelPluggableItem(spriteTasks::add, new LazyLoadedValue<>(() -> PULSAR_STATIC.getCutoutQuads()), new LazyLoadedValue<>(() -> PULSAR_DYNAMIC.getCutoutQuads())));
 //        putModel(event, "plug_light_sensor#inventory", new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
         putModel(event, "plug_light_sensor#inventory", new ModelPluggableItem(spriteTasks::add, new LazyLoadedValue<>(() -> LIGHT_SENSOR.getCutoutQuads())));
+//        putModel(event, "plug_timer#inventory", new ModelPluggableItem(TIMER.getCutoutQuads()));
+        putModel(event, "plug_timer#inventory", new ModelPluggableItem(spriteTasks::add, new LazyLoadedValue<>(() -> TIMER.getCutoutQuads())));
         putModel(event, "plug_facade#inventory", ModelFacadeItem.INSTANCE);
 
         PlugGateBaker.onModelBake();

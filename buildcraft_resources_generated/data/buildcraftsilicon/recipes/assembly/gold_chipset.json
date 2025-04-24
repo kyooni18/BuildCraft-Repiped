@@ -3,7 +3,7 @@
   "output": {
     "item": "buildcraftsilicon:chipset_gold"
   },
-  "requiredMicroJoules": 20000000000,
+  "requiredMicroJoules": 40000000000,
   "requiredStacks": [
     {
       "count": 1,

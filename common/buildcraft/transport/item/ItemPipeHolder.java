@@ -24,7 +24,10 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -179,8 +182,9 @@ public class ItemPipeHolder extends BlockItem implements IItemBuildCraft, IItemP
             PipeApi.PowerTransferInfo pti = PipeApi.getPowerTransferInfo(definition);
 //            tooltip.add(Component.literal(LocaleUtil.localizeMjFlow(pti.transferPerTick)));
             tooltip.add(LocaleUtil.localizeMjFlowComponent(pti.transferPerTick));
-            // TODO: remove this! (Not localised b/c localisations happen AFTER this is removed)
-            tooltip.add(Component.literal("Work in progress - the above limit isn't enforced!"));
+        } else if (definition.flowType == PipeApi.flowRf && PipeApi.flowRf != null) {
+            PipeApi.RedstoneFluxTransferInfo pti = PipeApi.getRfTransferInfo(definition);
+            tooltip.add(Component.literal(pti.transferPerTick + " RF/t"));//TODO: Locale!
         }
     }
 }
