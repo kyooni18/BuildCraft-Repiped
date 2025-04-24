@@ -23,9 +23,9 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import com.google.common.collect.Lists;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
@@ -97,9 +97,9 @@ public class BCCoreModels {
 
     @SubscribeEvent
     public static void onTesrReg(RegisterRenderers event) {
-        BlockEntityRenderers.register(BCCoreBlocks.markerVolumeTile.get(), RenderMarkerVolume::new);
-        BlockEntityRenderers.register(BCCoreBlocks.engineWoodTile.get(), RenderEngineWood::new);
-        BlockEntityRenderers.register(BCCoreBlocks.engineCreativeTile.get(), RenderEngineCreative::new);
+        RegistryUtil.regTesrIfTilePresent(BCCoreBlocks.markerVolumeTile, RenderMarkerVolume::new);
+        RegistryUtil.regTesrIfTilePresent(BCCoreBlocks.engineWoodTile, RenderEngineWood::new);
+        RegistryUtil.regTesrIfTilePresent(BCCoreBlocks.engineCreativeTile, RenderEngineCreative::new);
     }
 
     // Calen 1.20.1
@@ -123,8 +123,7 @@ public class BCCoreModels {
         varData.tick();
         varData.refresh();
         event.getModels().put(
-//                new ModelResourceLocation(EnumEngineType.WOOD.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCCoreBlocks.engineWood.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.WOOD.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         new LazyLoadedValue<>(
                                 () -> Arrays.stream(ENGINE_REDSTONE.getCutoutQuads())
@@ -141,8 +140,7 @@ public class BCCoreModels {
         varData.tick();
         varData.refresh();
         event.getModels().put(
-//                new ModelResourceLocation(EnumEngineType.CREATIVE.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCCoreBlocks.engineCreative.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.CREATIVE.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         new LazyLoadedValue<>(
                                 () -> Arrays.stream(ENGINE_CREATIVE.getCutoutQuads())

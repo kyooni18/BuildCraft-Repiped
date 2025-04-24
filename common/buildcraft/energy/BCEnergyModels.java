@@ -27,9 +27,10 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
+import buildcraft.lib.registry.TagManager;
 import com.google.common.collect.Lists;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
@@ -97,10 +98,10 @@ public class BCEnergyModels {
 
     @SubscribeEvent
     public static void onTesrReg(RegisterRenderers event) {
-        BlockEntityRenderers.register(BCEnergyBlocks.engineStoneTile.get(), RenderEngineStone::new);
-        BlockEntityRenderers.register(BCEnergyBlocks.engineIronTile.get(), RenderEngineIron::new);
-        BlockEntityRenderers.register(BCEnergyBlocks.engineRfTile.get(), RenderEngineRF::new);
-        BlockEntityRenderers.register(BCEnergyBlocks.mjDynamoTile.get(), RenderDynamoMJ::new);
+        RegistryUtil.regTesrIfTilePresent(BCEnergyBlocks.engineStoneTile, RenderEngineStone::new);
+        RegistryUtil.regTesrIfTilePresent(BCEnergyBlocks.engineIronTile, RenderEngineIron::new);
+        RegistryUtil.regTesrIfTilePresent(BCEnergyBlocks.engineRfTile, RenderEngineRF::new);
+        RegistryUtil.regTesrIfTilePresent(BCEnergyBlocks.mjDynamoTile, RenderDynamoMJ::new);
     }
 
     @SubscribeEvent
@@ -133,8 +134,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModels().put(
-//                new ModelResourceLocation(EnumEngineType.STONE.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCEnergyBlocks.engineStone.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.STONE.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         new LazyLoadedValue<>(
                                 () -> Arrays.stream(ENGINE_STONE.getCutoutQuads())
@@ -150,8 +150,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModels().put(
-//                new ModelResourceLocation(EnumEngineType.IRON.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCEnergyBlocks.engineIron.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.IRON.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         new LazyLoadedValue<>(
                                 () -> Arrays.stream(ENGINE_IRON.getCutoutQuads())
@@ -167,8 +166,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModels().put(
-                // new ModelResourceLocation(EnumEngineType.RF.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCEnergyBlocks.engineRf.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.RF.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         new LazyLoadedValue<>(
                                 () -> Arrays.stream(ENGINE_RF.getCutoutQuads())
@@ -184,7 +182,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModels().put(
-                new ModelResourceLocation(BCEnergyBlocks.mjDynamo.getId(), "inventory"),
+                new ModelResourceLocation(BCEnergy.MODID, TagManager.getTag("block.mj_dynamo", TagManager.EnumTagType.REGISTRY_NAME), "inventory"),
                 new ModelItemSimple(
                         new LazyLoadedValue<>(
                                 () -> Arrays.stream(MJ_DYNAMO.getCutoutQuads())

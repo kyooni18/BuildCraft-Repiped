@@ -13,8 +13,6 @@ import buildcraft.datagen.lib.LibItemModelProvider;
 import buildcraft.datagen.robotics.*;
 import buildcraft.datagen.silicon.*;
 import buildcraft.datagen.transport.*;
-import buildcraft.energy.BCEnergyConfig;
-import buildcraft.transport.BCTransportConfig;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.DataGenerator;
@@ -25,7 +23,6 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -34,13 +31,6 @@ import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber(modid = BCCore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BCDataGenerators {
-    @SubscribeEvent
-    public static void forceEnableRegistries(FMLConstructModEvent event) {
-        BCEnergyConfig.enableRfEngine = true;
-        BCEnergyConfig.enableMjDynamo = true;
-        BCTransportConfig.disableRfPipe = false;
-    }
-
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();

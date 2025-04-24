@@ -18,6 +18,7 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.RenderUtil;
 import buildcraft.transport.client.PipeBlockColours;
 import buildcraft.transport.client.model.ModelPipe;
@@ -31,7 +32,6 @@ import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowRedstoneFlux;
 import com.google.common.collect.Lists;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -114,7 +114,7 @@ public class BCTransportModels {
 
     @SubscribeEvent
     public static void onTesrReg(RegisterRenderers event) {
-        BlockEntityRenderers.register(BCTransportBlocks.pipeHolderTile.get(), RenderPipeHolder::new);
+        RegistryUtil.regTesrIfTilePresent(BCTransportBlocks.pipeHolderTile, RenderPipeHolder::new);
     }
 
     // Calen 1.20.1

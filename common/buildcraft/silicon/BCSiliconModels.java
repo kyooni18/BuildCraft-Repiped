@@ -14,6 +14,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.silicon.client.FacadeItemColours;
@@ -28,7 +29,6 @@ import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.plug.PluggableGate;
 import buildcraft.silicon.plug.PluggablePulsar;
 import com.google.common.collect.Lists;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -136,8 +136,8 @@ public class BCSiliconModels {
 
     @SubscribeEvent
     public static void onTesrReg(RegisterRenderers event) {
-        BlockEntityRenderers.register(BCSiliconBlocks.laserTile.get(), RenderLaser::new);
-        BlockEntityRenderers.register(BCSiliconBlocks.programmingTableTile.get(), RenderProgrammingTable::new);
+        RegistryUtil.regTesrIfTilePresent(BCSiliconBlocks.laserTile, RenderLaser::new);
+        RegistryUtil.regTesrIfTilePresent(BCSiliconBlocks.programmingTableTile, RenderProgrammingTable::new);
     }
 
     // Calen 1.20.1
