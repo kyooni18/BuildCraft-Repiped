@@ -102,7 +102,7 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
     @PipeEventHandler
     public void sideCheck(PipeEventItem.SideCheck sideCheck) {
         if (colour == sideCheck.colour) {
-            sideCheck.disallowAllExcept(currentDir.face);
+            sideCheck.increasePriority(currentDir.face, 100);
         } else {
             sideCheck.disallow(currentDir.face);
         }
