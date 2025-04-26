@@ -22,7 +22,7 @@ public class BCConfig {
 
     @SubscribeEvent
 //    public static void onConfigChange(OnConfigChangedEvent cce)
-    public static void onConfigChange(ModConfigEvent cce) {
+    public static void onConfigChange(ModConfigEvent.Loading cce) {
 //        if (BCModules.isBcMod(cce.getModID()))
         if (BCModules.isBcMod(cce.getConfig().getModId())) {
 //            EnumRestartRequirement req = EnumRestartRequirement.NONE;

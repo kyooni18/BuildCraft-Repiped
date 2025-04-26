@@ -8,7 +8,6 @@ package buildcraft.core.item;
 
 import buildcraft.lib.item.IItemBuildCraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;

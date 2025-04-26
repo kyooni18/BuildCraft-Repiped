@@ -189,7 +189,7 @@ public class FluidRenderer {
      * faces will be rendered. The indexes are determined by what {@link Direction#ordinal()} returns.
      * @see #renderFluid(FluidSpriteType, FluidStack, double, double, Vec3, Vec3, PoseStack.Pose, VertexConsumer, boolean[]) */
     public static void renderFluid(FluidSpriteType type, IFluidTank tank, Vec3 min, Vec3 max, PoseStack.Pose pose, VertexConsumer bbIn,
-                                   boolean[] sideRender) {
+            boolean[] sideRender) {
         renderFluid(type, tank.getFluid(), tank.getCapacity(), min, max, pose, bbIn, sideRender);
     }
 
@@ -243,7 +243,7 @@ public class FluidRenderer {
             VertexConsumer bbIn,
             boolean[] sideRender
     ) {
-        if (fluid == null || fluid.getRawFluid() == null || amount <= 0) {
+        if (fluid == null || fluid.getRawFluid() == null || fluid.getRawFluid() instanceof EmptyFluid || amount <= 0) {
             return;
         }
         ProfilerFiller prof = Minecraft.getInstance().getProfiler();

@@ -10,7 +10,6 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

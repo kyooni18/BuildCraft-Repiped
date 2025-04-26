@@ -15,6 +15,7 @@ import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -220,7 +221,9 @@ public enum ClientSnapshots {
                         modelData = ModelData.EMPTY;
                     }
                     modelData = model.getModelData(world, pos, state, modelData);
-                    blockRenderer.renderSingleBlock(state, modelViewStack, bufferSource, COMBINED_LIGHT, OverlayTexture.NO_OVERLAY, modelData, null);
+                    for (RenderType renderType : model.getRenderTypes(state, Minecraft.getInstance().level.random, modelData)) {
+                        blockRenderer.renderSingleBlock(state, modelViewStack, bufferSource, COMBINED_LIGHT, OverlayTexture.NO_OVERLAY, modelData, renderType);
+                    }
                     modelViewStack.popPose();
                 }
             }

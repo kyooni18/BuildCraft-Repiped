@@ -11,7 +11,6 @@ import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.transport.BCTransportBlocks;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -19,7 +18,6 @@ import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 public class BCBlockTagsGenerator extends BlockTagsProvider {

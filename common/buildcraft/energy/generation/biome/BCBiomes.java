@@ -16,7 +16,6 @@ import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 

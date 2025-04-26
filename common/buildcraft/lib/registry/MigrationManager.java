@@ -86,7 +86,7 @@ public enum MigrationManager {
         }
     }
 
-    //    private static <T extends IForgeRegistryEntry<T>> void onMissingMappings(MissingMappingsEvent missing, Map<String, T> migrations)
+    // private static <T extends IForgeRegistryEntry<T>> void onMissingMappings(MissingMappingsEvent missing, Map<String, T> migrations)
     private static <T> void onMissingMappings(MissingMappingsEvent missing, ResourceKey<? extends Registry<T>> registryKey, Map<String, T> migrations) {
         List<MissingMappingsEvent.Mapping<T>> all = missing.getAllMappings(registryKey);
         if (all.isEmpty()) {

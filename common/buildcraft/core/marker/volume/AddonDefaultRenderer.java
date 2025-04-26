@@ -21,7 +21,7 @@ import org.joml.Matrix4f;
 
 @OnlyIn(Dist.CLIENT)
 public class AddonDefaultRenderer<T extends Addon> implements IFastAddonRenderer<T> {
-    //    private final TextureAtlasSprite s;
+    // private final TextureAtlasSprite s;
     private final LazyOptional<TextureAtlasSprite> s;
 
     public AddonDefaultRenderer() {

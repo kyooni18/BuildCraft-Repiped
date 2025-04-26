@@ -59,7 +59,6 @@ public class JsonUtil {
             String id = GsonHelper.getAsString(obj, "id");
             ResourceLocation fluidName = new ResourceLocation(id);
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
-            ;
             if (fluid == null) {
                 throw failAndListFluids(id);
             }
@@ -519,7 +518,7 @@ public class JsonUtil {
                         (JsonSerializer<DoubleTag>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getAsDouble()))
                 .registerTypeAdapter(DoubleTag.class,
                         (JsonDeserializer<DoubleTag>) (json, typeOfT,
-                                                       context) -> DoubleTag.valueOf(json.getAsJsonPrimitive().getAsDouble()))
+                                context) -> DoubleTag.valueOf(json.getAsJsonPrimitive().getAsDouble()))
                 .registerTypeAdapter(ByteArrayTag.class, (JsonSerializer<ByteArrayTag>) (src, typeOfSrc, context) ->
                 {
                     JsonArray jsonArray = new JsonArray();
@@ -536,7 +535,7 @@ public class JsonUtil {
                         (JsonSerializer<StringTag>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getAsString()))
                 .registerTypeAdapter(StringTag.class,
                         (JsonDeserializer<StringTag>) (json, typeOfT,
-                                                       context) -> StringTag.valueOf(json.getAsJsonPrimitive().getAsString()))
+                                context) -> StringTag.valueOf(json.getAsJsonPrimitive().getAsString()))
                 .registerTypeAdapter(ListTag.class, (JsonSerializer<ListTag>) (src, typeOfSrc, context) ->
                 {
                     JsonArray jsonArray = new JsonArray();
@@ -657,19 +656,5 @@ public class JsonUtil {
         Ingredient ingredient = Ingredient.fromJson(json.get("ingredient"));
         int count = GsonHelper.getAsInt(json, "count");
         return new IngredientStack(ingredient, count);
-    }
-
-    // Calen 1.20.1
-    public static <T extends Enum<T>> boolean isEnumValue(JsonObject json, String key, Class<T> clazz) {
-        if (!GsonHelper.isValidPrimitive(json, key)) {
-            return false;
-        } else {
-            try {
-                Enum.valueOf(clazz, json.getAsJsonPrimitive(key).toString());
-                return true;
-            } catch (IllegalArgumentException e) {
-                return false;
-            }
-        }
     }
 }

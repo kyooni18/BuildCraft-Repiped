@@ -21,7 +21,7 @@ import java.util.List;
 
 public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase implements IDebuggable {
     // private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);
-    private final Tank tank1 = new Tank("tank1", net.minecraftforge.fluids.FluidType.BUCKET_VOLUME * 6, this);
+    private final Tank tank1 = new Tank("tank1", FluidType.BUCKET_VOLUME * 6, this);
     // private final Tank tank2 = new Tank("tank2", Fluid.BUCKET_VOLUME * 6, this);
     private final Tank tank2 = new Tank("tank2", FluidType.BUCKET_VOLUME * 6, this);
 
