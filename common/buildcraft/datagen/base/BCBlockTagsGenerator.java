@@ -89,11 +89,6 @@ public class BCBlockTagsGenerator extends BlockTagsProvider {
     }
 
     @Override
-    protected Path getPath(ResourceLocation id) {
-        return this.pathProvider.json(ResourceLocation.tryBuild(id.getNamespace(), "tags/blocks/" + id.getPath() + ".json"));
-    }
-
-    @Override
     public String getName() {
         return "BuildCraft Block Tags Generator";
     }
