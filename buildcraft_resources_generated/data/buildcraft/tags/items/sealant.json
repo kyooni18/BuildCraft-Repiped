@@ -1,6 +1,12 @@
 {
   "values": [
-    "#forge:dyes/green",
-    "#forge:slimeballs"
+    {
+      "id": "#forge:dyes/green",
+      "required": false
+    },
+    {
+      "id": "#forge:slimeballs",
+      "required": false
+    }
   ]
 }

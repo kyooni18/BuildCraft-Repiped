@@ -1,5 +1,8 @@
 {
   "values": [
-    "buildcraftcore:gear_wood"
+    {
+      "id": "buildcraftcore:gear_wood",
+      "required": false
+    }
   ]
 }

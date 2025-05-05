@@ -1590,6 +1590,14 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/plug"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_adapter"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "buildcraftfactory:block/distiller/power_sprite_d"
     },
     {
@@ -1735,14 +1743,6 @@
     {
       "type": "minecraft:single",
       "resource": "buildcraftsilicon:plugs/filter"
-    },
-    {
-      "type": "minecraft:single",
-      "resource": "buildcrafttransport:pipes/plug"
-    },
-    {
-      "type": "minecraft:single",
-      "resource": "buildcrafttransport:pipes/power_adapter"
     },
     {
       "type": "minecraft:single",

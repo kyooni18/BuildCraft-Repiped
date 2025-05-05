@@ -6,15 +6,15 @@
   "requiredMicroJoules": 1000000000,
   "requiredStacks": [
     {
-      "count": 2,
-      "ingredient": {
-        "tag": "forge:ingots/iron"
-      }
-    },
-    {
       "count": 1,
       "ingredient": {
         "item": "buildcraftcore:engine_wood"
+      }
+    },
+    {
+      "count": 2,
+      "ingredient": {
+        "tag": "forge:ingots/iron"
       }
     }
   ],
