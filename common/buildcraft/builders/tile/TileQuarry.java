@@ -913,15 +913,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 //        left.add("current = " + (iter == null ? "null" : iter.getCurrent()));
 //
 //        Task task = currentTask;
-//        if (task != null)
-//        {
+//        if (task != null) {
 //            left.add("task:");
 //            left.add(" - class = " + task.getClass().getName());
 //            left.add(" - power = " + LocaleUtil.localizeMj(task.power));
 //            left.add(" - target = " + LocaleUtil.localizeMj(task.getTarget()));
-//        }
-//        else
-//        {
+//        } else {
 //            left.add("task = null");
 //        }
 //        left.add("drill = " + drillPos);
@@ -945,9 +942,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         Task task = currentTask;
         if (task != null) {
             left.add(Component.literal("task:"));
-            left.add(Component.literal(" - class = " + task.getClass().getName()));
-            left.add(Component.literal(" - power = " + LocaleUtil.localizeMjComponent(task.power)));
-            left.add(Component.literal(" - target = " + LocaleUtil.localizeMjComponent(task.getTarget())));
+            left.add(Component.literal(" - class = ").append(task.getClass().getName()));
+            left.add(Component.literal(" - power = ").append(LocaleUtil.localizeMjComponent(task.power)));
+            left.add(Component.literal(" - target = ").append(LocaleUtil.localizeMjComponent(task.getTarget())));
         } else {
             left.add(Component.literal("task = null"));
         }
