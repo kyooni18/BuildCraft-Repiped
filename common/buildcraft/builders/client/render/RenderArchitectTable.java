@@ -9,7 +9,9 @@ package buildcraft.builders.client.render;
 import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -38,8 +40,10 @@ public class RenderArchitectTable implements BlockEntityRenderer<TileArchitectTa
 //        RenderHelper.disableStandardItemLighting();
 
         Minecraft.getInstance().getProfiler().push("box");
-//        LaserBoxRenderer.renderLaserBoxStatic(tile.box, BuildCraftLaserManager.STRIPES_READ, true);
-        LaserBoxRenderer.renderLaserBoxStatic(tile.box, BuildCraftLaserManager.STRIPES_READ, poseStack.last(), true);
+        VertexConsumer laserBuffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
+        LaserBoxRenderer.renderLaserBoxDynamic(
+                tile.box, BuildCraftLaserManager.STRIPES_READ, poseStack.last(), laserBuffer, true
+        );
         Minecraft.getInstance().getProfiler().pop();
 
 //        RenderHelper.enableStandardItemLighting();

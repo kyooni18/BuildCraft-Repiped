@@ -6,7 +6,6 @@
 
 package buildcraft.lib.client.render.laser;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
@@ -24,17 +23,19 @@ public class LaserCompiledBuffer {
     private final int vertices;
     private final double[] da;
     private final int[] ia;
-    // private final float[] normals;
+    private final float[] normals;
 
-    // public LaserCompiledBuffer(int vertices, double[] da, int[] ia)
     public LaserCompiledBuffer(int vertices, double[] da, int[] ia, float[] normals) {
         this.vertices = vertices;
         this.da = da;
         this.ia = ia;
-//        this.normals = normals;
+        this.normals = normals;
+        if (normals.length != vertices * NORMAL_STRIDE) {
+            throw new IllegalArgumentException("Expected " + (vertices * NORMAL_STRIDE) + " normal values, got " + normals.length);
+        }
     }
 
-    /** Assumes the buffer uses {@link DefaultVertexFormat#BLOCK} */
+    /** Emits position, color, UV, overlay, light and normal data expected by the dynamic laser RenderType. */
     public void render(PoseStack.Pose pose, VertexConsumer buffer) {
         for (int i = 0; i < vertices; i++) {
             // POSITION_3F
@@ -56,8 +57,12 @@ public class LaserCompiledBuffer {
 //            buffer.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
             buffer.setLight(lmap);
 
-            buffer.setNormal(pose, 1, 1, 1);
-//            buffer.normal(pose.normal(), normals[NORMAL_STRIDE * i + 0], normals[NORMAL_STRIDE * i + 1], normals[NORMAL_STRIDE * i + 2]);
+            buffer.setNormal(
+                    pose,
+                    normals[NORMAL_STRIDE * i],
+                    normals[NORMAL_STRIDE * i + 1],
+                    normals[NORMAL_STRIDE * i + 2]
+            );
         }
     }
 
@@ -104,16 +109,15 @@ public class LaserCompiledBuffer {
             // TEX_2S
             intData.add(lmap);
 
-//            // NORMAL_3F
-//            normalData.add(nx);
-//            normalData.add(ny);
-//            normalData.add(nz);
+            // NORMAL_3F
+            normalData.add(nx);
+            normalData.add(ny);
+            normalData.add(nz);
 
             vertices++;
         }
 
         public LaserCompiledBuffer build() {
-//            return new LaserCompiledBuffer(vertices, doubleData.toArray(), intData.toArray());
             return new LaserCompiledBuffer(vertices, doubleData.toDoubleArray(), intData.toIntArray(), normalData.toFloatArray());
         }
     }

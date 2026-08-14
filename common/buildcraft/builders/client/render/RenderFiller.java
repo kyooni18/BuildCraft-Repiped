@@ -9,6 +9,7 @@ package buildcraft.builders.client.render;
 import buildcraft.builders.tile.TileFiller;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -31,10 +32,12 @@ public class RenderFiller implements BlockEntityRenderer<TileFiller> {
         Minecraft.getInstance().getProfiler().push("filler");
 
         Minecraft.getInstance().getProfiler().push("main");
-        VertexConsumer bb = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
+        VertexConsumer laserBuffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
         if (tile.getBuilder() != null) {
-//            RenderSnapshotBuilder.render(tile.getBuilder(), tile.getWorld(), tile.getPos(), x, y, z, partialTicks, bb);
-            RenderSnapshotBuilder.render(tile.getBuilder(), tile.getLevel(), tile.getBlockPos(), partialTicks, poseStack, bb);
+            VertexConsumer modelBuffer = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
+            RenderSnapshotBuilder.render(
+                    tile.getBuilder(), tile.getLevel(), tile.getBlockPos(), partialTicks, poseStack, modelBuffer, laserBuffer
+            );
         }
         Minecraft.getInstance().getProfiler().pop();
 
@@ -43,7 +46,7 @@ public class RenderFiller implements BlockEntityRenderer<TileFiller> {
 //            bb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
             poseStack.pushPose();
             poseStack.translate(-tile.getBlockPos().getX(), -tile.getBlockPos().getY(), -tile.getBlockPos().getZ());
-            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), bb, true);
+            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), laserBuffer, true);
 //            bb.setTranslation(0, 0, 0);
             poseStack.popPose();
         }

@@ -17,7 +17,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -48,13 +47,13 @@ public class RenderBuilder implements BlockEntityRenderer<TileBuilder> {
         Minecraft.getInstance().getProfiler().push("box");
         Box box = tile.getBox();
 //        VertexConsumer buffer = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
-        VertexConsumer buffer = bufferSource.getBuffer(RenderType.solid());
+        VertexConsumer buffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
         LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), buffer, true);
 
         Minecraft.getInstance().getProfiler().popPush("path");
 
 //        buffer = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
-        buffer = bufferSource.getBuffer(RenderType.solid());
+        buffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
         List<BlockPos> path = tile.path;
         if (path != null) {
             BlockPos last = null;
@@ -80,8 +79,10 @@ public class RenderBuilder implements BlockEntityRenderer<TileBuilder> {
 
         if (tile.getBuilder() != null) {
             buffer = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
-//            RenderSnapshotBuilder.render(tile.getBuilder(), tile.getWorld(), tile.getPos(), x, y, z, partialTicks, buffer);
-            RenderSnapshotBuilder.render(tile.getBuilder(), tile.getLevel(), tile.getBlockPos(), partialTicks, poseStack, buffer);
+            VertexConsumer laserBuffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
+            RenderSnapshotBuilder.render(
+                    tile.getBuilder(), tile.getLevel(), tile.getBlockPos(), partialTicks, poseStack, buffer, laserBuffer
+            );
         }
 
         Minecraft.getInstance().getProfiler().pop();

@@ -13,12 +13,13 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ImmutableMap;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
@@ -32,6 +33,10 @@ import java.util.concurrent.TimeUnit;
 
 @OnlyIn(Dist.CLIENT)
 public class LaserRenderer_BC8 {
+    /** Dynamic lasers use entity-style vertices (overlay, light and normals) but sample the block atlas.
+     * No-cull is intentional: thin laser boxes must remain visible from both inside and outside their bounds. */
+    private static final RenderType DYNAMIC_RENDER_TYPE = RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS);
+
     private static final Map<LaserData_BC8.LaserType, CompiledLaserType> COMPILED_LASER_TYPES = new HashMap<>();
     private static final LoadingCache<LaserData_BC8, LaserCompiledList> COMPILED_STATIC_LASERS;
     private static final LoadingCache<LaserData_BC8, LaserCompiledBuffer> COMPILED_DYNAMIC_LASERS;
@@ -75,8 +80,14 @@ public class LaserRenderer_BC8 {
                 .build();
     }
 
+    public static RenderType getDynamicRenderType() {
+        return DYNAMIC_RENDER_TYPE;
+    }
+
     public static void clearModels() {
         COMPILED_LASER_TYPES.clear();
+        COMPILED_DYNAMIC_LASERS.invalidateAll();
+        COMPILED_STATIC_LASERS.invalidateAll();
     }
 
     private static CompiledLaserType compileType(LaserType laserType) {
@@ -174,7 +185,7 @@ public class LaserRenderer_BC8 {
         profiler.pop();
     }
 
-    /** Assumes the buffer uses {@link DefaultVertexFormat#BLOCK} */
+    /** Emits a cached laser into the supplied vertex consumer. Use {@link #getDynamicRenderType()} for the matching buffer. */
     public static void renderLaserDynamic(LaserData_BC8 data, PoseStack.Pose pose, VertexConsumer buffer) {
         ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
         profiler.push("compute");

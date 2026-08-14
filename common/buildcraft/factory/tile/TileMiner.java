@@ -25,7 +25,6 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -168,7 +167,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
         super.saveAdditional(nbt, provider);
         if (currentPos != null) {
-            nbt.put("currentPos", NbtUtils.writeBlockPos(currentPos));
+            nbt.put("currentPos", NBTUtilBC.writeBlockPos(currentPos));
         }
         nbt.putInt("wantedLength", wantedLength);
         nbt.putInt("progress", progress);
@@ -179,7 +178,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
         super.loadAdditional(nbt, provider);
         if (nbt.contains("currentPos")) {
-            currentPos = NBTUtilBC.readBlockPos(nbt.getCompound("currentPos"));
+            currentPos = NBTUtilBC.readBlockPos(nbt, "currentPos");
         }
         wantedLength = nbt.getInt("wantedLength");
         progress = nbt.getInt("progress");

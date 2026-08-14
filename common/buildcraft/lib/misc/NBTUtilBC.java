@@ -89,6 +89,17 @@ public final class NBTUtilBC {
         return nbt;
     }
 
+    /** Reads a block position stored under {@code key} without assuming a concrete NBT tag type.
+     * Minecraft 1.21 writes block positions as {@link IntArrayTag}, while older BuildCraft saves may
+     * still contain compound tags. Keeping the dispatch here preserves both formats. */
+    @Nullable
+    public static BlockPos readBlockPos(CompoundTag parent, String key) {
+        if (parent == null || key == null || !parent.contains(key)) {
+            return null;
+        }
+        return readBlockPos(parent.get(key));
+    }
+
     @Nullable
     public static BlockPos readBlockPos(Tag base) {
         if (base == null) {

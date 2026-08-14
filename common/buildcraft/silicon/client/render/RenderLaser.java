@@ -17,7 +17,6 @@ import buildcraft.silicon.tile.TileLaser;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -62,7 +61,7 @@ public class RenderLaser implements BlockEntityRenderer<TileLaser> {
                         index = MAX_POWER;
                     }
                     LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.POWERS[index], Vec3.atLowerCornerOf(tile.getBlockPos()).add(offset), tile.laserPos, 1 / 16D);
-                    VertexConsumer buffer = bufferSource.getBuffer(ItemBlockRenderTypes.getRenderType(tile.getLevel().getBlockState(tile.getBlockPos()), true));
+                    VertexConsumer buffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
                     LaserRenderer_BC8.renderLaserDynamic(laser, poseStack.last(), buffer);
                 }
             }

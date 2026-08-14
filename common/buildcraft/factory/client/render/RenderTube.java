@@ -13,7 +13,6 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -34,7 +33,7 @@ public class RenderTube implements BlockEntityRenderer<TileMiner> {
             return;
         }
 
-        VertexConsumer buffer = bufferSource.getBuffer(Sheets.solidBlockSheet());
+        VertexConsumer buffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
 
 //        double tubeY = tile.getPos().getY() - tile.getLength(partialTicks);
         double tubeY = tile.getBlockPos().getY() - tile.getLength(partialTicks);

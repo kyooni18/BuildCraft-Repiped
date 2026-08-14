@@ -14,6 +14,7 @@ import buildcraft.core.marker.volume.Lock;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -33,7 +34,10 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
 
 //        BufferBuilder bb = Tessellator.getInstance().getBuffer();
 //        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        VertexConsumer bb = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(Sheets.solidBlockSheet());
+        VertexConsumer laserBuffer = Minecraft.getInstance().renderBuffers().bufferSource()
+                .getBuffer(LaserRenderer_BC8.getDynamicRenderType());
+        VertexConsumer addonBuffer = Minecraft.getInstance().renderBuffers().bufferSource()
+                .getBuffer(Sheets.solidBlockSheet());
 
         ClientVolumeBoxes.INSTANCE.volumeBoxes.forEach(volumeBox ->
         {
@@ -49,10 +53,10 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
                         .findFirst()
                         .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED);
             }
-            LaserBoxRenderer.renderLaserBoxDynamic(volumeBox.box, type, poseStack.last(), bb, false);
+            LaserBoxRenderer.renderLaserBoxDynamic(volumeBox.box, type, poseStack.last(), laserBuffer, false);
 
             volumeBox.addons.values().forEach(addon ->
-                    ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, poseStack.last(), partialTicks, bb)
+                    ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, poseStack.last(), partialTicks, addonBuffer)
             );
         });
 

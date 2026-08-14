@@ -14,7 +14,6 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -119,7 +118,7 @@ public class Lock {
 
             @Override
             public CompoundTag writeToNBT(CompoundTag nbt) {
-                nbt.put("pos", NbtUtils.writeBlockPos(pos));
+                nbt.put("pos", NBTUtilBC.writeBlockPos(pos));
 //                nbt.setString("block", Block.REGISTRY.getNameForObject(block).toString());
                 nbt.putString("block", ForgeRegistries.BLOCKS.getKey(block).toString());
                 return nbt;
@@ -127,7 +126,7 @@ public class Lock {
 
             @Override
             public void readFromNBT(CompoundTag nbt) {
-                pos = NBTUtilBC.readBlockPos(nbt.getCompound("pos"));
+                pos = NBTUtilBC.readBlockPos(nbt, "pos");
 //                block = Block.REGISTRY.getObject(ResourceLocation.parse(nbt.getString("block")));
                 block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(nbt.getString("block")));
             }

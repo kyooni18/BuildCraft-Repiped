@@ -50,14 +50,14 @@ public class VolumeBox {
         player = nbt.contains("player") ? NbtUtils.loadUUID(nbt.getCompound("player")) : null;
         oldPlayer = nbt.contains("oldPlayer") ? NbtUtils.loadUUID(nbt.getCompound("oldPlayer")) : null;
         if (nbt.contains("held")) {
-            held = NBTUtilBC.readBlockPos(nbt.getCompound("held"));
+            held = NBTUtilBC.readBlockPos(nbt, "held");
         }
         dist = nbt.getDouble("dist");
         if (nbt.contains("oldMin")) {
-            oldMin = NBTUtilBC.readBlockPos(nbt.getCompound("oldMin"));
+            oldMin = NBTUtilBC.readBlockPos(nbt, "oldMin");
         }
         if (nbt.contains("oldMax")) {
-            oldMax = NBTUtilBC.readBlockPos(nbt.getCompound("oldMax"));
+            oldMax = NBTUtilBC.readBlockPos(nbt, "oldMax");
         }
         NBTUtilBC.readCompoundList(nbt.get("addons")).forEach(addonsEntryTag ->
         {
@@ -174,14 +174,14 @@ public class VolumeBox {
             nbt.put("oldPlayer", NbtUtils.createUUID(oldPlayer));
         }
         if (held != null) {
-            nbt.put("held", NbtUtils.writeBlockPos(held));
+            nbt.put("held", NBTUtilBC.writeBlockPos(held));
         }
         nbt.putDouble("dist", dist);
         if (oldMin != null) {
-            nbt.put("oldMin", NbtUtils.writeBlockPos(oldMin));
+            nbt.put("oldMin", NBTUtilBC.writeBlockPos(oldMin));
         }
         if (oldMax != null) {
-            nbt.put("oldMax", NbtUtils.writeBlockPos(oldMax));
+            nbt.put("oldMax", NBTUtilBC.writeBlockPos(oldMax));
         }
         nbt.put(
                 "addons",

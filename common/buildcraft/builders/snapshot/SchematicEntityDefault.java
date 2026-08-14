@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -199,7 +198,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
         CompoundTag nbt = new CompoundTag();
         nbt.put("entityNbt", entityNbt);
         nbt.put("pos", NBTUtilBC.writeVec3d(pos));
-        nbt.put("hangingPos", NbtUtils.writeBlockPos(hangingPos));
+        nbt.put("hangingPos", NBTUtilBC.writeBlockPos(hangingPos));
         nbt.put("hangingFacing", NBTUtilBC.writeEnum(hangingFacing));
         nbt.put("entityRotation", NBTUtilBC.writeEnum(entityRotation));
         return nbt;
@@ -209,7 +208,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
     public void deserializeNBT(CompoundTag nbt) throws InvalidInputDataException {
         entityNbt = nbt.getCompound("entityNbt");
         pos = NBTUtilBC.readVec3d(nbt.get("pos"));
-        hangingPos = NBTUtilBC.readBlockPos(nbt.getCompound("hangingPos"));
+        hangingPos = NBTUtilBC.readBlockPos(nbt, "hangingPos");
         hangingFacing = NBTUtilBC.readEnum(nbt.get("hangingFacing"), Direction.class);
         entityRotation = NBTUtilBC.readEnum(nbt.get("entityRotation"), Rotation.class);
     }

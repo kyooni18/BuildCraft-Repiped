@@ -20,7 +20,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -199,7 +198,7 @@ public class RenderQuarry implements BlockEntityRenderer<TileQuarry> {
                         poseStack.last()
                 );
             } else {
-                VertexConsumer rangeBuffer = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
+                VertexConsumer rangeBuffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
                 LaserBoxRenderer.renderLaserBoxDynamic(
                         tile.frameBox,
                         BuildCraftLaserManager.STRIPES_WRITE,

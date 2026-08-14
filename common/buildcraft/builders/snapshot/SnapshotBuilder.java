@@ -18,7 +18,6 @@ import buildcraft.lib.net.PacketBufferBC;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -605,7 +604,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         @SuppressWarnings("WeakerAccess")
         public BreakTask(CompoundTag nbt) {
-            pos = NBTUtilBC.readBlockPos(nbt.getCompound("pos"));
+            pos = NBTUtilBC.readBlockPos(nbt, "pos");
             power = nbt.getLong("power");
         }
 
@@ -625,7 +624,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         public CompoundTag writeToNBT() {
             CompoundTag nbt = new CompoundTag();
-            nbt.put("pos", NbtUtils.writeBlockPos(pos));
+            nbt.put("pos", NBTUtilBC.writeBlockPos(pos));
             nbt.putLong("power", power);
             return nbt;
         }
@@ -660,7 +659,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         @SuppressWarnings("WeakerAccess")
         public PlaceTask(CompoundTag nbt) {
-            pos = NBTUtilBC.readBlockPos(nbt.getCompound("pos"));
+            pos = NBTUtilBC.readBlockPos(nbt, "pos");
             items = ImmutableList.copyOf(
                             NBTUtilBC.readCompoundList(nbt.get("items"))
 //                            .map(ItemStack::new)
@@ -685,7 +684,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         public CompoundTag writeToNBT() {
             CompoundTag nbt = new CompoundTag();
-            nbt.put("pos", NbtUtils.writeBlockPos(pos));
+            nbt.put("pos", NBTUtilBC.writeBlockPos(pos));
             nbt.put("items", NBTUtilBC.writeCompoundList(items.stream().map(StackUtil::saveStack)));
             nbt.putLong("power", power);
             return nbt;

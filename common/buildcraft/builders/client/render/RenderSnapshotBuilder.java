@@ -50,6 +50,18 @@ public class RenderSnapshotBuilder {
             PoseStack poseStack,
             VertexConsumer bb
     ) {
+        render(snapshotBuilder, world, tilePos, partialTicks, poseStack, bb, bb);
+    }
+
+    public static <T extends ITileForSnapshotBuilder> void render(
+            SnapshotBuilder<T> snapshotBuilder,
+            Level world,
+            BlockPos tilePos,
+            float partialTicks,
+            PoseStack poseStack,
+            VertexConsumer bb,
+            VertexConsumer laserBuffer
+    ) {
         for (SnapshotBuilder<T>.PlaceTask placeTask : snapshotBuilder.clientPlaceTasks) {
             Vec3 prevPos = snapshotBuilder.prevClientPlaceTasks.stream()
                     .filter(renderTaskLocal -> renderTaskLocal.pos.equals(placeTask.pos))
@@ -129,7 +141,7 @@ public class RenderSnapshotBuilder {
                                 1 / 16D
                         ),
                         poseStack.last(),
-                        bb
+                        laserBuffer
                 );
             }
         }

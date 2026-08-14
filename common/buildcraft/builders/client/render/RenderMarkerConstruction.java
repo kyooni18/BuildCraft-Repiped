@@ -16,7 +16,6 @@ import buildcraft.lib.misc.data.Box;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -54,10 +53,11 @@ public class RenderMarkerConstruction implements BlockEntityRenderer<TileMarkerC
                 // GL11.glPushMatrix();
                 poseStack.pushPose();
                 // RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().renderEngine, marker.laser, EntityLaser.LASER_STRIPES_YELLOW);
-                VertexConsumer buffer = bufferSource.getBuffer(RenderType.translucent());
-                // LaserRenderer_BC8.renderLaserDynamic(marker.laser, poseStack.last(), buffer);
-                LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, marker.laser.getFirst(), marker.laser.getSecond(), 0.5 / 16.0);
-                LaserRenderer_BC8.renderLaserStatic(laser, poseStack.last());
+                VertexConsumer laserBuffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
+                LaserData_BC8 laser = new LaserData_BC8(
+                        BuildCraftLaserManager.STRIPES_WRITE, marker.laser.getFirst(), marker.laser.getSecond(), 0.5 / 16.0
+                );
+                LaserRenderer_BC8.renderLaserDynamic(laser, poseStack.last(), laserBuffer);
                 // GL11.glPopMatrix();
                 poseStack.popPose();
             }
@@ -85,7 +85,10 @@ public class RenderMarkerConstruction implements BlockEntityRenderer<TileMarkerC
             // renderItems.render(marker, x, y, z);
             if (marker.bluePrintBuilder != null) {
                 VertexConsumer buffer = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
-                RenderSnapshotBuilder.render(marker.bluePrintBuilder, marker.getLevel(), marker.getBlockPos(), partialTicks, poseStack, buffer);
+                VertexConsumer laserBuffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
+                RenderSnapshotBuilder.render(
+                        marker.bluePrintBuilder, marker.getLevel(), marker.getBlockPos(), partialTicks, poseStack, buffer, laserBuffer
+                );
             }
         }
     }
@@ -123,7 +126,7 @@ public class RenderMarkerConstruction implements BlockEntityRenderer<TileMarkerC
         // GlStateManager.disableLighting();
         // GlStateManager.enableBlend();
         // GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        VertexConsumer buffer = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
+        VertexConsumer buffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
 
         // GL11.glPushMatrix();
         poseStack.pushPose();
@@ -145,8 +148,9 @@ public class RenderMarkerConstruction implements BlockEntityRenderer<TileMarkerC
 //            }
 //        }
         Box box = tileentity.box;
-        // LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), buffer, true);
-        LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), true);
+        LaserBoxRenderer.renderLaserBoxDynamic(
+                box, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), buffer, true
+        );
 
         // GL11.glPopMatrix();
         poseStack.popPose();

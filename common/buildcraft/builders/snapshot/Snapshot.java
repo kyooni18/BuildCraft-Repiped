@@ -14,7 +14,6 @@ import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -125,18 +124,18 @@ public abstract class Snapshot {
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.put("key", key.serializeNBT());
-        nbt.put("size", NbtUtils.writeBlockPos(size));
+        nbt.put("size", NBTUtilBC.writeBlockPos(size));
         nbt.put("facing", NBTUtilBC.writeEnum(facing));
-        nbt.put("offset", NbtUtils.writeBlockPos(offset));
+        nbt.put("offset", NBTUtilBC.writeBlockPos(offset));
         return nbt;
     }
 
     // public void deserializeNBT(CompoundTag nbt) throws InvalidInputDataException
     public void deserializeNBT(CompoundTag nbt) throws InvalidInputDataException {
         key = new Key(nbt.getCompound("key"));
-        size = NBTUtilBC.readBlockPos(nbt.getCompound("size"));
+        size = NBTUtilBC.readBlockPos(nbt, "size");
         facing = NBTUtilBC.readEnum(nbt.get("facing"), Direction.class);
-        offset = NBTUtilBC.readBlockPos(nbt.getCompound("offset"));
+        offset = NBTUtilBC.readBlockPos(nbt, "offset");
     }
 
     abstract public Snapshot copy();
