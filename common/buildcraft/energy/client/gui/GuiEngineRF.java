@@ -35,7 +35,7 @@ import java.util.Map;
 
 public class GuiEngineRF extends GuiBC8<ContainerEngineRF> {
     private static final ResourceLocation TEXTURE_BASE
-            = new ResourceLocation("buildcraftenergy:textures/gui/rf_engine_gui.png");
+            = ResourceLocation.parse("buildcraftenergy:textures/gui/rf_engine_gui.png");
     private static final int SIZE_X = 176, SIZE_Y = 177;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_RF = new GuiIcon(TEXTURE_BASE, SIZE_X, 0, 16, 60);

@@ -1,5 +1,7 @@
 package buildcraft.datagen.transport;
 
+import buildcraft.datagen.base.BCCompatRecipeProvider;
+
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.lib.misc.ColourUtil;
@@ -10,6 +12,7 @@ import buildcraft.transport.BCTransportBlocks;
 import buildcraft.transport.BCTransportConfig;
 import buildcraft.transport.BCTransportItems;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
@@ -18,23 +21,25 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class TransportCraftingRecipeGenerator extends RecipeProvider {
+public class TransportCraftingRecipeGenerator extends BCCompatRecipeProvider {
     private static final String MOD_ID = BCTransport.MODID;
 
-    public TransportCraftingRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public TransportCraftingRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
-    private Consumer<FinishedRecipe> consumer;
+    private BCRecipeOutput consumer;
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         this.consumer = consumer;
         // filtered_buffer
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BCTransportBlocks.filteredBuffer.get())
@@ -91,7 +96,7 @@ public class TransportCraftingRecipeGenerator extends RecipeProvider {
         addPipeRecipe(BCTransportItems.pipeItemClay, OreDictionaryTags.CLAY);
         addPipeRecipe(BCTransportItems.pipeItemSandstone, Tags.Items.SANDSTONE);
         addPipeRecipe(BCTransportItems.pipeItemVoid, Tags.Items.DYES_BLACK, Tags.Items.DUSTS_REDSTONE);
-        addPipeRecipe(BCTransportItems.pipeItemObsidian, Tags.Items.OBSIDIAN);
+        addPipeRecipe(BCTransportItems.pipeItemObsidian, Items.OBSIDIAN);
         addPipeRecipe(BCTransportItems.pipeItemDiamond, Tags.Items.GEMS_DIAMOND);
         addPipeRecipe(BCTransportItems.pipeItemLapis, Tags.Items.STORAGE_BLOCKS_LAPIS);
         addPipeRecipe(BCTransportItems.pipeItemDaizuli, Tags.Items.STORAGE_BLOCKS_LAPIS, Tags.Items.GEMS_DIAMOND);
@@ -137,11 +142,19 @@ public class TransportCraftingRecipeGenerator extends RecipeProvider {
         }
     }
 
-    private void addPipeRecipe(Map<DyeColor, RegistryObject<? extends IItemPipe>> pipe, TagKey material) {
-        addPipeRecipe(pipe, material, material);
+    private void addPipeRecipe(Map<DyeColor, RegistryObject<? extends IItemPipe>> pipe, TagKey<Item> material) {
+        addPipeRecipe(pipe, Ingredient.of(material), Ingredient.of(material));
     }
 
-    private void addPipeRecipe(Map<DyeColor, RegistryObject<? extends IItemPipe>> pipe, TagKey left, TagKey right) {
+    private void addPipeRecipe(Map<DyeColor, RegistryObject<? extends IItemPipe>> pipe, Item material) {
+        addPipeRecipe(pipe, Ingredient.of(material), Ingredient.of(material));
+    }
+
+    private void addPipeRecipe(Map<DyeColor, RegistryObject<? extends IItemPipe>> pipe, TagKey<Item> left, TagKey<Item> right) {
+        addPipeRecipe(pipe, Ingredient.of(left), Ingredient.of(right));
+    }
+
+    private void addPipeRecipe(Map<DyeColor, RegistryObject<? extends IItemPipe>> pipe, Ingredient left, Ingredient right) {
         if (pipe == null) {
             return;
         }
@@ -159,7 +172,7 @@ public class TransportCraftingRecipeGenerator extends RecipeProvider {
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, coloured, 8)
                     .pattern("lgr")
                     .define('l', left)
-                    .define('g', TagKey.create(Registries.ITEM, new ResourceLocation("forge:glass/" + colour.getName())))
+                    .define('g', TagKey.create(Registries.ITEM, ResourceLocation.parse("forge:glass/" + colour.getName())))
                     .define('r', right)
                     .unlockedBy("has_item", has(Tags.Items.GLASS))
                     .group(MOD_ID)
@@ -203,10 +216,5 @@ public class TransportCraftingRecipeGenerator extends RecipeProvider {
                     .group(MOD_ID)
                     .save(consumer, MOD_ID + ":" + ItemUtil.getRegistryName(to_coloured).getPath() + "_" + colour.getName());
         }
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Transport Crafting Recipe Generator";
     }
 }

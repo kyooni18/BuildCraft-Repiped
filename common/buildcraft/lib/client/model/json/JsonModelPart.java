@@ -77,7 +77,7 @@ public class JsonModelPart {
             if (faces.isJsonObject()) {
                 JsonObject jFaces = faces.getAsJsonObject();
                 List<JsonQuad> quads = new ArrayList<>();
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     if (jFaces.has(face.getName())) {
                         JsonElement jFace = jFaces.get(face.getName());
                         if (!jFace.isJsonObject()) {

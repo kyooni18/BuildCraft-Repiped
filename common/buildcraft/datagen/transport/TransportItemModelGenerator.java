@@ -56,7 +56,7 @@ public class TransportItemModelGenerator extends BCBaseItemModelGenerator {
                             withExistingParent(reg.getNamespace() + ":item/" + reg.getPath() + "/" + colour.getName().toLowerCase(), HANDHELD)
                                     .texture("layer0", reg.getNamespace() + ":item/" + reg.getPath() + "/" + colour.getName().toLowerCase())
                     )
-                    .predicate(new ResourceLocation("buildcraft", "colour"), colour.getId())
+                    .predicate(ResourceLocation.fromNamespaceAndPath("buildcraft", "colour"), colour.getId())
                     .end();
         }
     }

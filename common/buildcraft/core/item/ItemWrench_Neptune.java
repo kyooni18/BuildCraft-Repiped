@@ -22,7 +22,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:wrenched");
+    private static final ResourceLocation ADVANCEMENT = ResourceLocation.parse("buildcraftcore:wrenched");
 
     public ItemWrench_Neptune(String idBC, Item.Properties properties) {
         super(idBC, properties);

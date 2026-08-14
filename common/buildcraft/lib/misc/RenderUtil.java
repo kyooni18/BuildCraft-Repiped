@@ -144,7 +144,7 @@ public class RenderUtil {
      * tile entity rendering.
      */
     public static boolean isMainRenderThread() {
-        return Minecraft.getInstance().renderOnThread();
+        return RenderSystem.isOnRenderThread();
     }
 
     /**
@@ -177,7 +177,7 @@ public class RenderUtil {
 //        } catch (Throwable t) {
 //            throw new Error(t);
 //        }
-        return bb.building();
+        return bb.building;
     }
 
     private static Tesselator newTessellator() {

@@ -3,7 +3,7 @@ package buildcraft.lib.recipe.refinery;
 import buildcraft.api.BCModules;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 import com.google.gson.JsonObject;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
@@ -46,7 +46,7 @@ public class DistillationRecipeBuilder {
 
         @Override
         public ResourceLocation getId() {
-            return new ResourceLocation(BCModules.ENERGY.getModId(), "distillation/" + name);
+            return ResourceLocation.fromNamespaceAndPath(BCModules.ENERGY.getModId(), "distillation/" + name);
         }
 
         @Override

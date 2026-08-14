@@ -60,7 +60,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,7 +76,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("builder");
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:paving_the_way");
+    private static final ResourceLocation ADVANCEMENT = ResourceLocation.parse("buildcraftbuilders:paving_the_way");
 
     public final ItemHandlerSimple invSnapshot =
             itemManager
@@ -312,7 +312,7 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -368,13 +368,13 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
 
     @Override
 //    public CompoundTag writeToNBT(CompoundTag nbt)
-    public void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.writeToNBT(nbt);
-        super.saveAdditional(nbt);
+        super.saveAdditional(nbt, provider);
         if (path != null) {
-            nbt.put("path", NBTUtilBC.writeCompoundList(path.stream().map(NbtUtils::writeBlockPos)));
+            nbt.put("path", NBTUtilBC.writeCompoundList(path.stream().map(NBTUtilBC::writeBlockPosAsCompound)));
         }
-        nbt.put("basePoses", NBTUtilBC.writeCompoundList(basePoses.stream().map(NbtUtils::writeBlockPos)));
+        nbt.put("basePoses", NBTUtilBC.writeCompoundList(basePoses.stream().map(NBTUtilBC::writeBlockPosAsCompound)));
         nbt.putBoolean("canExcavate", canExcavate);
         nbt.put("rotation", NBTUtilBC.writeEnum(rotation));
         Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.put("builder", builder.serializeNBT()));
@@ -383,14 +383,14 @@ public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggabl
 
     @Override
 //    public void readFromNBT(CompoundTag nbt)
-    public void load(CompoundTag nbt) {
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.readFromNBT(nbt);
-        super.load(nbt);
+        super.loadAdditional(nbt, provider);
         if (nbt.contains("path")) {
             path =
-                    NBTUtilBC.readCompoundList(nbt.get("path")).map(NbtUtils::readBlockPos).collect(Collectors.toList());
+                    NBTUtilBC.readCompoundList(nbt.get("path")).map(NBTUtilBC::readBlockPos).collect(Collectors.toList());
         }
-        basePoses = NBTUtilBC.readCompoundList(nbt.get("basePoses")).map(NbtUtils::readBlockPos)
+        basePoses = NBTUtilBC.readCompoundList(nbt.get("basePoses")).map(NBTUtilBC::readBlockPos)
                 .collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
         rotation = NBTUtilBC.readEnum(nbt.get("rotation"), Rotation.class);

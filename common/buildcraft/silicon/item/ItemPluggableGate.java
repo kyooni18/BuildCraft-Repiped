@@ -78,7 +78,7 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
     @Override
     @OnlyIn(Dist.CLIENT)
 //    public void addInformation(ItemStack stack, Level world, List<String> tooltip, ITooltipFlag flag)
-    public void appendHoverText(ItemStack stack, net.minecraft.world.level.Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 //        GateVariant variant = getVariant(StackUtil.asNonNull(stack));
         GateVariant variant = this.VARIANT;
 

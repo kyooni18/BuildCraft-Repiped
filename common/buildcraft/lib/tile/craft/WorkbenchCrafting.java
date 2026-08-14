@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -209,7 +210,8 @@ public class WorkbenchCrafting extends TransientCraftingContainer {
         // Some recipes (for example vanilla fireworks) require calling
         // matches before calling getCraftingResult, as they store the
         // result of matches for getCraftingResult and getResult.
-        if (!currentRecipe.matches(this, tile.getLevel())) {
+        CraftingInput craftInput = asCraftInput();
+        if (!currentRecipe.matches(craftInput, tile.getLevel())) {
             return false;
         }
 //        ItemStack result = currentRecipe.getCraftingResult(this);
@@ -223,7 +225,7 @@ public class WorkbenchCrafting extends TransientCraftingContainer {
         if (!leftover.isEmpty()) {
             InventoryUtil.addToBestAcceptor(tile.getLevel(), tile.getBlockPos(), null, leftover);
         }
-        NonNullList<ItemStack> remainingStacks = currentRecipe.getRemainingItems(this);
+        NonNullList<ItemStack> remainingStacks = currentRecipe.getRemainingItems(craftInput);
         for (int s = 0; s < remainingStacks.size(); s++) {
             ItemStack inSlot = getItem(s);
             ItemStack remaining = remainingStacks.get(s);

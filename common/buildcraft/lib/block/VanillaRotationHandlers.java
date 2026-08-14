@@ -208,7 +208,7 @@ public class VanillaRotationHandlers {
 
     private static InteractionResult rotateCocoa(Level world, BlockPos pos, BlockState state, Direction sideWrenched) {
         if (state.getBlock() instanceof CocoaBlock) {
-            return rotateAnyTypeManual(world, pos, state, CocoaBlock.FACING, ROTATE_HORIZONTAL, toTry -> ((CocoaBlock) state.getBlock()).canSurvive(state.setValue(CocoaBlock.FACING, toTry), world, pos));
+            return rotateAnyTypeManual(world, pos, state, CocoaBlock.FACING, ROTATE_HORIZONTAL, toTry -> state.setValue(CocoaBlock.FACING, toTry).canSurvive(world, pos));
         }
         return InteractionResult.PASS;
     }
@@ -219,7 +219,7 @@ public class VanillaRotationHandlers {
             {
                 BlockPos offsetPos = pos.relative(toTry.getOpposite());
                 BlockState offsetState = world.getBlockState(offsetPos);
-                return !offsetState.getBlock().isSignalSource(offsetState) &&
+                return !offsetState.isSignalSource() &&
 //                        offsetState.getBlockFaceShape(world, offsetPos, toTry) == BlockFaceShape.SOLID &&
                         state.setValue(LadderBlock.FACING, toTry).canSurvive(world, pos) &&
                         !BlockBCBase_Neptune.isExceptBlockForAttachWithPiston(offsetState.getBlock());

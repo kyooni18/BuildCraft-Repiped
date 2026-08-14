@@ -23,7 +23,7 @@ public class MatrixUtil {
 
     static {
         ImmutableMap.Builder<Direction, Matrix4f> builder = ImmutableMap.builder();
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             Matrix4f mat = new Matrix4f();
             mat.identity();
 

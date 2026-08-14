@@ -22,8 +22,8 @@ public class SpriteChanging implements ISprite {
 
     @Override
     public void bindTexture() {
-//        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(location.get()));
-        SpriteUtil.bindTexture(new ResourceLocation(location.get()));
+//        Minecraft.getMinecraft().renderEngine.bindTexture(ResourceLocation.parse(location.get()));
+        SpriteUtil.bindTexture(ResourceLocation.parse(location.get()));
     }
 
     @Override

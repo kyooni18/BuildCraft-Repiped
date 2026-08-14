@@ -34,7 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
 
     private static final long POWER_LOST = POWER_GEN_PASSIVE * 10;
 
-    private static final ResourceLocation ADVANCEMENT_AUTOCRAFT = new ResourceLocation("buildcraftfactory:lazy_crafting");
+    private static final ResourceLocation ADVANCEMENT_AUTOCRAFT = ResourceLocation.parse("buildcraftfactory:lazy_crafting");
 
     // TODO: Store output in the next slot!
     // (Can be used to differentiate between different recipes)
@@ -134,7 +134,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_GUI_TICK) {

@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiTank extends GuiBC8<ContainerTank> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftfactory:textures/gui/tank.png");
+    private static final ResourceLocation TEXTURE_BASE = ResourceLocation.parse("buildcraftfactory:textures/gui/tank.png");
     private static final int SIZE_X = 176, SIZE_Y = 181;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 64);

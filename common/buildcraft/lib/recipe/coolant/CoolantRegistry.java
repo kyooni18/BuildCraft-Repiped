@@ -63,7 +63,7 @@ public enum CoolantRegistry implements ICoolantManager {
 //        return coolants;
         Collection<IFluidCoolant> ret = Lists.newArrayList();
         ret.addAll(unregisteredFluidCoolants);
-        world.getRecipeManager().byType(ICoolant.TYPE).values().stream().filter(c -> c instanceof IFluidCoolant).forEach(c -> ret.add((IFluidCoolant) c));
+        world.getRecipeManager().getAllRecipesFor(ICoolant.TYPE).stream().map(r -> r.value()).filter(c -> c instanceof IFluidCoolant).forEach(c -> ret.add((IFluidCoolant) c));
         return ret;
     }
 
@@ -73,7 +73,7 @@ public enum CoolantRegistry implements ICoolantManager {
 //        return solidCoolants;
         Collection<ISolidCoolant> ret = Lists.newArrayList();
         ret.addAll(unregisteredSolidCoolants);
-        world.getRecipeManager().byType(ICoolant.TYPE).values().stream().filter(c -> c instanceof ISolidCoolant).forEach(c -> ret.add((ISolidCoolant) c));
+        world.getRecipeManager().getAllRecipesFor(ICoolant.TYPE).stream().map(r -> r.value()).filter(c -> c instanceof ISolidCoolant).forEach(c -> ret.add((ISolidCoolant) c));
         return ret;
     }
 

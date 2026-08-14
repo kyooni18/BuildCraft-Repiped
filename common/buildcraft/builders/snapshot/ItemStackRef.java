@@ -7,6 +7,7 @@
 package buildcraft.builders.snapshot;
 
 
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.StringTag;
@@ -38,12 +39,10 @@ public class ItemStackRef {
         ItemStack itemStack = new ItemStack(
                 Objects.requireNonNull(
 //                        Item.getByNameOrId(
-                        ForgeRegistries.ITEMS.getValue(new ResourceLocation(
-                                item
-                                        .get(nbt)
-                                        .orElseThrow(NullPointerException::new)
-                                        .getAsString()
-                        ))
+                        ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(item
+                                .get(nbt)
+                                .orElseThrow(NullPointerException::new)
+                                .getAsString()))
                 ),
                 Optional.ofNullable(amount)
                         .flatMap(ref -> ref.get(nbt))
@@ -56,7 +55,7 @@ public class ItemStackRef {
         );
         Optional.ofNullable(tagCompound)
                 .flatMap(ref -> ref.get(nbt))
-                .ifPresent(itemStack::setTag);
+                .ifPresent(tag -> StackUtil.setItemData(itemStack, tag));
         return itemStack;
     }
 }

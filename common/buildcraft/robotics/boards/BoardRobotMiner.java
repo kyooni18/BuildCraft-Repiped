@@ -16,7 +16,6 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.TierSortingRegistry;
 
 import javax.annotation.Nonnull;
 
@@ -69,7 +68,7 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
         if (harvestLevel != null) {
             // return world.getBlockState(pos).is(harvestLevel.getTag());
             BlockState state = world.getBlockState(pos);
-            return state.is(Tags.Blocks.ORES) && TierSortingRegistry.isCorrectTierForDrops(harvestLevel, state);
+            return state.is(Tags.Blocks.ORES) && !state.is(harvestLevel.getIncorrectBlocksForDrops());
         } else {
             return false;
         }

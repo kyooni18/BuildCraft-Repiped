@@ -10,6 +10,7 @@ import buildcraft.robotics.entity.EntityRobot;
 import buildcraft.robotics.pipe.DockingStationPipe;
 import io.netty.util.collection.LongObjectHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -318,7 +319,7 @@ public class RobotRegistry extends SavedData implements IRobotRegistry {
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider registries) {
         writeToNBT(nbt);
         return nbt;
     }

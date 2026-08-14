@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkHooks;
 
 // Calen: no modGuiId in 1.18.2, so open FILLER_PLANNER gui at another place...
 @Deprecated(forRemoval = true)
@@ -31,7 +30,7 @@ public enum BCBuildersGuis {
         if (player instanceof ServerPlayer serverPlayer) {
 //            player.openMenu(state.getMenuProvider(player.level, pos));
             if (serverPlayer.level().getBlockEntity(pos) instanceof MenuProvider menuProvider) {
-                NetworkHooks.openScreen(serverPlayer, menuProvider, pos);
+                serverPlayer.openMenu(menuProvider, pos);
             } else {
                 ((ServerPlayer) player).sendSystemMessage(Component.translatable("buildcraft.error.open_null_menu"));
             }

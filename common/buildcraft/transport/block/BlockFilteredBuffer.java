@@ -13,8 +13,9 @@ import buildcraft.transport.BCTransportBlocks;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,13 +34,13 @@ public class BlockFilteredBuffer extends BlockBCTile_Neptune<TileFilteredBuffer>
 
     @Override
 //    public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!world.isClientSide) {
 //            BCTransportGuis.FILTERED_BUFFER.openGui(player, pos);
             if (world.getBlockEntity(pos) instanceof TileFilteredBuffer tile) {
                 MessageUtil.serverOpenTileGui(player, tile);
             }
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.sidedSuccess(world.isClientSide);
     }
 }

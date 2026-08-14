@@ -67,12 +67,7 @@ public final class NBTUtilBC {
         if (stack.isEmpty()) {
             return new CompoundTag();
         }
-        CompoundTag nbt = stack.getTag();
-        if (nbt == null) {
-            nbt = new CompoundTag();
-            stack.setTag(nbt);
-        }
-        return nbt;
+        return StackUtil.getOrCreateItemData(stack);
     }
 
     public static IntArrayTag writeBlockPos(BlockPos pos) {

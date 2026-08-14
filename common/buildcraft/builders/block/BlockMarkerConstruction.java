@@ -17,6 +17,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -52,7 +53,7 @@ public class BlockMarkerConstruction extends BlockMarkerBase implements IBlockWi
         super.onRemove(state, world, pos, newState, isMoving);
     }
 
-    private InteractionResult dropMarkerIfPresent(Level world, BlockPos pos, boolean onBreak) {
+    private ItemInteractionResult dropMarkerIfPresent(Level world, BlockPos pos, boolean onBreak) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileMarkerConstruction) {
             TileMarkerConstruction marker = (TileMarkerConstruction) world.getBlockEntity(pos);
@@ -69,10 +70,10 @@ public class BlockMarkerConstruction extends BlockMarkerBase implements IBlockWi
                     marker.box.reset();
                 }
                 marker.setBlueprint(StackUtil.EMPTY);
-                return InteractionResult.SUCCESS;
+                return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
             }
         }
-        return InteractionResult.PASS;
+        return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
@@ -91,9 +92,9 @@ public class BlockMarkerConstruction extends BlockMarkerBase implements IBlockWi
 
     @Override
     // public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player entityplayer, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player entityplayer, InteractionHand hand, BlockHitResult hitResult) {
         // if (super.onBlockActivated(world, pos, state, entityplayer, face, hitX, hitY, hitZ))
-        InteractionResult superResult = super.use(state, world, pos, entityplayer, hand, hitResult);
+        ItemInteractionResult superResult = super.useItemOn(stack, state, world, pos, entityplayer, hand, hitResult);
         if (superResult.consumesAction()) {
             return superResult;
         }
@@ -107,28 +108,28 @@ public class BlockMarkerConstruction extends BlockMarkerBase implements IBlockWi
             // if (marker.itemBlueprint == null)
             if (marker.itemBlueprint.isEmpty()) {
 //                ItemStack stack = entityplayer.inventory.getCurrentItem().copy();
-                ItemStack stack = entityplayer.getInventory().getSelected().copy();
-                stack.setCount(1);
-                marker.setBlueprint(stack);
+                ItemStack blueprintStack = entityplayer.getInventory().getSelected().copy();
+                blueprintStack.setCount(1);
+                marker.setBlueprint(blueprintStack);
 //                stack = null;
-                stack = StackUtil.EMPTY;
+                blueprintStack = StackUtil.EMPTY;
                 if (entityplayer.getInventory().getSelected().getCount() > 1) {
 //                    stack = entityplayer.getCurrentEquippedItem().copy();
-                    stack = entityplayer.getItemInHand(hand).copy();
+                    blueprintStack = entityplayer.getItemInHand(hand).copy();
 //                    stack.getCount() = entityplayer.getCurrentEquippedItem().stackSize - 1;
-                    stack.setCount(entityplayer.getItemInHand(hand).getCount() - 1);
+                    blueprintStack.setCount(entityplayer.getItemInHand(hand).getCount() - 1);
                 }
 //                entityplayer.getInventory().setInventorySlotContents(entityplayer.inventory.currentItem, stack);
-                entityplayer.getInventory().setItem(entityplayer.getInventory().selected, stack);
+                entityplayer.getInventory().setItem(entityplayer.getInventory().selected, blueprintStack);
 
-                return InteractionResult.SUCCESS;
+                return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
             }
         } else if (equipped instanceof ItemMarkerConstruction) {
 //            if (ItemMarkerConstruction.linkStarted(entityplayer.getCurrentEquippedItem()))
             if (ItemMarkerConstruction.linkStarted(entityplayer.getItemInHand(hand))) {
 //                ItemMarkerConstruction.link(entityplayer.getCurrentEquippedItem(), world, pos);
                 ItemMarkerConstruction.link(entityplayer.getItemInHand(hand), world, pos);
-                return InteractionResult.SUCCESS;
+                return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
             }
         }
         // else if ((equipped == null || equipped instanceof IToolWrench) && entityplayer.isShiftKeyDown())
@@ -136,6 +137,6 @@ public class BlockMarkerConstruction extends BlockMarkerBase implements IBlockWi
             return dropMarkerIfPresent(world, pos, false);
         }
 
-        return InteractionResult.PASS;
+        return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 }

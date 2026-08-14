@@ -11,8 +11,6 @@ import buildcraft.lib.net.PacketBufferBC;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.io.IOException;
@@ -33,7 +31,7 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStack> {
                 if (o == null || o.isEmpty()) {
                     return 0;
                 }
-                return Objects.hash(o.getItem(), o.getTag());
+                return Objects.hash(o.getItem(), o.getComponentsPatch());
             }
 
             @Override
@@ -53,33 +51,13 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStack> {
 
     @Override
     protected void writeObject(ItemStack obj, PacketBufferBC buffer) {
-        if (obj == null || obj.isEmpty()) {
-            buffer.writeBoolean(false);
-        } else {
-            buffer.writeBoolean(true);
-            buffer.writeShort(Item.getId(obj.getItem()));
-//            buffer.writeShort(obj.getMetadata());
-            CompoundTag tag = null;
-//            if (obj.getItem().isDamageable(obj) || obj.getItem().getShareTag(obj))
-            if (obj.getItem().isDamageable(obj)) {
-                tag = obj.getItem().getShareTag(obj);
-            }
-            buffer.writeNbt(tag);
-        }
+        buffer.writeItem(obj == null ? ItemStack.EMPTY : obj.copyWithCount(1));
     }
 
     @Override
     protected ItemStack readObject(PacketBufferBC buffer) throws IOException {
-        if (buffer.readBoolean()) {
-            Item item = Item.byId(buffer.readUnsignedShort());
-//            int meta = buffer.readShort();
-//            ItemStack stack = new ItemStack(item, 1, meta);
-            ItemStack stack = new ItemStack(item, 1);
-            stack.setTag(buffer.readNbt());
-            return stack;
-        } else {
-            return ItemStack.EMPTY;
-        }
+        ItemStack stack = buffer.readItem();
+        return stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1);
     }
 
     @Override

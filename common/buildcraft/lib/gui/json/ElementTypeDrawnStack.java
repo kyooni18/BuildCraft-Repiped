@@ -29,7 +29,7 @@ public class ElementTypeDrawnStack extends ElementType {
         boolean foreground = resolveEquationBool(json, "foreground", ctx, false);
 
 //        Item item = JsonUtils.getItem(json.json, "id");
-        Item item = GsonHelper.getAsItem(json.json, "id");
+        Item item = GsonHelper.getAsItem(json.json, "id").value();
 
         // 1.18.2: to ensure no meta appears
         int meta = resolveEquationInt(json, "meta", ctx);

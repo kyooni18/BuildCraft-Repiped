@@ -17,7 +17,7 @@ public class RedstoneBoardRobotEmptyNBT extends RedstoneBoardRobotNBT {
 
     public static RedstoneBoardRobotEmptyNBT instance = new RedstoneBoardRobotEmptyNBT();
 
-    private static final ResourceLocation ROBOT_ID = new ResourceLocation("buildcraftrobotics:robot_base");
+    private static final ResourceLocation ROBOT_ID = ResourceLocation.parse("buildcraftrobotics:robot_base");
 
     @Override
     public RedstoneBoardRobot create(EntityRobotBase robot) {
@@ -31,7 +31,7 @@ public class RedstoneBoardRobotEmptyNBT extends RedstoneBoardRobotNBT {
 
     @Override
     public ResourceLocation getRobotItemTexture() {
-        return new ResourceLocation("buildcraftrobotics:item/robot/robot_base");
+        return ResourceLocation.parse("buildcraftrobotics:item/robot/robot_base");
     }
 
     @Override
@@ -46,7 +46,7 @@ public class RedstoneBoardRobotEmptyNBT extends RedstoneBoardRobotNBT {
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation("buildcraftrobotics:board_robot_empty");
+        return ResourceLocation.parse("buildcraftrobotics:board_robot_empty");
     }
 
     @SuppressWarnings("rawtypes")

@@ -35,7 +35,7 @@ public class EnergyOilBucketModelGenerator extends BCBaseItemModelGenerator {
         // normal
         withExistingParent(
                 fluid.getReg().getBucket().getRegistryName().toString(),
-                new ResourceLocation("forge", "item/bucket_drip")
+                ResourceLocation.fromNamespaceAndPath("forge", "item/bucket_drip")
         )
                 .customLoader(DynamicFluidContainerModelBuilder::begin)
                 .flipGas(isGaseous)
@@ -44,7 +44,7 @@ public class EnergyOilBucketModelGenerator extends BCBaseItemModelGenerator {
         // christmas
         withExistingParent(
                 fluid.getReg().getBucket().getRegistryName().toString() + "_christmas",
-                new ResourceLocation("forge", "item/bucket_drip")
+                ResourceLocation.fromNamespaceAndPath("forge", "item/bucket_drip")
         )
                 .customLoader(DynamicFluidContainerModelBuilder::begin)
                 .flipGas(false)

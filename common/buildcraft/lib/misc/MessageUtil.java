@@ -19,7 +19,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.util.internal.StringUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -34,11 +33,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -72,6 +69,14 @@ public class MessageUtil {
         for (Runnable runnable : DELAYED_CLIENT_TASKS.advance()) {
             runnable.run();
         }
+    }
+
+    public static NetworkDirection getNetworkDirection(CustomPayloadEvent.Context ctx) {
+        return ctx == null || ctx.isClientSide() ? NetworkDirection.PLAY_TO_CLIENT : NetworkDirection.PLAY_TO_SERVER;
+    }
+
+    public static boolean isClientbound(CustomPayloadEvent.Context ctx) {
+        return ctx == null || ctx.isClientSide();
     }
 
     public static void sendToAllWatching(Level worldObj, BlockPos pos, IMessage message) {
@@ -170,8 +175,12 @@ public class MessageUtil {
         return new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
     }
 
+    private static boolean isCompleteProfile(GameProfile profile) {
+        return profile != null && profile.getId() != null && profile.getName() != null && !profile.getName().isEmpty();
+    }
+
     public static void writeGameProfile(FriendlyByteBuf buffer, GameProfile profile) {
-        if (profile != null && profile.isComplete()) {
+        if (isCompleteProfile(profile)) {
             buffer.writeBoolean(true);
             buffer.writeUUID(profile.getId());
             buffer.writeUtf(profile.getName());
@@ -185,7 +194,7 @@ public class MessageUtil {
             UUID uuid = buffer.readUUID();
             String name = buffer.readUtf(256);
             GameProfile profile = new GameProfile(uuid, name);
-            if (profile.isComplete()) {
+            if (isCompleteProfile(profile)) {
                 return profile;
             }
         }
@@ -299,7 +308,7 @@ public class MessageUtil {
         return set;
     }
 
-    public static void sendReturnMessage(NetworkEvent.Context context, IMessage reply) {
+    public static void sendReturnMessage(CustomPayloadEvent.Context context, IMessage reply) {
         Player player = context.getSender();
 //        Player player = BCLibProxy.getProxy().getPlayerForContext(context);
         if (player instanceof ServerPlayer playerMP) {
@@ -381,12 +390,8 @@ public class MessageUtil {
         MessageUpdateTile msg = new MessageUpdateTile();
         msg.fromBytes(data);
         try {
-            // Calen: create a fake Context for tile to read NetworkDirection
-            Constructor<NetworkEvent.Context> c = NetworkEvent.Context.class.getDeclaredConstructor(Connection.class, NetworkDirection.class, int.class);
-            c.setAccessible(true);
-            NetworkEvent.Context ctx = c.newInstance(null, NetworkDirection.PLAY_TO_CLIENT, -1);
-            // Process the msg and create a new gate object
-            tile.receivePayload(ctx, msg.payload);
+            // Process the msg and create a new gate object before a real network context exists.
+            tile.receivePayload(null, msg.payload);
             for (Runnable r : additional) {
                 r.run();
             }
@@ -401,8 +406,8 @@ public class MessageUtil {
     public static void serverOpenTileGui(Player player, IBCTileMenuProvider tile, BlockPos pos) {
         if (player instanceof ServerPlayer serverPlayer) {
             IMessage msg = tile.onServerPlayerOpenNoSend(player);
-            NetworkHooks.openScreen(
-                    serverPlayer, tile, buf ->
+            serverPlayer.openMenu(
+                    tile, buf ->
                     {
                         buf.writeBlockPos(pos);
 
@@ -415,8 +420,8 @@ public class MessageUtil {
     public static <T extends TileBC_Neptune & IBCTileMenuProvider> void serverOpenTileGui(Player player, T tile) {
         if (player instanceof ServerPlayer serverPlayer) {
             IMessage msg = tile.onServerPlayerOpenNoSend(player);
-            NetworkHooks.openScreen(
-                    serverPlayer, tile, buf ->
+            serverPlayer.openMenu(
+                    tile, buf ->
                     {
                         buf.writeBlockPos(tile.getBlockPos());
 
@@ -429,8 +434,8 @@ public class MessageUtil {
     public static void serverOpenGUIWithMsg(Player player, MenuProvider provider, BlockPos pos, int data, IMessage msg) {
         int fullId = data << 8;
         if (player instanceof ServerPlayer serverPlayer) {
-            NetworkHooks.openScreen(
-                    serverPlayer, provider, buf ->
+            serverPlayer.openMenu(
+                    provider, buf ->
                     {
                         buf.writeBlockPos(pos);
                         buf.writeInt(fullId);
@@ -444,7 +449,7 @@ public class MessageUtil {
     // Calen
     public static <I extends Item & MenuProvider> void serverOpenItemGui(Player player, I item) {
         if (player instanceof ServerPlayer serverPlayer) {
-            NetworkHooks.openScreen(serverPlayer, item, serverPlayer.blockPosition());
+            serverPlayer.openMenu(item, serverPlayer.blockPosition());
         }
     }
 }

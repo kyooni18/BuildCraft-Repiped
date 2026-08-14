@@ -40,7 +40,6 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
 //        setMaxStackSize(1);
     }
 
-    @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt) {
         return new FragileFluidHandler(stack);
     }
@@ -85,9 +84,9 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     @OnlyIn(Dist.CLIENT)
     @Override
 //    public void addInformation(ItemStack stack, @Nullable Level worldIn, List<String> tooltip, ITooltipFlag flagIn)
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        CompoundTag fluidTag = stack.getTagElement("fluid");
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, context, tooltip, flagIn);
+        CompoundTag fluidTag = StackUtil.getItemDataElement(stack, "fluid");
         if (fluidTag != null) {
             FluidStack fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
             if (fluid != null && fluid.getAmount() > 0) {
@@ -123,6 +122,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     static void setFluid(ItemStack container, FluidStack fluid) {
         CompoundTag nbt = NBTUtilBC.getItemData(container);
         nbt.put("fluid", fluid.writeToNBT(new CompoundTag()));
+        StackUtil.setItemData(container, nbt);
     }
 
     @Nullable
@@ -130,7 +130,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         if (container.isEmpty()) {
             return null;
         }
-        CompoundTag fluidNbt = container.getTagElement("fluid");
+        CompoundTag fluidNbt = StackUtil.getItemDataElement(container, "fluid");
         if (fluidNbt == null) {
             return null;
         }

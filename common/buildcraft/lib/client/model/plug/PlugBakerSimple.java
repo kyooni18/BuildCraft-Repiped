@@ -34,7 +34,7 @@ public class PlugBakerSimple<K extends PluggableModelKey> implements IPluggableS
         if (quads != lastSeen) {
             cached.clear();
             MutableQuad copy = new MutableQuad();
-            for (Direction to : Direction.VALUES) {
+            for (Direction to : Direction.values()) {
                 List<BakedQuad> list = new ArrayList<>();
                 for (MutableQuad q : quads) {
                     copy.copyFrom(q);

@@ -19,7 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -134,7 +134,7 @@ public class ContainerList extends ContainerBC_Neptune<ItemList_BC8> {
 
     @Override
 //    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException
-    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_SERVER) {
             if (id == ID_BUTTON) {

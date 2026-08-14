@@ -68,7 +68,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         boolean vertical = flow.pipe.isConnected(gas ? Direction.DOWN : Direction.UP);
 
         prof.popPush("build");
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             double size = ((Pipe) flow.pipe).getConnectedDist(face);
 //            double amount = amounts[face.getIndex()];
             double amount = amounts[face.get3DDataValue()];

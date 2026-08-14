@@ -34,7 +34,7 @@ import java.util.Map;
 
 public class GuiDynamoMJ extends GuiBC8<ContainerDynamoMJ> {
     private static final ResourceLocation TEXTURE_BASE
-            = new ResourceLocation("buildcraftenergy:textures/gui/mj_dynamo_gui.png");
+            = ResourceLocation.parse("buildcraftenergy:textures/gui/mj_dynamo_gui.png");
     private static final int SIZE_X = 176, SIZE_Y = 177;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_RF = new GuiIcon(TEXTURE_BASE, SIZE_X, 0, 16, 60);

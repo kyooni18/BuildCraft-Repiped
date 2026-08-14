@@ -13,9 +13,11 @@ import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -78,9 +80,9 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 RulesLoader.getRules(
                                 context.blockState,
 //                                context.block.hasTileEntity(context.blockState) &&
-                                context.blockState.hasBlockEntity() &&
-                                        context.world.getBlockEntity(context.pos) != null
-                                        ? context.world.getBlockEntity(context.pos).serializeNBT()
+                                        context.blockState.hasBlockEntity() &&
+                                                context.world.getBlockEntity(context.pos) != null
+                                        ? context.world.getBlockEntity(context.pos).saveWithFullMetadata(RegistryAccess.EMPTY)
                                         : null
                         ).stream()
                         .noneMatch(rule -> rule.ignore);
@@ -124,7 +126,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
         if (context.blockState.hasBlockEntity()) {
             BlockEntity tileEntity = context.world.getBlockEntity(context.pos);
             if (tileEntity != null) {
-                tileNbt = tileEntity.serializeNBT();
+                tileNbt = tileEntity.saveWithFullMetadata(RegistryAccess.EMPTY);
                 // Calen
                 // containing items
                 items = new ListTag();
@@ -133,9 +135,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                     for (int index = 0; index < c.getSlots(); index++) {
                         ItemStack stack = c.getStackInSlot(index);
                         if (!stack.isEmpty()) {
-                            CompoundTag itemNbt_i = new CompoundTag();
-                            stack.save(itemNbt_i);
-                            items.add(itemNbt_i);
+                            items.add(StackUtil.saveStack(stack));
                         }
                     }
                 });
@@ -177,7 +177,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                     .flatMap(Collection::stream)
                     .forEach(updateBlockOffsets::add);
         } else {
-            Stream.of(Direction.VALUES)
+            Stream.of(Direction.values())
 //                    .map(Direction::getDirectionVec)
                     .map(Direction::getNormal)
                     .map(BlockPos::new)
@@ -206,7 +206,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
         Set<JsonRule> rules = RulesLoader.getRules(
                 context.blockState,
                 context.blockState.hasBlockEntity() && context.world.getBlockEntity(context.pos) != null
-                        ? context.world.getBlockEntity(context.pos).serializeNBT()
+                        ? context.world.getBlockEntity(context.pos).saveWithFullMetadata(RegistryAccess.EMPTY)
                         : null
         );
         setRequiredBlockOffsets /*   */(context, rules);
@@ -245,7 +245,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
         List<ItemStack> ret = Lists.newArrayList();
         if (items != null) {
             for (int index = 0; index < items.size(); index++) {
-                ItemStack stack_i = ItemStack.of(items.getCompound(index));
+                ItemStack stack_i = buildcraft.lib.misc.StackUtil.loadStack(items.getCompound(index));
                 if (!stack_i.isEmpty()) {
                     ret.add(stack_i);
                 }
@@ -392,7 +392,8 @@ public class SchematicBlockDefault implements ISchematicBlock {
                         blockState,
                         replaceNbt != null
                                 ? (CompoundTag) NBTUtilBC.merge(newTileNbt, replaceNbt)
-                                : newTileNbt
+                                : newTileNbt,
+                        RegistryAccess.EMPTY
                 );
                 if (tileEntity != null) {
                     // Calen: tileEntity#setLevel and tileEntity#clearRemoved will be called in world.setBlockEntity
@@ -425,7 +426,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 newTileNbt.putInt("y", blockPos.getY());
                 newTileNbt.putInt("z", blockPos.getZ());
 //                BlockEntity tileEntity = BlockEntity.create(world, newTileNbt);
-                BlockEntity tileEntity = BlockEntity.loadStatic(blockPos, blockState, newTileNbt);
+                BlockEntity tileEntity = BlockEntity.loadStatic(blockPos, blockState, newTileNbt, RegistryAccess.EMPTY);
                 if (tileEntity != null) {
                     // Calen: tileEntity#setLevel and tileEntity#clearRemoved will be called in world.setBlockEntity
 //                    tileEntity.setLevel(world);
@@ -457,7 +458,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 "requiredBlockOffsets",
                 NBTUtilBC.writeCompoundList(
                         requiredBlockOffsets.stream()
-                                .map(NbtUtils::writeBlockPos)
+                                .map(NBTUtilBC::writeBlockPosAsCompound)
                 )
         );
 //        nbt.put("blockState", NbtUtils.writeBlockState(new CompoundTag(), blockState));
@@ -488,7 +489,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 "updateBlockOffsets",
                 NBTUtilBC.writeCompoundList(
                         updateBlockOffsets.stream()
-                                .map(NbtUtils::writeBlockPos)
+                                .map(NBTUtilBC::writeBlockPosAsCompound)
                 )
         );
         nbt.put(
@@ -506,7 +507,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
     @Override
     public void deserializeNBT(CompoundTag nbt) throws InvalidInputDataException {
         NBTUtilBC.readCompoundList(nbt.get("requiredBlockOffsets"))
-                .map(NbtUtils::readBlockPos)
+                .map(NBTUtilBC::readBlockPos)
                 .forEach(requiredBlockOffsets::add);
         blockState = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("blockState"));
         NBTUtilBC.readStringList(nbt.get("ignoredProperties"))
@@ -530,13 +531,13 @@ public class SchematicBlockDefault implements ISchematicBlock {
 
         // Calen: 1.12.2 tileRotation -> 1.18.2 SkullBlock BlockState ROTATION_16
 //        tileRotation = NBTUtilBC.readEnum(nbt.get("tileRotation"), Rotation.class);
-//        placeBlock = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("placeBlock")));
+//        placeBlock = Block.REGISTRY.getObject(ResourceLocation.parse(nbt.getString("placeBlock")));
         placeBlock = BlockUtil.getBlockFromRegistryName(nbt.getString("placeBlock"));
         NBTUtilBC.readCompoundList(nbt.get("updateBlockOffsets"))
-                .map(NbtUtils::readBlockPos)
+                .map(NBTUtilBC::readBlockPos)
                 .forEach(updateBlockOffsets::add);
         NBTUtilBC.readStringList(nbt.get("canBeReplacedWithBlocks"))
-                .map(ResourceLocation::new)
+                .map(ResourceLocation::parse)
 //                .map(Block.REGISTRY::getObject)
                 .map(BlockUtil::getBlockFromRegistryName)
                 .forEach(canBeReplacedWithBlocks::add);

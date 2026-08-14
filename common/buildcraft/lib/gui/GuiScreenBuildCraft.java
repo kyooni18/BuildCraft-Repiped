@@ -81,16 +81,16 @@ public class GuiScreenBuildCraft<C extends ContainerBC_Neptune<?>> extends Scree
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         PoseStack poseStack = guiGraphics.pose();
 //        mainGui.drawBackgroundLayer(poseStack, partialTicks, mouseX, mouseY, this::drawMenuBackground);
-        mainGui.drawBackgroundLayer(guiGraphics, partialTicks, mouseX, mouseY, () -> drawMenuBackground(guiGraphics));
+        mainGui.drawBackgroundLayer(guiGraphics, partialTicks, mouseX, mouseY, () -> drawMenuBackground(guiGraphics, mouseX, mouseY, partialTicks));
         mainGui.drawElementBackgrounds(guiGraphics);
 //        mainGui.drawElementForegrounds(this::drawMenuBackground);
-        mainGui.drawElementForegrounds(() -> drawMenuBackground(guiGraphics), guiGraphics);
+        mainGui.drawElementForegrounds(() -> drawMenuBackground(guiGraphics, mouseX, mouseY, partialTicks), guiGraphics);
     }
 
     // private void drawMenuBackground()
-    private void drawMenuBackground(GuiGraphics guiGraphics) {
+    private void drawMenuBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 //        this.drawBackground(0);
-        super.renderBackground(guiGraphics);
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override

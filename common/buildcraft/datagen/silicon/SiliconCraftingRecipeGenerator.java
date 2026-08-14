@@ -1,5 +1,7 @@
 package buildcraft.datagen.silicon;
 
+import buildcraft.datagen.base.BCCompatRecipeProvider;
+
 import buildcraft.lib.oredictionarytag.OreDictionaryTags;
 import buildcraft.silicon.BCSilicon;
 import buildcraft.silicon.BCSiliconBlocks;
@@ -10,23 +12,24 @@ import buildcraft.silicon.gate.EnumGateModifier;
 import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.item.ItemPluggableGate;
 import buildcraft.transport.BCTransportItems;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
 
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
-public class SiliconCraftingRecipeGenerator extends RecipeProvider {
+public class SiliconCraftingRecipeGenerator extends BCCompatRecipeProvider {
     private static final String MOD_ID = BCSilicon.MODID;
 
-    public SiliconCraftingRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public SiliconCraftingRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         // advanced_crafting_table
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BCSiliconBlocks.advancedCraftingTable.get())
                 .pattern("OtO")
@@ -35,7 +38,7 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
                 .define('r', BCSiliconItems.chipsetRedstone.get())
                 .define('c', Tags.Items.CHESTS_WOODEN)
                 .define('t', OreDictionaryTags.WORKBENCHES_ITEM)
-                .define('O', Tags.Items.OBSIDIAN)
+                .define('O', Items.OBSIDIAN)
                 .unlockedBy("has_item", has(BCSiliconItems.chipsetRedstone.get()))
                 .group(MOD_ID)
                 .save(consumer);
@@ -47,7 +50,7 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
                 .define('r', Tags.Items.DUSTS_REDSTONE)
                 .define('d', Tags.Items.GEMS_DIAMOND)
                 .define('g', OreDictionaryTags.GEAR_DIAMOND)
-                .define('O', Tags.Items.OBSIDIAN)
+                .define('O', Items.OBSIDIAN)
                 .unlockedBy("has_item", has(OreDictionaryTags.GEAR_DIAMOND))
                 .group(MOD_ID)
                 .save(consumer);
@@ -59,7 +62,7 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
                 .define('r', BCSiliconItems.chipsetIron.get())
                 .define('g', OreDictionaryTags.GEAR_DIAMOND)
                 .define('i', Tags.Items.INGOTS_GOLD)
-                .define('O', Tags.Items.OBSIDIAN)
+                .define('O', Items.OBSIDIAN)
                 .unlockedBy("has_item", has(OreDictionaryTags.GEAR_DIAMOND))
                 .group(MOD_ID)
                 .save(consumer);
@@ -68,7 +71,7 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
                 .pattern("OCO")
                 .pattern("ORO")
                 .pattern("OGO")
-                .define('O', Tags.Items.OBSIDIAN)
+                .define('O', Items.OBSIDIAN)
                 .define('R', BCSiliconItems.chipsetRedstone.get())
                 .define('C', Tags.Items.GEMS_EMERALD)
                 .define('G', OreDictionaryTags.GEAR_DIAMOND)
@@ -80,7 +83,7 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
                 .pattern("OIO")
                 .pattern("OCO")
                 .pattern("OGO")
-                .define('O', Tags.Items.OBSIDIAN)
+                .define('O', Items.OBSIDIAN)
                 .define('I', Tags.Items.DUSTS_REDSTONE)
                 .define('C', BCSiliconItems.chipsetRedstone.get())
                 .define('G', OreDictionaryTags.GEAR_GOLD)
@@ -94,7 +97,7 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
                 .pattern("rro")
                 .define('r', Tags.Items.DUSTS_REDSTONE)
                 .define('d', Tags.Items.GEMS_DIAMOND)
-                .define('o', Tags.Items.OBSIDIAN)
+                .define('o', Items.OBSIDIAN)
                 .unlockedBy("has_item", has(Tags.Items.DUSTS_REDSTONE))
                 .group(MOD_ID)
                 .save(consumer);
@@ -103,9 +106,9 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
         // You can craft some of the basic gate types in a normal crafting table
 
         // Base craftable types
-        makeGateRecipe1(Tags.Items.INGOTS_BRICK, EnumGateLogic.AND, EnumGateMaterial.CLAY_BRICK, EnumGateModifier.NO_MODIFIER, consumer);
-        makeGateRecipe1(Tags.Items.INGOTS_IRON, EnumGateLogic.AND, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER, consumer);
-        makeGateRecipe1(Tags.Items.INGOTS_NETHER_BRICK, EnumGateLogic.AND, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.NO_MODIFIER, consumer);
+        makeGateRecipe1(Ingredient.of(Items.BRICK), EnumGateLogic.AND, EnumGateMaterial.CLAY_BRICK, EnumGateModifier.NO_MODIFIER, consumer);
+        makeGateRecipe1(Ingredient.of(Tags.Items.INGOTS_IRON), EnumGateLogic.AND, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER, consumer);
+        makeGateRecipe1(Ingredient.of(Items.NETHER_BRICK), EnumGateLogic.AND, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.NO_MODIFIER, consumer);
 
         // Iron modifier addition
         makeGateRecipe2(Tags.Items.GEMS_LAPIS, EnumGateLogic.AND, EnumGateMaterial.IRON, EnumGateModifier.LAPIS, consumer);
@@ -137,7 +140,7 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
         }
     }
 
-    private static void makeGateRecipe1(TagKey<Item> m, EnumGateLogic logic, EnumGateMaterial material, EnumGateModifier modifier, Consumer<FinishedRecipe> consumer) {
+    private static void makeGateRecipe1(Ingredient m, EnumGateLogic logic, EnumGateMaterial material, EnumGateModifier modifier, BCRecipeOutput consumer) {
         GateVariant variant = new GateVariant(logic, material, modifier);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BCSiliconItems.variantGateMap.get(variant).get())
                 .pattern(" m ")
@@ -161,7 +164,7 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
                 .save(consumer, "buildcraftsilicon:plug_gate_create_" + material.tag + "_" + modifier.tag + "_blocker");
     }
 
-    private static void makeGateRecipe2(TagKey<Item> m, EnumGateLogic logic, EnumGateMaterial material, EnumGateModifier modifier, Consumer<FinishedRecipe> consumer) {
+    private static void makeGateRecipe2(net.minecraft.tags.TagKey<net.minecraft.world.item.Item> m, EnumGateLogic logic, EnumGateMaterial material, EnumGateModifier modifier, BCRecipeOutput consumer) {
         GateVariant variantG = new GateVariant(EnumGateLogic.AND, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER);
         ItemPluggableGate ironGateG = BCSiliconItems.variantGateMap.get(variantG).get();
         GateVariant variant = new GateVariant(logic, material, modifier);
@@ -174,10 +177,5 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
                 .unlockedBy("has_item", has(Tags.Items.DUSTS_REDSTONE))
                 .group(MOD_ID)
                 .save(consumer, "buildcraftsilicon:plug_gate_create_" + material.tag + "_" + modifier.tag);
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Silicon Crafting Recipe Generator";
     }
 }

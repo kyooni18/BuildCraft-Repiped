@@ -54,7 +54,7 @@ public class JsonModel {
     public static void deserializePart(List<JsonModelPart> to, boolean translucent, JsonElement json, ResourceLoaderContext ctx) throws JsonParseException, IOException {
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String str = json.getAsString();
-            ResourceLocation parent = new ResourceLocation(str);
+            ResourceLocation parent = ResourceLocation.parse(str);
             JsonModel model = deserialize(parent, ctx);
             if (translucent) {
                 Collections.addAll(to, model.translucentElements);

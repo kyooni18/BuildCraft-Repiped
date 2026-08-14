@@ -54,7 +54,7 @@ public class SchematicBlockManager {
 
     @Nonnull
     public static ISchematicBlock readFromNBT(CompoundTag schematicBlockTag) throws InvalidInputDataException {
-        ResourceLocation name = new ResourceLocation(schematicBlockTag.getString("name"));
+        ResourceLocation name = ResourceLocation.parse(schematicBlockTag.getString("name"));
         SchematicBlockFactory<?> factory = SchematicBlockFactoryRegistry.getFactoryByName(name);
         if (factory == null) {
             throw new InvalidInputDataException("Unknown schematic type " + name);

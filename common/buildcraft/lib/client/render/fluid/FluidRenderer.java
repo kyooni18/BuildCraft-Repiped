@@ -17,6 +17,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -66,7 +67,7 @@ public class FluidRenderer {
     private static double xTexDiff, yTexDiff, zTexDiff;
 
     // Calen 1.20.1
-    public static final ResourceLocation TEXTURE_ATLAS_FROZEN_LOCATION = new ResourceLocation(BCLib.MODID, "textures/atlas/frozen.png");
+    public static final ResourceLocation TEXTURE_ATLAS_FROZEN_LOCATION = ResourceLocation.fromNamespaceAndPath(BCLib.MODID, "textures/atlas/frozen.png");
     public static final TextureAtlas FROZEN_ATLAS = new TextureAtlas(TEXTURE_ATLAS_FROZEN_LOCATION);
     public static final RenderType FROZEN_FLUID_RENDER_TYPE_TRANSLUCENT = RenderType.create(
             "buildcraft_frozen_fluid_translucent",
@@ -144,6 +145,8 @@ public class FluidRenderer {
         if (map.location().equals(TextureAtlas.LOCATION_BLOCKS)) {
             SpriteLoader spriteLoader = SpriteLoader.create(FROZEN_ATLAS);
             List<SpriteContents> spriteContentsList = Lists.newArrayList();
+            // TextureAtlas#upload requires every atlas to contain the vanilla missing-texture sprite.
+            spriteContentsList.add(MissingTextureAtlasSprite.create());
             // Calen: BC 1.12.2
             for (Fluid fluid : ForgeRegistries.FLUIDS.getValues()) {
                 // Calen
@@ -166,14 +169,19 @@ public class FluidRenderer {
             SpriteLoader.Preparations preparations = spriteLoader.stitch(spriteContentsList, Minecraft.getInstance().options.mipmapLevels().get(), Runnable::run);
             FROZEN_ATLAS.upload(preparations);
             FROZEN_ATLAS.getTextureLocations().forEach(location -> {
-                SpriteFluidFrozen spriteFluidFrozen = (SpriteFluidFrozen) FROZEN_ATLAS.getSprite(location);
-                fluidSprites.get(FluidSpriteType.FROZEN).put(spriteFluidFrozen.srcRegistryName.toString(), spriteFluidFrozen);
+                if (location.equals(MissingTextureAtlasSprite.getLocation())) {
+                    return;
+                }
+                TextureAtlasSprite frozenSprite = FROZEN_ATLAS.getSprite(location);
+                if (frozenSprite instanceof SpriteFluidFrozen spriteFluidFrozen) {
+                    fluidSprites.get(FluidSpriteType.FROZEN).put(spriteFluidFrozen.srcRegistryName.toString(), spriteFluidFrozen);
+                }
             });
         }
     }
 
     private static SpriteContents createFrozenSprite(ResourceLocation registryName, TextureAtlasSprite stillSprite) {
-        ResourceLocation frozenLocation = new ResourceLocation(BCLib.MODID, "fluid_" + registryName.toString().replace(':', '_') + "_convert_frozen");
+        ResourceLocation frozenLocation = ResourceLocation.fromNamespaceAndPath(BCLib.MODID, "fluid_" + registryName.toString().replace(':', '_') + "_convert_frozen");
         return SpriteFluidFrozen.createSpriteContents(stillSprite, registryName, frozenLocation);
     }
 
@@ -405,9 +413,9 @@ public class FluidRenderer {
 //        Tessellator tess = Tessellator.getInstance();
         Tesselator tess = Tesselator.getInstance();
 //        bb = tess.getBuffer();
-        bb = tess.getBuilder();
+        BufferBuilder builder = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bb = builder;
 //        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        ((BufferBuilder) bb).begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         // draw all the full sprites
 
@@ -475,7 +483,7 @@ public class FluidRenderer {
         }
 
 //        tess.draw();
-        tess.end();
+        BufferUploader.drawWithShader(builder.buildOrThrow());
 //        GlStateManager.color(1, 1, 1);
         RenderUtil.color(1, 1, 1);
         sprite = null;
@@ -484,14 +492,13 @@ public class FluidRenderer {
 
     private static void guiVertex(Matrix4f poseMatrix, double x, double y, double u, double v) {
 //        float ru = sprite.getInterpolatedU(u);
-        float ru = sprite.getU(u);
+        float ru = sprite.getU((float) u);
 //        float rv = sprite.getInterpolatedV(v);
-        float rv = sprite.getV(v);
+        float rv = sprite.getV((float) v);
 //        poseStack.translate(x, y, 0);
-        bb.vertex(poseMatrix, (float) x, (float) y, 0);
+        bb.addVertex(poseMatrix, (float) x, (float) y, 0);
 //        bb.tex(ru, rv);
-        bb.uv(ru, rv);
-        bb.endVertex();
+        bb.setUv(ru, rv);
     }
 
     /** Used to keep track of what position maps to what texture co-ord.
@@ -524,7 +531,7 @@ public class FluidRenderer {
                 realv = 1 - realv;
             }
 //            vertex.texf(sprite.getInterpolatedU(realu * 16), sprite.getInterpolatedV(realv * 16));
-            vertex.texf(sprite.getU(realu * 16), sprite.getV(realv * 16));
+            vertex.texf(sprite.getU((float) (realu * 16)), sprite.getV((float) (realv * 16)));
         }
     }
 

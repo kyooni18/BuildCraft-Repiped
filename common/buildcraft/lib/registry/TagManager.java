@@ -26,7 +26,7 @@ public class TagManager {
 
     public static Item getItem(String id) {
         String regTag = getTag(id, EnumTagType.REGISTRY_NAME);
-        ResourceLocation loc = new ResourceLocation(regTag);
+        ResourceLocation loc = ResourceLocation.parse(regTag);
         if (ForgeRegistries.ITEMS.containsKey(loc)) {
             return ForgeRegistries.ITEMS.getValue(loc);
         } else {

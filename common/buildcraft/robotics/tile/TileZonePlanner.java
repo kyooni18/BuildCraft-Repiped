@@ -39,7 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -67,7 +67,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
             1,
             (slot, stack) -> stack.getItem() instanceof ItemMapLocation &&
 //                    Optional.ofNullable(stack.getTagCompound())
-                    Optional.ofNullable(stack.getTag())
+                    Optional.ofNullable(StackUtil.getItemData(stack))
 //                            .map(tagCompound -> tagCompound.hasKey("chunkMapping"))
                             .map(tagCompound -> tagCompound.contains("chunkMapping"))
                             .orElse(false) &&
@@ -134,7 +134,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
 
     @Override
 //    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -156,9 +156,9 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
 
     @Override
 //    public CompoundTag writeToNBT(CompoundTag nbt)
-    public void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.writeToNBT(nbt);
-        super.saveAdditional(nbt);
+        super.saveAdditional(nbt, provider);
         for (int i = 0; i < layers.length; i++) {
             ZonePlan layer = layers[i];
             CompoundTag layerCompound = new CompoundTag();
@@ -170,9 +170,9 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
 
     @Override
 //    public void readFromNBT(CompoundTag nbt)
-    public void load(CompoundTag nbt) {
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.readFromNBT(nbt);
-        super.load(nbt);
+        super.loadAdditional(nbt, provider);
         for (int i = 0; i < layers.length; i++) {
             ZonePlan layer = layers[i];
             layer.readFromNBT(nbt.getCompound("layer_" + i));
@@ -210,8 +210,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
             // noinspection ConstantConditions
             if (!invInputPaintbrush.getStackInSlot(0).isEmpty() && invInputPaintbrush.getStackInSlot(0).getItem() instanceof ItemPaintbrush_BC8 && !invInputMapLocation.getStackInSlot(0).isEmpty()
 //                    && invInputMapLocation.getStackInSlot(0).getItem() instanceof ItemMapLocation && invInputMapLocation.getStackInSlot(0).getTag() != null && invInputMapLocation.getStackInSlot(0)
-                    && invInputMapLocation.getStackInSlot(0).getItem() instanceof ItemMapLocation && invInputMapLocation.getStackInSlot(0).hasTag() && invInputMapLocation.getStackInSlot(0)
-                    .getTag().contains("chunkMapping") && invInputResult.getStackInSlot(0).isEmpty())
+                    && invInputMapLocation.getStackInSlot(0).getItem() instanceof ItemMapLocation && StackUtil.hasItemData(invInputMapLocation.getStackInSlot(0)) && StackUtil.getItemData(invInputMapLocation.getStackInSlot(0)).contains("chunkMapping") && invInputResult.getStackInSlot(0).isEmpty())
             {
                 if (progressInput == 0) {
                     deltaProgressInput.addDelta(0, 200, 1);
@@ -224,7 +223,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
                 }
 
                 ZonePlan zonePlan = new ZonePlan();
-                zonePlan.readFromNBT(invInputMapLocation.getStackInSlot(0).getTag());
+                zonePlan.readFromNBT(StackUtil.getItemData(invInputMapLocation.getStackInSlot(0)));
 //                layers[BCCoreItems.paintbrushClean.get().getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getMetadata()] = zonePlan.getWithOffset(-pos.getX(), -pos.getZ());
                 layers[BCCoreItems.paintbrushClean.get().getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getId()] = zonePlan.getWithOffset(-worldPosition.getX(), -worldPosition.getZ());
                 invInputMapLocation.setStackInSlot(0, StackUtil.EMPTY);

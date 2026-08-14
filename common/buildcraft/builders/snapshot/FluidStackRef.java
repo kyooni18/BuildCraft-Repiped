@@ -30,15 +30,10 @@ public class FluidStackRef {
         return new FluidStack(
                 Objects.requireNonNull(
 //                        FluidRegistry.getFluid(
-                        ForgeRegistries.FLUIDS.getValue(
-                                new ResourceLocation(
-                                        fluid
-                                                .get(nbt)
-                                                .orElseThrow(NullPointerException::new)
-//                                                .getString()
-                                                .getAsString()
-                                )
-                        )
+                        ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(fluid
+                                .get(nbt)
+                                .orElseThrow(NullPointerException::new)
+                                .getAsString()))
                 ),
                 Optional.ofNullable(amount)
                         .flatMap(ref -> ref.get(nbt))

@@ -11,6 +11,7 @@ import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.snapshot.Snapshot.Header;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.HashUtil;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -80,14 +81,14 @@ public class ItemSnapshot extends ItemBC_Neptune {
                 stack = new ItemStack(BCBuildersItems.snapshotTEMPLATE.get());
                 break;
         }
-        stack.setTag(nbt);
+        StackUtil.setItemData(stack, nbt);
         return stack;
     }
 
     public Header getHeader(ItemStack stack) {
         if (stack.getItem() instanceof ItemSnapshot) {
             if (EnumItemSnapshotType.getFromStack(stack).used) {
-                CompoundTag nbt = stack.getTag();
+                CompoundTag nbt = StackUtil.getItemData(stack);
                 if (nbt != null) {
 //                    if (nbt.contains("header", Tag.TAG_COMPOUND))
                     if (nbt.contains(TAG_KEY, Tag.TAG_COMPOUND)) {
@@ -100,7 +101,6 @@ public class ItemSnapshot extends ItemBC_Neptune {
         return null;
     }
 
-    @Override
 //    public int getItemStackLimit(ItemStack stack)
     public int getMaxStackSize(ItemStack stack) {
         return EnumItemSnapshotType.getFromStack(stack).used ? 1 : 16;
@@ -139,7 +139,8 @@ public class ItemSnapshot extends ItemBC_Neptune {
     @OnlyIn(Dist.CLIENT)
     @Override
 //    public void addInformation(ItemStack stack, Level world, List<String> tooltip, ITooltipFlag flag)
-    public void appendHoverText(ItemStack stack, net.minecraft.world.level.Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        net.minecraft.world.level.Level world = context.level();
         Header header = getHeader(stack);
         if (header == null) {
             tooltip.add(Component.translatable("item.blueprint.blank"));
@@ -192,7 +193,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
 //            return values()[Math.abs(stack.getMetadata()) % values().length];
 
             if (stack.getItem() instanceof ItemSnapshot snapshot) {
-                boolean hasHeaderTag = stack.hasTag() && stack.getTag().contains(TAG_KEY);
+                boolean hasHeaderTag = StackUtil.hasItemData(stack) && StackUtil.getItemData(stack).contains(TAG_KEY);
                 return switch (snapshot.TYPE) {
                     case TEMPLATE -> hasHeaderTag ? TEMPLATE_USED : TEMPLATE_CLEAN;
                     case BLUEPRINT -> hasHeaderTag ? BLUEPRINT_USED : BLUEPRINT_CLEAN;

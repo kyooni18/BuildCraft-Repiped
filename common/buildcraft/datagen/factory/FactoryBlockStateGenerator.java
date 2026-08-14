@@ -291,18 +291,18 @@ public class FactoryBlockStateGenerator extends BCBaseBlockStateGenerator {
                                                 "all",
                                                 switch (state.getValue(BlockWaterGel.PROP_STAGE)) {
                                                     case SPREAD_0 ->
-                                                            new ResourceLocation("buildcraftfactory:block/gel/spread_0");
+                                                            ResourceLocation.parse("buildcraftfactory:block/gel/spread_0");
                                                     case SPREAD_1 ->
-                                                            new ResourceLocation("buildcraftfactory:block/gel/spread_1");
+                                                            ResourceLocation.parse("buildcraftfactory:block/gel/spread_1");
                                                     case SPREAD_2 ->
-                                                            new ResourceLocation("buildcraftfactory:block/gel/spread_2");
+                                                            ResourceLocation.parse("buildcraftfactory:block/gel/spread_2");
                                                     case SPREAD_3 ->
-                                                            new ResourceLocation("buildcraftfactory:block/gel/spread_3");
+                                                            ResourceLocation.parse("buildcraftfactory:block/gel/spread_3");
                                                     case GELLING_0 ->
-                                                            new ResourceLocation("buildcraftfactory:block/gel/gelling_0");
+                                                            ResourceLocation.parse("buildcraftfactory:block/gel/gelling_0");
                                                     case GELLING_1 ->
-                                                            new ResourceLocation("buildcraftfactory:block/gel/gelling_1");
-                                                    case GEL -> new ResourceLocation("buildcraftfactory:block/gel/gel");
+                                                            ResourceLocation.parse("buildcraftfactory:block/gel/gelling_1");
+                                                    case GEL -> ResourceLocation.parse("buildcraftfactory:block/gel/gel");
                                                 }
                                         )
                         )
@@ -311,9 +311,9 @@ public class FactoryBlockStateGenerator extends BCBaseBlockStateGenerator {
 
         // flood_gate
         ResourceLocation floodGate = BCFactoryBlocks.floodGate.get().getRegistryName();
-        ResourceLocation floodGate_top = new ResourceLocation("buildcraftfactory:block/flood_gate/top");
-        ResourceLocation floodGate_closed = new ResourceLocation("buildcraftfactory:block/flood_gate/closed");
-        ResourceLocation floodGate_open = new ResourceLocation("buildcraftfactory:block/flood_gate/open");
+        ResourceLocation floodGate_top = ResourceLocation.parse("buildcraftfactory:block/flood_gate/top");
+        ResourceLocation floodGate_closed = ResourceLocation.parse("buildcraftfactory:block/flood_gate/closed");
+        ResourceLocation floodGate_open = ResourceLocation.parse("buildcraftfactory:block/flood_gate/open");
         getVariantBuilder(BCFactoryBlocks.floodGate.get()).forAllStates(state ->
                 ConfiguredModel.builder().modelFile(
                                 models().withExistingParent(
@@ -324,7 +324,7 @@ public class FactoryBlockStateGenerator extends BCBaseBlockStateGenerator {
                                                         + "_" + state.getValue(BuildCraftProperties.CONNECTED_EAST)
                                                         + "_" + state.getValue(BuildCraftProperties.CONNECTED_WEST)
                                                 ,
-                                                new ResourceLocation("buildcraftcore:block/default_cube")
+                                                ResourceLocation.parse("buildcraftcore:block/default_cube")
                                         )
                                         .texture("particle", floodGate_top)
                                         .texture("up", floodGate_top)

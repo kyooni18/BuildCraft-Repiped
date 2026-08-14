@@ -6,6 +6,7 @@
 
 package buildcraft.lib.client.guide.loader;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
@@ -44,7 +45,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         }
         ItemStack stack = null;
 //        Item item = Item.getByNameOrId(args[0].trim());
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(args[0].trim()));
+        Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(args[0].trim()));
         if (item != null) {
             stack = new ItemStack(item);
         } else {
@@ -90,8 +91,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
 
         String nbtString = args[3];
         try {
-//            stack.setTag(JsonToNBT.getTagFromJson(nbtString));
-            stack.setTag(TagParser.parseTag(nbtString));
+//            StackUtil.setItemData(stack, JsonToNBT.getTagFromJson(nbtString));
+            StackUtil.setItemData(stack, TagParser.parseTag(nbtString));
         }
 //        catch (NBTException e)
         catch (CommandSyntaxException e) {

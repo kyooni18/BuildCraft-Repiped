@@ -1,11 +1,15 @@
 package buildcraft.datagen.core;
 
+import buildcraft.datagen.base.BCCompatRecipeProvider;
+
 import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.core.BCCore;
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreItems;
 import buildcraft.lib.oredictionarytag.OreDictionaryTags;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.ImpossibleTrigger;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.tags.ItemTags;
@@ -15,17 +19,18 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class CoreCraftingRecipeGenerator extends RecipeProvider {
+public class CoreCraftingRecipeGenerator extends BCCompatRecipeProvider {
     private static final String MOD_ID = BCCore.MODID;
 
-    public CoreCraftingRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public CoreCraftingRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         // Calen: unlock the recipe before got the item... some gamerules...
         // Gears
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BCCoreItems.gearWood.get())
@@ -99,7 +104,7 @@ public class CoreCraftingRecipeGenerator extends RecipeProvider {
                 .define('p', Ingredient.of(Items.PAPER))
                 .define('R', Ingredient.of(Tags.Items.DUSTS_REDSTONE))
                 .define('G', Ingredient.of(Tags.Items.DYES_GREEN))
-                .unlockedBy("has_item", new ImpossibleTrigger.TriggerInstance())
+                .unlockedBy("has_item", CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance()))
                 .group(MOD_ID)
                 .save(consumer);
         // marker_connector
@@ -162,15 +167,10 @@ public class CoreCraftingRecipeGenerator extends RecipeProvider {
                 .pattern("sss")
                 .pattern("scs")
                 .pattern("sss")
-                .define('s', Ingredient.of(Tags.Items.OBSIDIAN))
+                .define('s', Ingredient.of(Items.OBSIDIAN))
                 .define('c', Ingredient.of(Tags.Items.STORAGE_BLOCKS_REDSTONE))
-                .unlockedBy("has_item", has(Tags.Items.OBSIDIAN))
+                .unlockedBy("has_item", has(Items.OBSIDIAN))
                 .group(MOD_ID)
                 .save(consumer);
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Core Crafting Recipe Generator";
     }
 }

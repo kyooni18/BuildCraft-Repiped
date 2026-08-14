@@ -12,9 +12,10 @@ import buildcraft.lib.recipe.coolant.CoolantRecipeBuilder;
 import buildcraft.lib.recipe.fuel.FuelRecipeBuilder;
 import buildcraft.lib.recipe.refinery.DistillationRecipeBuilder;
 import buildcraft.lib.recipe.refinery.HeatExchangeRecipeBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeProvider;
+import buildcraft.lib.recipe.FinishedRecipe;
+import buildcraft.datagen.base.BCCompatRecipeProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
@@ -22,10 +23,11 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class EnergyOilRecipeGenerator extends RecipeProvider {
-    private Consumer<FinishedRecipe> consumer;
+public class EnergyOilRecipeGenerator extends BCCompatRecipeProvider {
+    private BCRecipeOutput consumer;
 
     // Relative amounts of the fluid -- the amount of oil used in refining will return X amount of fluid
 
@@ -47,12 +49,12 @@ public class EnergyOilRecipeGenerator extends RecipeProvider {
 
     private static final int TIME_BASE = 240_000; // 240_000 - multiple of 3, 5, 16, 1000
 
-    public EnergyOilRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public EnergyOilRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         this.consumer = consumer;
         buildHeatExchangeRecipes();
         buildDistillationRecipes();
@@ -214,10 +216,5 @@ public class EnergyOilRecipeGenerator extends RecipeProvider {
             return null;
         }
         return array[0].get();
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Energy Oil Recipe Generator";
     }
 }

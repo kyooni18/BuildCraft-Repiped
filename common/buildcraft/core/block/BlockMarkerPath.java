@@ -31,7 +31,7 @@ public class BlockMarkerPath extends BlockMarkerBase {
 
     @Override
 //    public boolean onBlockActivated(Level world, BlockPos pos, IBlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!world.isClientSide) {
             BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof TileMarkerPath) {
@@ -42,6 +42,6 @@ public class BlockMarkerPath extends BlockMarkerBase {
             }
         }
 //        return true;
-        return InteractionResult.SUCCESS;
+        return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
     }
 }

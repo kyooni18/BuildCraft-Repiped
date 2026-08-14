@@ -490,7 +490,7 @@ public class GuiUtil {
 
         if (!list.isEmpty()) {
 //            list.set(0, Component.literal(stack.getRarity().color.toString() + list.get(0).getString()));
-            list.set(0, Component.literal(stack.getRarity().color.toString()).append(list.get(0)));
+            list.set(0, Component.literal(stack.getRarity().color().toString()).append(list.get(0)));
         }
 
         for (int i = 1; i < list.size(); ++i) {
@@ -503,7 +503,7 @@ public class GuiUtil {
 
     public static List<Component> getUnFormattedTooltip(ItemStack stack) {
         Minecraft mc = Minecraft.getInstance();
-        List<Component> list = stack.getTooltipLines(mc.player, getTooltipFlags());
+        List<Component> list = stack.getTooltipLines(Item.TooltipContext.of(mc.level), mc.player, getTooltipFlags());
         if (list.isEmpty()) {
             return Collections.singletonList(getStackDisplayName(stack));
         }
@@ -516,7 +516,7 @@ public class GuiUtil {
             // Temp workaround for headcrumbs
             // TODO: Remove this after https://github.com/BuildCraft/BuildCraft/issues/4268 is fixed from their side! */
             Item item = stack.getItem();
-            String info = ItemUtil.getRegistryName(item) + " " + item.getClass() + " (" + stack.serializeNBT() + ")";
+            String info = ItemUtil.getRegistryName(item) + " " + item.getClass() + " (" + StackUtil.saveStack(stack) + ")";
             BCLog.logger.warn("[lib.guide] Found null display name! " + info);
             name = Component.literal("!!NULL stack.getDisplayName(): " + info);
         }

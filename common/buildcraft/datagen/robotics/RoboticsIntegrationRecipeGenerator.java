@@ -7,21 +7,23 @@ import buildcraft.api.recipes.IngredientStack;
 import buildcraft.lib.recipe.integration.IntegrationRecipeBuilder;
 import buildcraft.robotics.BCRoboticsItems;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeProvider;
+import buildcraft.lib.recipe.FinishedRecipe;
+import buildcraft.datagen.base.BCCompatRecipeProvider;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class RoboticsIntegrationRecipeGenerator extends RecipeProvider {
-    private Consumer<FinishedRecipe> consumer;
+public class RoboticsIntegrationRecipeGenerator extends BCCompatRecipeProvider {
+    private BCRecipeOutput consumer;
 
-    public RoboticsIntegrationRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public RoboticsIntegrationRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         this.consumer = consumer;
 
         BCRoboticsItems.robot.keySet().forEach(this::robot);
@@ -36,10 +38,5 @@ public class RoboticsIntegrationRecipeGenerator extends RecipeProvider {
                     BCRoboticsItems.robot.get(boardNBT).get().getDefaultInstance()
             ).save(consumer, boardNBT.getRobotId().getPath());
         }
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Robotics Integration Recipe Generator";
     }
 }

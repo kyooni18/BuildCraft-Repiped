@@ -1,73 +1,63 @@
 package buildcraft.lib.recipe.refinery;
 
-import buildcraft.api.BCModules;
+import buildcraft.api.recipes.IRefineryRecipeManager.ICoolableRecipe;
+import buildcraft.api.recipes.IRefineryRecipeManager.IHeatableRecipe;
 import buildcraft.api.recipes.IRefineryRecipeManager.IHeatExchangerRecipe;
 import buildcraft.lib.misc.JsonUtil;
+import buildcraft.lib.recipe.LegacyRecipeCodec;
 import buildcraft.lib.recipe.refinery.RefineryRecipeRegistry.CoolableRecipe;
 import buildcraft.lib.recipe.refinery.RefineryRecipeRegistry.HeatableRecipe;
 import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
-
 public class HeatExchangeRecipeSerializer implements RecipeSerializer<IHeatExchangerRecipe> {
-    public static final HeatExchangeRecipeSerializer HEATABLE;
-    public static final HeatExchangeRecipeSerializer COOLABLE;
-
-    static {
-        HEATABLE = new HeatExchangeRecipeSerializer(EnumHeatExchangeRecipeType.HEATABLE);
-        COOLABLE = new HeatExchangeRecipeSerializer(EnumHeatExchangeRecipeType.COOLABLE);
-    }
+    public static final HeatExchangeRecipeSerializer HEATABLE = new HeatExchangeRecipeSerializer(EnumHeatExchangeRecipeType.HEATABLE);
+    public static final HeatExchangeRecipeSerializer COOLABLE = new HeatExchangeRecipeSerializer(EnumHeatExchangeRecipeType.COOLABLE);
 
     private final EnumHeatExchangeRecipeType type;
+    private final MapCodec<IHeatExchangerRecipe> codec;
+    private final StreamCodec<RegistryFriendlyByteBuf, IHeatExchangerRecipe> streamCodec;
 
     private HeatExchangeRecipeSerializer(EnumHeatExchangeRecipeType type) {
         this.type = type;
+        ResourceLocation id = type == EnumHeatExchangeRecipeType.HEATABLE ? IHeatableRecipe.TYPE_ID : ICoolableRecipe.TYPE_ID;
+        this.codec = LegacyRecipeCodec.mapCodec(id, this::fromJson, HeatExchangeRecipeSerializer::toJson);
+        this.streamCodec = LegacyRecipeCodec.streamCodec(codec);
     }
 
-    @Override
-    public IHeatExchangerRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-        String typeStr = GsonHelper.getAsString(json, "type").replace("heat_exchange/", "");
-        FluidStack in = JsonUtil.deSerializeFluidStack(json.getAsJsonObject("in"));
-        FluidStack out = JsonUtil.deSerializeFluidStack(json.getAsJsonObject("out"));
-        int heatFrom = json.get("heatFrom").getAsInt();
-        int heatTo = json.get("heatTo").getAsInt();
-        return switch (this.type) {
-            case COOLABLE -> new CoolableRecipe(recipeId, in, out, heatFrom, heatTo);
-            case HEATABLE -> new HeatableRecipe(recipeId, in, out, heatFrom, heatTo);
-        };
+    private IHeatExchangerRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+        FluidStack in = JsonUtil.deSerializeFluidStack(GsonHelper.getAsJsonObject(json, "in"));
+        FluidStack out = JsonUtil.deSerializeFluidStack(GsonHelper.getAsJsonObject(json, "out"));
+        int heatFrom = GsonHelper.getAsInt(json, "heatFrom");
+        int heatTo = GsonHelper.getAsInt(json, "heatTo");
+        return type == EnumHeatExchangeRecipeType.COOLABLE
+                ? new CoolableRecipe(recipeId, in, out, heatFrom, heatTo)
+                : new HeatableRecipe(recipeId, in, out, heatFrom, heatTo);
+    }
+
+    private static void toJson(IHeatExchangerRecipe recipe, JsonObject json) {
+        json.addProperty("id", recipe.getId().toString());
+        json.add("in", JsonUtil.serializeFluidStack(recipe.in()));
+        json.add("out", JsonUtil.serializeFluidStack(recipe.out()));
+        json.addProperty("heatFrom", recipe.heatFrom());
+        json.addProperty("heatTo", recipe.heatTo());
     }
 
     public static void toJson(HeatExchangeRecipeBuilder builder, JsonObject json) {
-        json.addProperty("type", BCModules.FACTORY.getModId() + ":heat_exchange/" + builder.type.getlowerName());
+        ResourceLocation id = builder.type == EnumHeatExchangeRecipeType.HEATABLE ? IHeatableRecipe.TYPE_ID : ICoolableRecipe.TYPE_ID;
+        json.addProperty("type", id.toString());
         json.add("in", JsonUtil.serializeFluidStack(builder.in));
         json.add("out", JsonUtil.serializeFluidStack(builder.out));
         json.addProperty("heatFrom", builder.heatFrom);
         json.addProperty("heatTo", builder.heatTo);
     }
 
-    @Nullable
-    @Override
-    public IHeatExchangerRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-        FluidStack in = buffer.readFluidStack();
-        FluidStack out = buffer.readFluidStack();
-        int heatFrom = buffer.readInt();
-        int heatTo = buffer.readInt();
-        return switch (this.type) {
-            case COOLABLE -> new CoolableRecipe(recipeId, in, out, heatFrom, heatTo);
-            case HEATABLE -> new HeatableRecipe(recipeId, in, out, heatFrom, heatTo);
-        };
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buffer, IHeatExchangerRecipe recipe) {
-        buffer.writeFluidStack(recipe.in());
-        buffer.writeFluidStack(recipe.out());
-        buffer.writeInt(recipe.heatFrom());
-        buffer.writeInt(recipe.heatTo());
-    }
+    @Override public MapCodec<IHeatExchangerRecipe> codec() { return codec; }
+    @Override public StreamCodec<RegistryFriendlyByteBuf, IHeatExchangerRecipe> streamCodec() { return streamCodec; }
 }

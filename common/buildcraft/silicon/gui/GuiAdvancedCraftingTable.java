@@ -21,6 +21,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
 import java.util.ArrayList;
@@ -30,8 +31,8 @@ import java.util.List;
 //public class GuiAdvancedCraftingTable extends GuiWithRecipeBookBC8<ContainerAdvancedCraftingTable> implements RecipeShownListener
 //public class GuiAdvancedCraftingTable<T extends AbstractContainerMenu> extends RecipeBookMenu<ContainerAdvancedCraftingTable> implements RecipeShownListener
 public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTable> implements RecipeShownListener {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftsilicon:textures/gui/advanced_crafting_table.png");
-    private static final ResourceLocation VANILLA_CRAFTING_TABLE = new ResourceLocation("textures/gui/container/crafting_table.png");
+    private static final ResourceLocation TEXTURE_BASE = ResourceLocation.parse("buildcraftsilicon:textures/gui/advanced_crafting_table.png");
+    private static final ResourceLocation VANILLA_CRAFTING_TABLE = ResourceLocation.parse("textures/gui/container/crafting_table.png");
     private static final int SIZE_X = 176, SIZE_Y = 241;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_PROGRESS = new GuiIcon(TEXTURE_BASE, SIZE_X, 0, 4, 70);
@@ -354,10 +355,10 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
 
     @Override
 //    public GuiRecipeBook func_194310_f()
-    public void recipesShown(List<Recipe<?>> p_100518_) {
+    public void recipesShown(List<RecipeHolder<?>> p_100518_) {
 //        return recipeBook;
         // Calen: From RecipeBookComponent
-        for (Recipe<?> recipe : p_100518_) {
+        for (RecipeHolder<?> recipe : p_100518_) {
             this.minecraft.player.removeRecipeHighlight(recipe);
         }
     }

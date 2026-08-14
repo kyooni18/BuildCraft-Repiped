@@ -43,12 +43,9 @@ public class StatementParameterDirection implements IStatementParameter {
 //    @OnlyIn(Dist.CLIENT)
 //    public void registerIcons(TextureAtlas map) {
 //        sprites = new TextureAtlasSprite[] {
-//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_down")),
-//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_up")),
-//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_north")),
-//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_south")),
-//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_west")),
-//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_east"))
+//            map.registerSprite(ResourceLocation.parse("buildcraftcore:triggers/trigger_dir_down")), //            map.registerSprite(ResourceLocation.parse("buildcraftcore:triggers/trigger_dir_up")),
+//            map.registerSprite(ResourceLocation.parse("buildcraftcore:triggers/trigger_dir_north")), //            map.registerSprite(ResourceLocation.parse("buildcraftcore:triggers/trigger_dir_south")),
+//            map.registerSprite(ResourceLocation.parse("buildcraftcore:triggers/trigger_dir_west")), //            map.registerSprite(ResourceLocation.parse("buildcraftcore:triggers/trigger_dir_east"))
 //        };
 //    }
 
@@ -97,7 +94,7 @@ public class StatementParameterDirection implements IStatementParameter {
     //    @Override
     public void readFromNBT(CompoundTag nbt) {
         if (nbt.contains("direction")) {
-            direction = Direction.VALUES[nbt.getByte("direction")];
+            direction = Direction.values()[nbt.getByte("direction")];
         } else {
             direction = null;
         }

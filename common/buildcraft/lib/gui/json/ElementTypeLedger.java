@@ -34,8 +34,8 @@ public class ElementTypeLedger extends ElementType {
 
         ledger.calculateMaxSize();
         ResourceLocation def = gui.jsonGuiDefinition;
-//        def = new ResourceLocation(def.getResourceDomain(), def.getResourcePath().replace(".json", ""));
-        def = new ResourceLocation(def.getNamespace(), def.getPath().replace(".json", ""));
+//        def = ResourceLocation.fromNamespaceAndPath(def.getResourceDomain(), def.getResourcePath().replace(".json", ""));
+        def = ResourceLocation.fromNamespaceAndPath(def.getNamespace(), def.getPath().replace(".json", ""));
         ledger.setOpenProperty(GuiConfigManager.getOrAddBoolean(def, json.name + ".is_open", false));
         return ledger;
     }

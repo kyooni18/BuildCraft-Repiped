@@ -48,7 +48,7 @@ public class LibFrozenFluidTextureProvider extends BCBaseTextureGenerator {
                 continue;
             }
             createdFluids.add(still);
-            ResourceLocation frozen = new ResourceLocation(
+            ResourceLocation frozen = ResourceLocation.fromNamespaceAndPath(
                     still.getNamespace(),
                     still.getPath().contains("_still")
                             ?

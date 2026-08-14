@@ -38,7 +38,7 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
         VertexConsumer bb = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
         double centrePower = 0;
         double[] power = new double[6];
-        for (Direction side : Direction.VALUES) {
+        for (Direction side : Direction.values()) {
             Section s = flow.getSection(side);
             int i = side.ordinal();
             power[i] = s.displayPower / (double) MjAPI.MJ;
@@ -48,7 +48,7 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
 //        bb.setTranslation(x, y, z);
 
         if (centrePower > 0) {
-            for (Direction side : Direction.VALUES) {
+            for (Direction side : Direction.values()) {
                 if (!flow.pipe.isConnected(side)) {
                     continue;
                 }
@@ -109,7 +109,7 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
         Vector3f radiusF = new Vector3f((float) radiusV.x, (float) radiusV.y, (float) radiusV.z);
 
         UvFaceData uvs = new UvFaceData();
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (face == side.getOpposite()) {
                 continue;
             }
@@ -142,7 +142,7 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
 
         UvFaceData uvs = new UvFaceData();
 
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
 
             AABB box = new AABB(
                     new Vec3(0.5 - radius, 0.5 - radius, 0.5 - radius).scale(0.5), //

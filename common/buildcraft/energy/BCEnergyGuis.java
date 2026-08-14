@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkHooks;
 
 @Deprecated(forRemoval = true)
 public enum BCEnergyGuis {
@@ -40,8 +39,8 @@ public enum BCEnergyGuis {
 //                NetworkHooks.openGui(serverPlayer, menuProvider, pos);
 
                 IMessage msg = tile.onServerPlayerOpenNoSend(player);
-                NetworkHooks.openScreen(
-                        serverPlayer, menuProvider, buf ->
+                serverPlayer.openMenu(
+                        menuProvider, buf ->
                         {
                             buf.writeBlockPos(tile.getBlockPos());
 

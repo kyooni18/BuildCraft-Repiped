@@ -40,6 +40,6 @@ public class BCTransportPlugs {
     }
 
     private static ResourceLocation idFor(String name) {
-        return new ResourceLocation("buildcrafttransport", name);
+        return ResourceLocation.fromNamespaceAndPath("buildcrafttransport", name);
     }
 }

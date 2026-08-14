@@ -41,7 +41,7 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
     @Override
     public ResourceLocation getId() {
         // return "buildcraft:redstone_board";
-        // return new ResourceLocation(BCModules.ROBOTICS.getModId(), "redstone_board");
+        // return ResourceLocation.fromNamespaceAndPath(BCModules.ROBOTICS.getModId(), "redstone_board");
         return this.id;
     }
 

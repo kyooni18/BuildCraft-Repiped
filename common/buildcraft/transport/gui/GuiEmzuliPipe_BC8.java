@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 //public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8>
 public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation("buildcrafttransport:textures/gui/pipe_emzuli.png");
+            ResourceLocation.parse("buildcrafttransport:textures/gui/pipe_emzuli.png");
     private static final int SIZE_X = 176, SIZE_Y = 166;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_NO_PAINT = new GuiIcon(TEXTURE, SIZE_X, 40, 16, 16);

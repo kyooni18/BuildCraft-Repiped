@@ -299,7 +299,7 @@ public class BCSiliconRecipes {
 //        }
 //
 //        String name = root.relativize(file).toString().replace("\\", "/");
-//        ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
+//        ResourceLocation key = ResourceLocation.fromNamespaceAndPath(ctx.getModId(), name);
 //        try (BufferedReader reader = Files.newBufferedReader(file)) {
 //            JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
 //            if (json == null || json.isJsonNull()) throw new JsonSyntaxException("Json is null (empty file?)");

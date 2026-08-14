@@ -39,7 +39,7 @@ public enum EnumTraversalExpense {
         }
 //        Block block = state.getBlock();
 //        if (block.isPassable(world, pos))
-        if (state.isPathfindable(world, pos, PathComputationType.LAND)) {
+        if (state.isPathfindable(PathComputationType.LAND)) {
             return AIR;
         }
         return SOLID;

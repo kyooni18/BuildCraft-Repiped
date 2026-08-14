@@ -2,7 +2,7 @@ package buildcraft.silicon.recipe;
 
 import buildcraft.silicon.BCSilicon;
 import com.google.gson.JsonObject;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
@@ -40,7 +40,7 @@ public class FacadeSwapRecipeBuilder {
 
         @Override
         public ResourceLocation getId() {
-            return new ResourceLocation(namespace, "facade_swap/" + name);
+            return ResourceLocation.fromNamespaceAndPath(namespace, "facade_swap/" + name);
         }
 
         @Override

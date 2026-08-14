@@ -91,7 +91,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
 
     private Direction getOpenFace() {
         Direction openFace = null;
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (pipe.isConnected(face)) {
                 if (openFace == null) {
                     openFace = face.getOpposite();

@@ -7,6 +7,7 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,7 +28,7 @@ public class RequiredExtractorItemsList extends RequiredExtractor {
         return Optional.ofNullable(path.get(tileNbt))
                 .map(NBTUtilBC::readCompoundList)
 //                .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
-                .map(stream -> stream.map(ItemStack::of).collect(Collectors.toList()))
+                .map(stream -> stream.map(StackUtil::loadStack).collect(Collectors.toList()))
                 .map(Collections::unmodifiableList)
                 .orElseGet(Collections::emptyList);
     }
@@ -38,7 +39,7 @@ public class RequiredExtractorItemsList extends RequiredExtractor {
         return Optional.ofNullable(path.get(entityNbt))
                 .map(NBTUtilBC::readCompoundList)
 //                .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
-                .map(stream -> stream.map(ItemStack::of).collect(Collectors.toList()))
+                .map(stream -> stream.map(StackUtil::loadStack).collect(Collectors.toList()))
                 .map(Collections::unmodifiableList)
                 .orElseGet(Collections::emptyList);
     }

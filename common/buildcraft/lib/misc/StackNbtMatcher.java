@@ -23,8 +23,8 @@ public class StackNbtMatcher implements StackMatchingPredicate {
 
     @Override
     public boolean isMatching(@Nonnull ItemStack base, @Nonnull ItemStack comparison) {
-        CompoundTag baseNBT = base.getTag();
-        CompoundTag comparisonNBT = comparison.getTag();
+        CompoundTag baseNBT = StackUtil.getItemData(base);
+        CompoundTag comparisonNBT = StackUtil.getItemData(comparison);
 
         for (String key : keys) {
             Tag baseValue = baseNBT != null ? baseNBT.get(key) : null;

@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
 import java.util.ArrayList;
@@ -37,11 +38,11 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
 //public class GuiAutoCraftItems extends GuiWithRecipeBookBC8<ContainerAutoCraftItems> implements RecipeShownListener
 {
     private static final ResourceLocation TEXTURE_BASE =
-            new ResourceLocation("buildcraftfactory:textures/gui/autobench_item.png");
+            ResourceLocation.parse("buildcraftfactory:textures/gui/autobench_item.png");
     private static final ResourceLocation TEXTURE_MISC =
-            new ResourceLocation("buildcraftlib:textures/gui/misc_slots.png");
+            ResourceLocation.parse("buildcraftlib:textures/gui/misc_slots.png");
     private static final ResourceLocation VANILLA_CRAFTING_TABLE =
-            new ResourceLocation("textures/gui/container/crafting_table.png");
+            ResourceLocation.parse("textures/gui/container/crafting_table.png");
     private static final int SIZE_X = 176, SIZE_Y = 197;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_FILTER_OVERLAY_SAME = new GuiIcon(TEXTURE_MISC, 54, 0, 18, 18);
@@ -405,10 +406,10 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
 
     @Override
 //    public GuiRecipeBook func_194310_f()
-    public void recipesShown(List<Recipe<?>> p_100518_) {
+    public void recipesShown(List<RecipeHolder<?>> p_100518_) {
 //        return recipeBook;
         // Calen: From RecipeBookComponent
-        for (Recipe<?> recipe : p_100518_) {
+        for (RecipeHolder<?> recipe : p_100518_) {
             this.minecraft.player.removeRecipeHighlight(recipe);
         }
     }

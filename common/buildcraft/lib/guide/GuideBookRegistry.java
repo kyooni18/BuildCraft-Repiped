@@ -16,7 +16,7 @@ public class GuideBookRegistry extends ScriptableRegistry<GuideBook> {
 
     @Nullable
     public GuideBook getBook(String bookName) {
-        ResourceLocation loc = new ResourceLocation(bookName);
+        ResourceLocation loc = ResourceLocation.parse(bookName);
         GuideBook guideBook = getReloadableEntryMap().get(loc);
         if (guideBook != null) {
             return guideBook;

@@ -49,7 +49,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             TextureAtlasSprite[] array = new TextureAtlasSprite[def.textures.length];
 //            for (int i = 0; i < array.length; i++) {
 //                String name = def.textures[i];
-//                event.addSprite(new ResourceLocation(name));
+//                event.addSprite(ResourceLocation.parse(name));
 //            }
             SPRITES.put(def, array);
         }
@@ -61,7 +61,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         for (PipeDefinition def : PipeApi.pipeRegistry.getAllRegisteredPipes()) {
             for (int i = 0; i < def.textures.length; i++) {
                 String name = def.textures[i];
-                consumer.accept(new ResourceLocation(name));
+                consumer.accept(ResourceLocation.parse(name));
             }
         }
     }
@@ -78,7 +78,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
                 String name = def.textures[i];
                 TextureAtlasSprite sprite = sprites.get(name);
                 if (sprite == null) {
-                    sprite = event.getAtlas().getSprite(new ResourceLocation(name));
+                    sprite = event.getAtlas().getSprite(ResourceLocation.parse(name));
                     sprites.put(name, sprite);
                 }
                 array[i] = sprite;
@@ -100,7 +100,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         QUADS_COLOURED = new MutableQuad[2][][];
         final double colourOffset = 0.01;
         Vec3[] faceOffset = new Vec3[6];
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             faceOffset[face.ordinal()] = Vec3.atLowerCornerOf(face.getOpposite().getNormal()).scale(colourOffset);
         }
 
@@ -112,7 +112,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         UvFaceData uvs = new UvFaceData();
         uvs.minU = uvs.minV = 4 / 16f;
         uvs.maxU = uvs.maxV = 12 / 16f;
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
             quad.setDiffuse(quad.normalvf());
             QUADS[0][face.ordinal()][0] = quad;
@@ -144,7 +144,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         // connected
         QUADS[1] = new MutableQuad[6][8];
         QUADS_COLOURED[1] = new MutableQuad[6][8];
-        for (Direction side : Direction.VALUES) {
+        for (Direction side : Direction.values()) {
             center = new Vector3f(//
                     side.getStepX() * 0.375f, //
                     side.getStepY() * 0.375f, //
@@ -158,7 +158,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             center.add(new Vector3f(0.5f, 0.5f, 0.5f));
 
             int i = 0;
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 if (face.getAxis() == side.getAxis()) continue;
                 MutableQuad quad = ModelUtil.createFace(face, center, radius, types[i]);
                 quad.rotateTextureUp(uvsRot[side.ordinal()][i]);
@@ -214,7 +214,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         int border_r = (colour >> 0) & 0xFF;
         int border_g = (colour >> 8) & 0xFF;
         int border_b = (colour >> 16) & 0xFF;
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             float size = key.connections[face.ordinal()];
             PipeFaceTex tex = size > 0 ? key.sideSprites[face.ordinal()] : key.centerSprite;
             int quadsIndex = size > 0 ? 1 : 0;
@@ -286,7 +286,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         List<MutableQuad> quads = new ArrayList<>();
         TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR.getSprite();
 
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             float size = key.connections[face.ordinal()];
             if (size > 0) {
                 addQuads(QUADS_COLOURED[1][face.ordinal()], quads, sprite);

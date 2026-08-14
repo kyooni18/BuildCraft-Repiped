@@ -18,7 +18,7 @@
 
 package buildcraft.energy.generation.structure;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.world.level.ChunkPos;
@@ -32,7 +32,7 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
 import java.util.Optional;
 
 public class OilStructureFeature extends Structure {
-    public static final Codec<OilStructureFeature> CODEC = simpleCodec(OilStructureFeature::new);
+    public static final MapCodec<OilStructureFeature> CODEC = simpleCodec(OilStructureFeature::new);
 
     public OilStructureFeature(Structure.StructureSettings settings) {
         super(settings);

@@ -13,6 +13,7 @@ import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.MessageDebugRequest;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -96,7 +97,9 @@ public enum BCLibEventDist {
         if (player == null) return;
         float partialTicks = event.getPartialTick();
 
-        DetachedRenderer.INSTANCE.renderWorldLastEvent(player, partialTicks, event.getPoseStack(), event.getCamera());
+        PoseStack poseStack = new PoseStack();
+        poseStack.mulPose(event.getPoseStack());
+        DetachedRenderer.INSTANCE.renderWorldLastEvent(player, partialTicks, poseStack, event.getCamera());
     }
 
     @SubscribeEvent

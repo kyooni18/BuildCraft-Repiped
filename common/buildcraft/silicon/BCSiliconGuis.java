@@ -9,7 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkHooks;
 
 @Deprecated(forRemoval = true)
 public enum BCSiliconGuis {
@@ -42,8 +41,8 @@ public enum BCSiliconGuis {
 //                NetworkHooks.openGui(serverPlayer, tile, pos);
 //            }
             if (this == GATE) {
-                NetworkHooks.openScreen(
-                        serverPlayer, provider, buf ->
+                serverPlayer.openMenu(
+                        provider, buf ->
                         {
                             buf.writeBlockPos(pos);
                             buf.writeInt(fullId);
@@ -52,7 +51,7 @@ public enum BCSiliconGuis {
                         }
                 );
             } else {
-                NetworkHooks.openScreen(serverPlayer, provider, pos);
+                serverPlayer.openMenu(provider, pos);
             }
         }
     }

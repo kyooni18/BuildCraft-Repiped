@@ -47,7 +47,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -101,8 +101,8 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
     // TileEngineBase_BC8
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
         nbt.put("currentDirection", NBTUtilBC.writeEnum(currentDirection));
         nbt.putBoolean("isRedstonePowered", isRedstonePowered);
         nbt.putDouble("heat", heat);
@@ -113,8 +113,8 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
         currentDirection = NBTUtilBC.readEnum(nbt.get("currentDirection"), Direction.class);
         if (currentDirection == null) {
             currentDirection = Direction.UP;
@@ -128,7 +128,7 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -222,7 +222,7 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
     /** @return The heat of the current biome, in celsius. */
     protected float getBiomeHeat() {
         Biome biome = getBiome();
-        float temp = biome.getTemperature(getBlockPos());
+        float temp = biome.getBaseTemperature();
         return Math.max(0, Math.min(30, temp * 15f));
     }
 

@@ -44,7 +44,7 @@ public class ItemStackKey {
 //        if (baseStack.getMetadata() != other.baseStack.getMetadata()) {
 //            return false;
 //        }
-        return baseStack.serializeNBT().equals(other.baseStack.serializeNBT());
+        return StackUtil.saveStack(baseStack).equals(StackUtil.saveStack(other.baseStack));
     }
 
     @Override

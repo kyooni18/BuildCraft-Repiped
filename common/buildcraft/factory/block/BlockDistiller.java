@@ -57,16 +57,19 @@ public class BlockDistiller extends BlockBCTile_Neptune<TileDistiller_BC8> imple
 
     @Override
 //    public InteractionResult onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction facing, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         Direction facing = hitResult.getDirection();
         float hitX = hitResult.getBlockPos().getX();
         float hitY = hitResult.getBlockPos().getY();
         float hitZ = hitResult.getBlockPos().getZ();
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileDistiller_BC8) {
-            return ((TileDistiller_BC8) tile).onActivated(player, hand, facing, hitX, hitY, hitZ);
+            InteractionResult result = ((TileDistiller_BC8) tile).onActivated(player, hand, facing, hitX, hitY, hitZ);
+            return result.consumesAction()
+                    ? net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide)
+                    : net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        return InteractionResult.PASS;
+        return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     // 1.18.2: moved to BCFactory#registerRecipeSerializers

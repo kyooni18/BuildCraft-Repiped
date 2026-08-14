@@ -3,6 +3,7 @@ package buildcraft.datagen.factory;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.BCFactoryItems;
 import buildcraft.factory.loot.LootConditionSpreading;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
@@ -18,8 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class FactoryBlockLoot extends BlockLootSubProvider {
-    public FactoryBlockLoot() {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+    public FactoryBlockLoot(HolderLookup.Provider registries) {
+        super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
     }
 
     @Override

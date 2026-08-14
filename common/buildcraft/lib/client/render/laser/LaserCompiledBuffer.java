@@ -39,27 +39,25 @@ public class LaserCompiledBuffer {
         for (int i = 0; i < vertices; i++) {
             // POSITION_3F
 //            buffer.pos(da[DOUBLE_STRIDE * i + 0], da[DOUBLE_STRIDE * i + 1], da[DOUBLE_STRIDE * i + 2]);
-            buffer.vertex(pose.pose(), (float) da[DOUBLE_STRIDE * i + 0], (float) da[DOUBLE_STRIDE * i + 1], (float) da[DOUBLE_STRIDE * i + 2]);
+            buffer.addVertex(pose.pose(), (float) da[DOUBLE_STRIDE * i + 0], (float) da[DOUBLE_STRIDE * i + 1], (float) da[DOUBLE_STRIDE * i + 2]);
 
             // COLOR_4UB
             int c = ia[INT_STRIDE * i + 0];
-            buffer.color(c & 0xFF, (c >> 8) & 0xFF, (c >> 16) & 0xFF, (c >> 24) & 0xFF);
+            buffer.setColor(c & 0xFF, (c >> 8) & 0xFF, (c >> 16) & 0xFF, (c >> 24) & 0xFF);
 
             // TEX_2F
-            buffer.uv((float) da[DOUBLE_STRIDE * i + 3], (float) da[DOUBLE_STRIDE * i + 4]);
+            buffer.setUv((float) da[DOUBLE_STRIDE * i + 3], (float) da[DOUBLE_STRIDE * i + 4]);
 
             // Calen Overlay
-            buffer.overlayCoords(ia[INT_STRIDE * i + 1]);
+            buffer.setOverlay(ia[INT_STRIDE * i + 1]);
 
             // TEX_2S
             int lmap = ia[INT_STRIDE * i + 2];
 //            buffer.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
-            buffer.uv2(lmap);
+            buffer.setLight(lmap);
 
-            buffer.normal(pose.normal(), 1, 1, 1);
+            buffer.setNormal(pose, 1, 1, 1);
 //            buffer.normal(pose.normal(), normals[NORMAL_STRIDE * i + 0], normals[NORMAL_STRIDE * i + 1], normals[NORMAL_STRIDE * i + 2]);
-
-            buffer.endVertex();
         }
     }
 

@@ -87,8 +87,7 @@ public class GuiIcon implements ISimpleDrawable {
 //        GL11.glBegin(GL11.GL_QUADS);
         RenderSystem.setShader(GameRenderer::getPositionTexShader); // Calen: without this, the texture will not appear
         Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuilder();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder bufferbuilder = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
 //        double[] q = calcQ(x1, y1, x2, y2, x3, y3, x4, y4);
 
@@ -102,13 +101,13 @@ public class GuiIcon implements ISimpleDrawable {
 //        bufferbuilder.vertex(pose, (float) x2, (float) y2, 0).uv((float) uMax, (float) vMax).endVertex();
 //        bufferbuilder.vertex(pose, (float) x2, (float) y1, 0).uv((float) uMax, (float) vMin).endVertex();
 //        bufferbuilder.vertex(pose, (float) x1, (float) y1, 0).uv((float) uMin, (float) vMin).endVertex();
-        bufferbuilder.vertex(pose, (float) x1, (float) y1, 0).uv((float) uMin, (float) vMax).endVertex();
-        bufferbuilder.vertex(pose, (float) x2, (float) y2, 0).uv((float) uMax, (float) vMax).endVertex();
-        bufferbuilder.vertex(pose, (float) x3, (float) y3, 0).uv((float) uMax, (float) vMin).endVertex();
-        bufferbuilder.vertex(pose, (float) x4, (float) y4, 0).uv((float) uMin, (float) vMin).endVertex();
+        bufferbuilder.addVertex(pose, (float) x1, (float) y1, 0).setUv((float) uMin, (float) vMax);
+        bufferbuilder.addVertex(pose, (float) x2, (float) y2, 0).setUv((float) uMax, (float) vMax);
+        bufferbuilder.addVertex(pose, (float) x3, (float) y3, 0).setUv((float) uMax, (float) vMin);
+        bufferbuilder.addVertex(pose, (float) x4, (float) y4, 0).setUv((float) uMin, (float) vMin);
 
 //        GL11.glEnd();
-        tessellator.end();
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
     }
 
 //    private static double[] calcQ(double x1, double y1, double x2, double y2, double x3, double y3, double x4,
@@ -180,8 +179,7 @@ public class GuiIcon implements ISimpleDrawable {
 //        Tessellator tess = Tessellator.getInstance();
         Tesselator tess = Tesselator.getInstance();
 //        BufferBuilder vb = tess.getBuffer();
-        BufferBuilder vb = tess.getBuilder();
-        vb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder vb = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         PoseStack.Pose pose = poseStack.last();
         vertex(pose, vb, xMin, yMax, uMin, vMax);
@@ -190,7 +188,7 @@ public class GuiIcon implements ISimpleDrawable {
         vertex(pose, vb, xMin, yMin, uMin, vMin);
 
 //        tess.draw();
-        tess.end();
+        BufferUploader.drawWithShader(vb.buildOrThrow());
     }
 
     public static void drawAt(ISprite sprite, GuiGraphics guiGraphics, double x, double y, double size) {
@@ -217,8 +215,7 @@ public class GuiIcon implements ISimpleDrawable {
 //        Tessellator tess = Tessellator.getInstance();
         Tesselator tess = Tesselator.getInstance();
 //        BufferBuilder vb = tess.getBuffer();
-        BufferBuilder vb = tess.getBuilder();
-        vb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder vb = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         PoseStack.Pose pose = poseStack.last();
         vertex(pose, vb, xMin, yMax, uMin, vMax);
@@ -227,12 +224,10 @@ public class GuiIcon implements ISimpleDrawable {
         vertex(pose, vb, xMin, yMin, uMin, vMin);
 
 //        tess.draw();
-        tess.end();
+        BufferUploader.drawWithShader(vb.buildOrThrow());
     }
 
     private static void vertex(PoseStack.Pose pose, BufferBuilder vb, double x, double y, double u, double v) {
-        vb.vertex(pose.pose(), (float) x, (float) y, 0);
-        vb.uv((float) u, (float) v);
-        vb.endVertex();
+        vb.addVertex(pose.pose(), (float) x, (float) y, 0).setUv((float) u, (float) v);
     }
 }

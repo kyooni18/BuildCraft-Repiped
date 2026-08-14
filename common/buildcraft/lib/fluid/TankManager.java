@@ -213,6 +213,10 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
     }
 
     @Override
+    public CompoundTag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
+        return serializeNBT();
+    }
+
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         for (Tank t : tanks) {
@@ -222,6 +226,10 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
     }
 
     @Override
+    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, CompoundTag nbt) {
+        deserializeNBT(nbt);
+    }
+
     public void deserializeNBT(CompoundTag nbt) {
         for (Tank t : tanks) {
             t.readFromNBT(nbt.getCompound(t.getTankName()));

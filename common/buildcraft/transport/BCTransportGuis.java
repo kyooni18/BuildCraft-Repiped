@@ -9,7 +9,6 @@ import buildcraft.api.tiles.IBCTileMenuProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkHooks;
 
 @Deprecated(forRemoval = true)
 public enum BCTransportGuis {
@@ -43,8 +42,8 @@ public enum BCTransportGuis {
 //            PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
 
             IMessage msg = holder.onServerPlayerOpenNoSend(player);
-            NetworkHooks.openScreen(
-                    serverPlayer, holder, buf ->
+            serverPlayer.openMenu(
+                    holder, buf ->
                     {
                         buf.writeBlockPos(pos);
 

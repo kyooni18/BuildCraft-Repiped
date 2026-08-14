@@ -330,7 +330,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack()
         );
         sideCheck.disallow(reachCenter.from);
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (item.tried.contains(face) || !pipe.isConnected(face)) {
                 sideCheck.disallow(face);
             }
@@ -581,7 +581,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         TravellingItem item = new TravellingItem(stack);
         if (from == null) {
             // Find a reasonable alternative (as it's not allowed to be null)
-            for (Direction f : Direction.VALUES) {
+            for (Direction f : Direction.values()) {
                 if (!pipe.isConnected(f)) {
                     item.side = f;
                     break;

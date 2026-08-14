@@ -112,11 +112,16 @@ public class BCCore {
         BCCoreConfig.postInit();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void clientSetup(FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(BCCoreBlocks.markerVolume.get(), RenderType.cutout());
-        CoreItemModelPredicates.register(event);
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static final class ClientEvents {
+        private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void clientSetup(FMLClientSetupEvent event) {
+            ItemBlockRenderTypes.setRenderLayer(BCCoreBlocks.markerVolume.get(), RenderType.cutout());
+            CoreItemModelPredicates.register(event);
+        }
     }
 
     @SubscribeEvent

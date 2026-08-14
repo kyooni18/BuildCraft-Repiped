@@ -5,41 +5,45 @@ import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFluidCoolant;
 import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.lib.misc.JsonUtil;
+import buildcraft.lib.recipe.LegacyRecipeCodec;
 import buildcraft.lib.recipe.coolant.CoolantRegistry.FluidCoolant;
 import buildcraft.lib.recipe.coolant.CoolantRegistry.SolidCoolant;
 import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
-
 public class CoolantRecipeSerializer implements RecipeSerializer<ICoolant> {
-    public static final CoolantRecipeSerializer INSTANCE;
+    public static final CoolantRecipeSerializer INSTANCE = new CoolantRecipeSerializer();
+    private static final MapCodec<ICoolant> CODEC = LegacyRecipeCodec.mapCodec(
+            ICoolant.TYPE_ID, CoolantRecipeSerializer::fromJson, CoolantRecipeSerializer::toJson);
+    private static final StreamCodec<RegistryFriendlyByteBuf, ICoolant> STREAM_CODEC = LegacyRecipeCodec.streamCodec(CODEC);
 
-    static {
-        INSTANCE = new CoolantRecipeSerializer();
+    private static ICoolant fromJson(ResourceLocation recipeId, JsonObject json) {
+        EnumCoolantType type = EnumCoolantType.byName(GsonHelper.getAsString(json, "coolantType"));
+        FluidStack fluid = JsonUtil.deSerializeFluidStack(GsonHelper.getAsJsonObject(json, "fluid"));
+        return switch (type) {
+            case FLUID -> new FluidCoolant(recipeId, fluid, GsonHelper.getAsFloat(json, "degreesCoolingPerMb"));
+            case SOLID -> new SolidCoolant(recipeId, JsonUtil.deSerializeItemStack(GsonHelper.getAsJsonObject(json, "solid")), fluid,
+                    GsonHelper.getAsFloat(json, "multiplier"));
+        };
     }
 
-    @Override
-    public ICoolant fromJson(ResourceLocation recipeId, JsonObject json) {
-        String type = GsonHelper.getAsString(json, "type");
-        EnumCoolantType coolantType = EnumCoolantType.byName(GsonHelper.getAsString(json, "coolantType"));
-        FluidStack fluid = JsonUtil.deSerializeFluidStack(json.getAsJsonObject("fluid"));
-        switch (coolantType) {
-            case FLUID:
-                float degreesCoolingPerMb = GsonHelper.getAsFloat(json, "degreesCoolingPerMb");
-                return new FluidCoolant(recipeId, fluid, degreesCoolingPerMb);
-            case SOLID:
-                float multiplier = GsonHelper.getAsFloat(json, "multiplier");
-                ItemStack solid = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "solid"));
-                return new SolidCoolant(recipeId, solid, fluid, multiplier);
+    private static void toJson(ICoolant recipe, JsonObject json) {
+        json.addProperty("id", recipe.getId().toString());
+        json.addProperty("coolantType", recipe.getCoolantType().getLowerName());
+        json.add("fluid", JsonUtil.serializeFluidStack(recipe.getFluid()));
+        if (recipe instanceof ISolidCoolant solid) {
+            json.addProperty("multiplier", solid.getMultiplier());
+            json.add("solid", JsonUtil.serializeItemStack(solid.getSolid()));
+        } else if (recipe instanceof IFluidCoolant fluid) {
+            json.addProperty("degreesCoolingPerMb", fluid.getDegreesCoolingPerMB());
         }
-        throw new IllegalArgumentException("[energy.recipe] Unexpected Coolant Type!");
     }
 
     public static void toJson(CoolantRecipeBuilder builder, JsonObject json) {
@@ -49,40 +53,9 @@ public class CoolantRecipeSerializer implements RecipeSerializer<ICoolant> {
         if (builder.type == EnumCoolantType.SOLID) {
             json.addProperty("multiplier", builder.multiplier);
             json.add("solid", JsonUtil.serializeItemStack(builder.solid));
-        } else {
-            json.addProperty("degreesCoolingPerMb", builder.degreesCoolingPerMb);
-        }
+        } else json.addProperty("degreesCoolingPerMb", builder.degreesCoolingPerMb);
     }
 
-    @Nullable
-    @Override
-    public ICoolant fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-        EnumCoolantType coolantType = buffer.readEnum(EnumCoolantType.class);
-        FluidStack fluid = buffer.readFluidStack();
-        float floatValue = buffer.readFloat();
-        switch (coolantType) {
-            case FLUID:
-                return new FluidCoolant(recipeId, fluid, floatValue);
-            case SOLID:
-                ItemStack solid = buffer.readItem();
-                return new SolidCoolant(recipeId, solid, fluid, floatValue);
-        }
-        throw new IllegalArgumentException("[energy.recipe] Unexpected Coolant Type!");
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buffer, ICoolant recipe) {
-        EnumCoolantType coolantType = recipe.getCoolantType();
-        buffer.writeEnum(coolantType);
-        buffer.writeFluidStack(recipe.getFluid());
-        switch (coolantType) {
-            case FLUID:
-                buffer.writeFloat(((IFluidCoolant) recipe).getDegreesCoolingPerMB());
-                return;
-            case SOLID:
-                buffer.writeFloat(((ISolidCoolant) recipe).getMultiplier());
-                buffer.writeItemStack(((ISolidCoolant) recipe).getSolid(), false);
-                return;
-        }
-    }
+    @Override public MapCodec<ICoolant> codec() { return CODEC; }
+    @Override public StreamCodec<RegistryFriendlyByteBuf, ICoolant> streamCodec() { return STREAM_CODEC; }
 }

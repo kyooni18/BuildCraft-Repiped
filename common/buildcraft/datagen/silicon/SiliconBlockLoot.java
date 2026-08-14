@@ -1,6 +1,7 @@
 package buildcraft.datagen.silicon;
 
 import buildcraft.silicon.BCSiliconBlocks;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
@@ -11,8 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SiliconBlockLoot extends BlockLootSubProvider {
-    public SiliconBlockLoot() {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+    public SiliconBlockLoot(HolderLookup.Provider registries) {
+        super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
     }
 
     @Override

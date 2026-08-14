@@ -8,7 +8,6 @@ package buildcraft.lib.list;
 
 import buildcraft.api.lists.ListMatchHandler;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -23,10 +22,10 @@ public class ListMatchHandlerArmor extends ListMatchHandler {
         EnumSet<EquipmentSlot> types = EnumSet.noneOf(EquipmentSlot.class);
 
         for (EquipmentSlot e : EquipmentSlot.values()) {
-            if (e.getType() == EquipmentSlot.Type.ARMOR) {
+            if (e.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
                 // Calen: IForgeItem#canEquip
 //                if (stack.getItem().canEquip(stack, e, player))
-                if (Mob.getEquipmentSlotForItem(stack) == e) {
+                if (stack.getEquipmentSlot() == e) {
                     types.add(e);
                 }
             }

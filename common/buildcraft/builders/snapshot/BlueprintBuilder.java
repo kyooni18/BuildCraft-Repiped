@@ -131,14 +131,13 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                                         .map(fluidStack ->
                                                         {
                                                             ItemStack stack = FluidUtil.getFilledBucket(fluidStack);
-                                                            if (!stack.hasTag()) {
-                                                                stack.setTag(new CompoundTag());
-                                                            }
+                                                            CompoundTag stackData = StackUtil.getItemData(stack);
                                                             // noinspection ConstantConditions
-                                                            stack.getTag().put(
+                                                            stackData.put(
                                                                     FLUID_STACK_KEY,
                                                                     fluidStack.writeToNBT(new CompoundTag())
                                                             );
+                                                            StackUtil.setItemData(stack, stackData);
                                                             return stack;
                                                         })
                                         ).collect(Collectors.toList())
@@ -192,12 +191,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         super.cancelPlaceTask(placeTask);
         // noinspection ConstantConditions
         placeTask.items.stream()
-                .filter(stack -> !stack.hasTag() || !stack.getTag().contains(FLUID_STACK_KEY))
+                .filter(stack -> !StackUtil.getItemData(stack).contains(FLUID_STACK_KEY))
                 .forEach(stack -> tile.getInvResources().insert(stack, false, false));
         // noinspection ConstantConditions
         placeTask.items.stream()
-                .filter(stack -> stack.hasTag() && stack.getTag().contains(FLUID_STACK_KEY))
-                .map(stack -> Pair.of(stack.getCount(), stack.getTag().getCompound(FLUID_STACK_KEY)))
+                .filter(stack -> StackUtil.getItemData(stack).contains(FLUID_STACK_KEY))
+                .map(stack -> Pair.of(stack.getCount(), StackUtil.getItemData(stack).getCompound(FLUID_STACK_KEY)))
                 .map(countNbt ->
                 {
                     FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(countNbt.getRight());

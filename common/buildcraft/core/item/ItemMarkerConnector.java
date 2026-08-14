@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 
 public class ItemMarkerConnector extends ItemBC_Neptune {
 
-    private static final ResourceLocation ADVANCEMENT_VOLUME_MARKER = new ResourceLocation("buildcraftcore:markers");
-    private static final ResourceLocation ADVANCEMENT_PATH_MARKER = new ResourceLocation("buildcraftcore:path_markers");
+    private static final ResourceLocation ADVANCEMENT_VOLUME_MARKER = ResourceLocation.parse("buildcraftcore:markers");
+    private static final ResourceLocation ADVANCEMENT_PATH_MARKER = ResourceLocation.parse("buildcraftcore:path_markers");
 
     public ItemMarkerConnector(String idBC, Item.Properties properties) {
         super(idBC, properties);

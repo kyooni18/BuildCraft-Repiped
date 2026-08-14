@@ -99,7 +99,7 @@ public enum PipeRegistry implements IPipeRegistry {
 
     @Nonnull
     public PipeDefinition loadDefinition(String identifier) throws InvalidInputDataException {
-        PipeDefinition def = getDefinition(new ResourceLocation(identifier));
+        PipeDefinition def = getDefinition(ResourceLocation.parse(identifier));
         if (def == null) {
             throw new InvalidInputDataException("Unknown pipe definition " + identifier);
         }

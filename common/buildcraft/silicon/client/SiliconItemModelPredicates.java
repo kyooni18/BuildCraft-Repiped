@@ -10,7 +10,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @OnlyIn(Dist.CLIENT)
 public class SiliconItemModelPredicates {
-    public static final ResourceLocation PREDICATE_HAS_DATA = new ResourceLocation("buildcraft", "has_data");
+    public static final ResourceLocation PREDICATE_HAS_DATA = ResourceLocation.fromNamespaceAndPath("buildcraft", "has_data");
 
     public static void register(FMLClientSetupEvent event) {
         event.enqueueWork(

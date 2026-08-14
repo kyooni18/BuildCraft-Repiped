@@ -284,7 +284,6 @@ public class BCEnergyConfig {
 
         christmasEventStatus = propChristmasEventType.get();
 //            } else {
-        validateBiomeNames();
 //            }
 //        }
 
@@ -294,13 +293,20 @@ public class BCEnergyConfig {
     private static void addBiomeNames(ConfigCategory<List<String>> prop, Set<ResourceLocation> set) {
         set.clear();
         for (String s : prop.get()) {
-            set.add(new ResourceLocation(s));
+            set.add(ResourceLocation.parse(s));
         }
     }
 
     /** Called in post-init, after all biomes should have been registered. In 1.12 this should be called after the
      * registry event for biomes has been fired. */
     public static void validateBiomeNames() {
+        // Biomes are data-driven in 1.21 and are not necessarily populated in ForgeRegistries.BIOMES
+        // during mod lifecycle events. Avoid reporting every configured biome as invalid when that
+        // compatibility view is empty.
+        if (ForgeRegistries.BIOMES.getKeys().isEmpty()) {
+            return;
+        }
+
         Set<ResourceLocation> invalids = new HashSet<>();
         addInvalidBiomeNames(excessiveBiomes, invalids);
         addInvalidBiomeNames(excludedBiomes, invalids);

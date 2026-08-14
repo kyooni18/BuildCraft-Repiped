@@ -10,10 +10,14 @@ import buildcraft.api.items.IList;
 import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.recipes.StackDefinition;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -49,6 +53,44 @@ public class StackUtil {
         EMPTY_FLUID = stackF;
     }
 
+    public static CompoundTag saveStack(ItemStack stack) {
+        Tag tag = stack.save(RegistryAccess.EMPTY);
+        return tag instanceof CompoundTag compound ? compound : new CompoundTag();
+    }
+
+    public static ItemStack loadStack(CompoundTag tag) {
+        return ItemStack.parseOptional(RegistryAccess.EMPTY, tag);
+    }
+
+    public static CompoundTag getItemData(ItemStack stack) {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        return data == null ? new CompoundTag() : data.copyTag();
+    }
+
+    public static CompoundTag getOrCreateItemData(ItemStack stack) {
+        CompoundTag tag = getItemData(stack);
+        setItemData(stack, tag);
+        return tag;
+    }
+
+    public static CompoundTag getItemDataElement(ItemStack stack, String key) {
+        CompoundTag tag = getItemData(stack);
+        return tag.contains(key, Tag.TAG_COMPOUND) ? tag.getCompound(key) : null;
+    }
+
+    public static boolean hasItemData(ItemStack stack) {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        return data != null && !data.isEmpty();
+    }
+
+    public static void setItemData(ItemStack stack, @Nullable CompoundTag tag) {
+        if (tag == null || tag.isEmpty()) {
+            stack.remove(DataComponents.CUSTOM_DATA);
+        } else {
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag.copy()));
+        }
+    }
+
     /** Checks to see if the two input stacks are equal in all but stack size. Note that this doesn't check anything
      * todo with stack size, so if you pass in two stacks of 64 cobblestone this will return true. If you pass in null
      * (at all) then this will only return true if both are null. */
@@ -75,7 +117,7 @@ public class StackUtil {
 //            stack = new ItemStack(stack.getItem(), 1, b.getMetaFromState(state));
 //        }
 //        return stack;
-        return b.getCloneItemStack(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, state);
+        return new ItemStack(b);
     }
 
     /** Checks to see if the given required stack is contained fully in the given container stack. */
@@ -331,8 +373,7 @@ public class StackUtil {
 //            }
 //        }
         if (matchNBT) {
-            CompoundTag baseTag = base.getTag();
-            if (baseTag != null && !baseTag.equals(comparison.getTag())) {
+            if (!Objects.equals(base.getComponentsPatch(), comparison.getComponentsPatch())) {
                 return false;
             }
         } else {
@@ -443,11 +484,7 @@ public class StackUtil {
         if (stack.isEmpty()) {
             return 0;
         }
-        if (!stack.hasTag()) {
-//            return Objects.hash(stack.getItem(), stack.getMetadata());
-            return Objects.hash(stack.getItem(), stack.getDamageValue());
-        }
-        return stack.serializeNBT().hashCode();
+        return ItemStack.hashItemAndComponents(stack);
     }
 
     public static NonNullList<ItemStack> mergeSameItems(List<ItemStack> items) {
@@ -474,15 +511,15 @@ public class StackUtil {
 
     public static boolean isSameItemSameDamageSameTag(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
         // damage is a tag value
-        return ItemStack.isSameItemSameTags(stack1, stack2);
+        return ItemStack.isSameItemSameComponents(stack1, stack2);
     }
 
     public static boolean isSameTag(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
-        return stack1.isEmpty() && stack2.isEmpty() ? true : Objects.equals(stack1.getTag(), stack2.getTag()) && stack1.areCapsCompatible(stack2);
+        return stack1.isEmpty() && stack2.isEmpty() || Objects.equals(stack1.getComponentsPatch(), stack2.getComponentsPatch());
     }
 
     public static boolean isSameItemSameDamageSameTagSameCount(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
         // damage is a tag value
-        return stack1.getCount() == stack2.getCount() && ItemStack.isSameItemSameTags(stack1, stack2);
+        return stack1.getCount() == stack2.getCount() && ItemStack.isSameItemSameComponents(stack1, stack2);
     }
 }

@@ -38,8 +38,8 @@ public class ItemGateCopier extends ItemBC_Neptune {
     @Override
     @OnlyIn(Dist.CLIENT)
 //    public void addInformation(ItemStack stack, Level world, List<String> tooltip, ITooltipFlag flag)
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, world, tooltip, flag);
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
         if (getMetadata(stack) != 0) {
 //            tooltip.add(LocaleUtil.localize("buildcraft.item.nonclean.usage"));
             tooltip.add(Component.translatable("buildcraft.item.nonclean.usage"));
@@ -66,7 +66,9 @@ public class ItemGateCopier extends ItemBC_Neptune {
         CompoundTag nbt = NBTUtilBC.getItemData(stack);
         nbt.remove(NBT_DATA);
         if (nbt.isEmpty()) {
-            stack.setTag(null);
+            StackUtil.setItemData(stack, null);
+        } else {
+            StackUtil.setItemData(stack, nbt);
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
@@ -78,10 +80,12 @@ public class ItemGateCopier extends ItemBC_Neptune {
     }
 
     public static CompoundTag getCopiedGateData(ItemStack stack) {
-        return stack.getTagElement(NBT_DATA);
+        return StackUtil.getItemDataElement(stack, NBT_DATA);
     }
 
     public static void setCopiedGateData(ItemStack stack, CompoundTag nbt) {
-        NBTUtilBC.getItemData(stack).put(NBT_DATA, nbt);
+        CompoundTag tag = NBTUtilBC.getItemData(stack);
+        tag.put(NBT_DATA, nbt);
+        StackUtil.setItemData(stack, tag);
     }
 }

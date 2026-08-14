@@ -63,7 +63,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -77,7 +77,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public static final boolean DEBUG_QUARRY = BCDebugging.shouldDebugLog("builders.quarry");
     private static final long MAX_POWER_PER_TICK = 512 * MjAPI.MJ;
     private static final ResourceLocation ADVANCEMENT_COMPLETE
-            = new ResourceLocation("buildcraftbuilders:diggy_diggy_hole");
+            = ResourceLocation.parse("buildcraftbuilders:diggy_diggy_hole");
 
     private final MjBattery battery = new MjBattery(24000 * MjAPI.MJ);
     public final Box frameBox = new Box();
@@ -208,8 +208,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         openSet.add(getBlockPos());
 
         // Hold on to the array of orders, as we shuffle it on each iteration
-//        Direction[] order = Direction.VALUES;
-        Direction[] order = Direction.VALUES.clone();
+//        Direction[] order = Direction.values();
+        Direction[] order = Direction.values().clone();
         // Also hold on to it as a list, so that we don't have to re-create it all the time
         List<Direction> orderAsList = Arrays.asList(order);
 
@@ -742,9 +742,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Override
 //    public CompoundTag writeToNBT(CompoundTag nbt)
-    public void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.writeToNBT(nbt);
-        super.saveAdditional(nbt);
+        super.saveAdditional(nbt, provider);
         nbt.put("box", miningBox.writeToNBT());
         nbt.put("frame", frameBox.writeToNBT());
         if (boxIterator != null) {
@@ -768,9 +768,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Override
 //    public void readFromNBT(CompoundTag nbt)
-    public void load(CompoundTag nbt) {
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.readFromNBT(nbt);
-        super.load(nbt);
+        super.loadAdditional(nbt, provider);
         miningBox.initialize(nbt.getCompound("box"));
         frameBox.initialize(nbt.getCompound("frame"));
         boxIterator = BoxIterator.readFromNbt(nbt.getCompound("boxIterator"));
@@ -793,7 +793,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if (frameBox.isInitialized() && miningBox.isInitialized()) {
             isValid = true;
             Direction validFace = null;
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 if (face.getAxis() == Axis.Y) continue;
                 // We can't read the blockstate yet so instead we'll have to try all possible faces
                 if (frameBox.isOnEdge(getBlockPos().relative(face))) {
@@ -864,7 +864,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {

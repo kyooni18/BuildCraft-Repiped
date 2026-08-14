@@ -26,14 +26,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.RegistryObject;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemPipeHolder extends BlockItem implements IItemBuildCraft, IItemPipe {
@@ -166,7 +165,7 @@ public class ItemPipeHolder extends BlockItem implements IItemBuildCraft, IItemP
     @Override
     @OnlyIn(Dist.CLIENT)
 //    public void addInformation(ItemStack stack, Level world, List<String> tooltip, ITooltipFlag flag)
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 //        String tipName = "tip." + unlocalizedName.replace(".name", "").replace("item.", "");
         String tipName = "tip." + this.unlocalizedName.replace(".name", "").replace("item.", "");
         String localised = I18n.get(tipName);

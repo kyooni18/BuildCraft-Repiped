@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.entity;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.api.BCItems;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -39,19 +40,16 @@ import buildcraft.robotics.client.particle.EntityRobotEnergyParticle;
 import buildcraft.robotics.item.ItemRobot;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -64,7 +62,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -75,19 +72,21 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -95,7 +94,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -113,10 +112,10 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public static final int NET_SET_STEAM_DIRECTION = IDS.allocId("setSteamDirection");
     public static final int NET_SYNC_WEARABLES = IDS.allocId("syncWearables");
 
-    // public static final ResourceLocation ROBOT_BASE = new ResourceLocation(DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_base.png");
-    // public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraftrobotics:textures/entities" + "/robot_base.png");
-    public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraftrobotics:entities/robot_base");
-    public static final ResourceLocation ROBOT_BASE_PNG = new ResourceLocation("buildcraftrobotics:entities/robot_base.png");
+    // public static final ResourceLocation ROBOT_BASE = ResourceLocation.parse(DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_base.png");
+    // public static final ResourceLocation ROBOT_BASE = ResourceLocation.parse("buildcraftrobotics:textures/entities" + "/robot_base.png");
+    public static final ResourceLocation ROBOT_BASE = ResourceLocation.parse("buildcraftrobotics:entities/robot_base");
+    public static final ResourceLocation ROBOT_BASE_PNG = ResourceLocation.parse("buildcraftrobotics:entities/robot_base.png");
 
     // private static final int DATA_LASER_TAIL_X = 12;
     // private static final int DATA_LASER_TAIL_Y = 13;
@@ -251,9 +250,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     // protected void entityInit()
-    protected void defineSynchedData() {
+    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
         // super.entityInit();
-        super.defineSynchedData();
+        super.defineSynchedData(builder);
 
         // setNullBoundingBox();
 
@@ -274,16 +273,16 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 //        dataWatcher.addObject(DATA_ENERGY_SPEND_PER_CYCLE, Integer.valueOf(0));
 //        dataWatcher.addObject(DATA_ACTIVE_CLIENT, Byte.valueOf((byte) 0));
 //        dataWatcher.addObject(DATA_BATTERY_ENERGY, Integer.valueOf(0));
-        entityData.define(DATA_LASER_TAIL_X, Float.valueOf(0));
-        entityData.define(DATA_LASER_TAIL_Y, Float.valueOf(0));
-        entityData.define(DATA_LASER_TAIL_Z, Float.valueOf(0));
-        entityData.define(DATA_LASER_VISIBLE, Byte.valueOf((byte) 0));
-        entityData.define(DATA_BOARD_ID, "");
-        entityData.define(DATA_ITEM_AIM_YAW, Float.valueOf(0));
-        entityData.define(DATA_ITEM_AIM_PITCH, Float.valueOf(0));
-        entityData.define(DATA_ENERGY_SPEND_PER_CYCLE, writeLongToNbt(0));
-        entityData.define(DATA_ACTIVE_CLIENT, Byte.valueOf((byte) 0));
-        entityData.define(DATA_BATTERY_ENERGY, writeLongToNbt(0));
+        builder.define(DATA_LASER_TAIL_X, Float.valueOf(0));
+        builder.define(DATA_LASER_TAIL_Y, Float.valueOf(0));
+        builder.define(DATA_LASER_TAIL_Z, Float.valueOf(0));
+        builder.define(DATA_LASER_VISIBLE, Byte.valueOf((byte) 0));
+        builder.define(DATA_BOARD_ID, "");
+        builder.define(DATA_ITEM_AIM_YAW, Float.valueOf(0));
+        builder.define(DATA_ITEM_AIM_PITCH, Float.valueOf(0));
+        builder.define(DATA_ENERGY_SPEND_PER_CYCLE, writeLongToNbt(0));
+        builder.define(DATA_ACTIVE_CLIENT, Byte.valueOf((byte) 0));
+        builder.define(DATA_BATTERY_ENERGY, writeLongToNbt(0));
     }
 
     protected void updateDataClient() {
@@ -301,7 +300,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         this.isLaserVisible = entityData.get(DATA_LASER_VISIBLE) == 1;
 
 //        RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher.getWatchableObjectString(DATA_BOARD_ID));
-        RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(new ResourceLocation(entityData.get(DATA_BOARD_ID)));
+        RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(ResourceLocation.parse(entityData.get(DATA_BOARD_ID)));
 
         if (boardNBT != null) {
             // texture = ((RedstoneBoardRobotNBT) boardNBT).getRobotTexture();
@@ -549,10 +548,6 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         return new AABB(getX() - 0.25F, getY() - 0.25F, getZ() - 0.25F, getX() + 0.25F, getY() + 0.25F, getZ() + 0.25F);
     }
 
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions dim) {
-        return 0;
-    }
 
 //    public void setNullBoundingBox() {
 //        width = 0F;
@@ -571,18 +566,20 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     @Override
     public void writeSpawnData(FriendlyByteBuf data) {
         data.writeByte(wearables.size());
+        PacketBufferBC bcData = new PacketBufferBC(data);
         for (ItemStack s : wearables) {
 //            NetworkUtils.writeStack(data, s);
-            data.writeItemStack(s, false);
+            bcData.writeItemStack(s, false);
         }
     }
 
     @Override
     public void readSpawnData(FriendlyByteBuf data) {
         int amount = data.readUnsignedByte();
+        PacketBufferBC bcData = new PacketBufferBC(data);
         while (amount > 0) {
 //            wearables.add(NetworkUtils.readStack(data));
-            wearables.add(data.readItem());
+            wearables.add(bcData.readItem());
             amount--;
         }
         init();
@@ -682,9 +679,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
         // if (itemInUse != null)
         if (!itemInUse.isEmpty()) {
-            CompoundTag itemNBT = new CompoundTag();
-            itemInUse.save(itemNBT);
-            nbt.put("itemInUse", itemNBT);
+            nbt.put("itemInUse", StackUtil.saveStack(itemInUse));
             nbt.putBoolean("itemActive", itemActive);
         }
 
@@ -704,9 +699,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             ListTag wearableList = new ListTag();
 
             for (ItemStack wearable : wearables) {
-                CompoundTag item = new CompoundTag();
-                wearable.save(item);
-                wearableList.add(item);
+                wearableList.add(StackUtil.saveStack(wearable));
             }
 
             nbt.put("wearables", wearableList);
@@ -766,7 +759,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         if (nbt.contains("wearables")) {
             ListTag list = nbt.getList("wearables", 10);
             for (int i = 0; i < list.size(); i++) {
-                ItemStack stack = ItemStack.of(list.getCompound(i));
+                ItemStack stack = buildcraft.lib.misc.StackUtil.loadStack(list.getCompound(i));
 //                if (stack != null)
                 if (stack != null && !stack.isEmpty()) {
                     wearables.add(stack);
@@ -775,12 +768,12 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         }
 
         if (nbt.contains("itemInUse")) {
-            itemInUse = ItemStack.of(nbt.getCompound("itemInUse"));
+            itemInUse = buildcraft.lib.misc.StackUtil.loadStack(nbt.getCompound("itemInUse"));
             itemActive = nbt.getBoolean("itemActive");
         }
 
 //        for (int i = 0; i < inv.length; ++i) {
-//            inv[i] = ItemStack.of(nbt.getCompound("inv[" + i + "]"));
+//            inv[i] = buildcraft.lib.misc.StackUtil.loadStack(nbt.getCompound("inv[" + i + "]"));
 //        }
         if (nbt.contains("items", Tag.TAG_COMPOUND)) {
             itemManager.deserializeNBT(nbt.getCompound("items"));
@@ -998,7 +991,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         }
     }
 
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (NET_CLIENT_SET_ITEM_IN_USE == id) {
                 itemInUse = buffer.readItem();
@@ -1243,85 +1236,54 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         mainAI.setOverridingAI(ai);
     }
 
-    public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
-        BlockPos entPos = VecUtil.convertFloor(VecUtil.getVec(par1Entity));
-        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(FakePlayerProvider.INSTANCE.getFakePlayer((ServerLevel) level(), FakePlayerProvider.NULL_PROFILE, entPos), par1Entity))) {
+    public void attackTargetEntityWithCurrentItem(Entity target) {
+        BlockPos entPos = VecUtil.convertFloor(VecUtil.getVec(target));
+        ServerLevel serverLevel = (ServerLevel) level();
+        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(
+                FakePlayerProvider.INSTANCE.getFakePlayer(serverLevel, FakePlayerProvider.NULL_PROFILE, entPos), target))) {
             return;
         }
-        // if (par1Entity.canAttackWithItem())
-        if (par1Entity.isAttackable()) {
-            // if (!par1Entity.hitByEntity(this))
-            if (!par1Entity.skipAttackInteraction(this)) {
-                float attackDamage = 2.0F;
-                int knockback = 0;
+        if (!target.isAttackable() || target.skipAttackInteraction(this)) {
+            return;
+        }
 
-                // if (attributes != null)
-                if (this.getAttributes() != null) {
-                    // for (AttributeModifier modifier : attributes.get(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName()))
-                    for (AttributeModifier modifier : this.getAttributes().getInstance(Attributes.ATTACK_DAMAGE).getModifiers()) {
-                        switch (modifier.getOperation()) {
-                            case ADDITION:
-                                attackDamage += modifier.getAmount();
-                                break;
-                            case MULTIPLY_BASE:
-                                attackDamage *= modifier.getAmount();
-                                break;
-                            case MULTIPLY_TOTAL:
-                                attackDamage *= 1.0F + modifier.getAmount();
-                                break;
-                        }
-                    }
-                }
+        DamageSource damageSource = new DamageSource(
+                level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(
+                        ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryBuild(BCRobotics.MODID, "robot"))),
+                this
+        );
+        ItemStack weapon = getWeaponItem();
+        float attackDamage = (float) getAttributeValue(Attributes.ATTACK_DAMAGE);
+        attackDamage = EnchantmentHelper.modifyDamage(serverLevel, weapon, target, damageSource, attackDamage);
+        float knockback = EnchantmentHelper.modifyKnockback(
+                serverLevel, weapon, target, damageSource, (float) getAttributeValue(Attributes.ATTACK_KNOCKBACK));
 
-                if (par1Entity instanceof LivingEntity) {
-                    // FIXME: This was probably meant to do something at some point
-                    // attackDamage += EnchantmentHelper.getEnchantmentModifierDamage(this, (EntityLivingBase)
-                    // par1Entity);
-                    // knockback += EnchantmentHelper.getKnockbackModifier(this);
-                    knockback += EnchantmentHelper.getKnockbackBonus(this);
-                }
+        if (attackDamage <= 0.0F || !target.hurt(damageSource, attackDamage)) {
+            return;
+        }
 
-                if (attackDamage > 0.0F) {
-                    // int fireAspect = EnchantmentHelper.getFireAspectModifier(this);
-                    int fireAspect = EnchantmentHelper.getFireAspect(this);
-
-                    if (par1Entity instanceof LivingEntity && fireAspect > 0 && !par1Entity.isOnFire()) {
-//                        par1Entity.setFire(fireAspect * 4);
-                        par1Entity.setSecondsOnFire(fireAspect * 4);
-                    }
-
-                    if (par1Entity.hurt(new DamageSource(level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryBuild(BCRobotics.MODID, "robot"))), this), attackDamage)) {
-                        this.setLastHurtMob(par1Entity);
-
-                        if (knockback > 0) {
-                            // par1Entity.addVelocity(
-                            par1Entity.push(
-                                    (double) (-Mth.sin(this.getXRot() * (float) Math.PI / 180.0F) * (float) knockback * 0.5F),
-                                    0.1D,
-                                    (double) (Mth.cos(this.getXRot() * (float) Math.PI / 180.0F) * (float) knockback * 0.5F)
-                            );
-//                            this.motionX *= 0.6D;
-//                            this.motionZ *= 0.6D;
-                            this.setDeltaMovement(this.getDeltaMovement().x * 0.6D, 1, this.getDeltaMovement().z * 0.6D);
-                            this.setSprinting(false);
-                        }
-                        // FIXME: This was probably meant to do something at some point...
-
-                        // if (par1Entity instanceof EntityLivingBase) {
-                        // EnchantmentHelper.((EntityLivingBase) par1Entity, this);
-                        // }
-                        //
-                        // EnchantmentHelper.func_151385_b(this, par1Entity);
-
-                        ItemStack itemstack = itemInUse;
-
-                        // if (itemstack != null && par1Entity instanceof LivingEntity)
-                        if (!itemstack.isEmpty() && par1Entity instanceof LivingEntity) {
-                            itemstack.getItem().hurtEnemy(itemstack, (LivingEntity) par1Entity, this);
-                        }
-                    }
-                }
+        setLastHurtMob(target);
+        if (knockback > 0.0F) {
+            if (target instanceof LivingEntity livingTarget) {
+                livingTarget.knockback(
+                        knockback * 0.5F,
+                        Mth.sin(getYRot() * (float) Math.PI / 180.0F),
+                        -Mth.cos(getYRot() * (float) Math.PI / 180.0F)
+                );
+            } else {
+                target.push(
+                        -Mth.sin(getYRot() * (float) Math.PI / 180.0F) * knockback * 0.5F,
+                        0.1D,
+                        Mth.cos(getYRot() * (float) Math.PI / 180.0F) * knockback * 0.5F
+                );
             }
+            setDeltaMovement(getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+            setSprinting(false);
+        }
+
+        EnchantmentHelper.doPostAttackEffectsWithItemSource(serverLevel, target, damageSource, weapon);
+        if (!weapon.isEmpty() && target instanceof LivingEntity livingTarget) {
+            weapon.getItem().hurtEnemy(weapon, livingTarget, this);
         }
     }
 
@@ -1479,8 +1441,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             }
             return InteractionResult.SUCCESS;
         }
-        // else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof SkullItem)
-        else if (wearables.size() < MAX_WEARABLES && stack.is(Tags.Items.HEADS)) {
+        // else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof AbstractSkullBlock)
+        else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof AbstractSkullBlock) {
             if (!level().isClientSide) {
                 ItemStack skullStack = stack.split(1);
                 initSkullItem(skullStack);
@@ -1497,38 +1459,12 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     private void initSkullItem(ItemStack skullStack) {
-        if (skullStack.hasTag()) {
-            CompoundTag nbttagcompound = skullStack.getTag();
-            GameProfile gameProfile = null;
-
-            if (nbttagcompound.contains("SkullOwner", Tag.TAG_COMPOUND)) {
-                gameProfile = NbtUtils.readGameProfile(nbttagcompound.getCompound("SkullOwner"));
-            } else if (nbttagcompound.contains("SkullOwner", Tag.TAG_STRING) && !StringUtil.isNullOrEmpty(nbttagcompound.getString("SkullOwner"))) {
-                gameProfile = new GameProfile(null, nbttagcompound.getString("SkullOwner"));
-            }
-            if (gameProfile != null && !StringUtil.isNullOrEmpty(gameProfile.getName())) {
-                if (!gameProfile.isComplete() || !gameProfile.getProperties().containsKey("textures")) {
-                    // // TODO: FIND OUT HOW SKULLS LOAD GAME PROFILES
-                    // gameProfile = MinecraftServer.getServer().getGameProfileRepository().(gameProfile.getName());
-                    gameProfile = this.getServer().getProfileCache().get(gameProfile.getName()).orElse(null);
-
-                    if (gameProfile != null) {
-                        Property property = (Property) Iterables.getFirst(gameProfile.getProperties().get("textures"), (Object) null);
-
-                        if (property == null) {
-                            // gameProfile =
-                            // MinecraftServer.getServer().func_147130_as().fillProfileProperties(gameProfile, true);
-                        }
-                    }
-                }
-            }
-            if (gameProfile != null && gameProfile.isComplete() && gameProfile.getProperties().containsKey("textures")) {
-                CompoundTag profileNBT = new CompoundTag();
-                NbtUtils.writeGameProfile(profileNBT, gameProfile);
-                nbttagcompound.put("SkullOwner", profileNBT);
-            } else {
-                nbttagcompound.remove("SkullOwner");
-            }
+        ResolvableProfile profile = skullStack.get(DataComponents.PROFILE);
+        if (profile != null && !profile.isResolved()) {
+            profile.resolve().thenAcceptAsync(
+                    resolved -> skullStack.set(DataComponents.PROFILE, resolved),
+                    SkullBlockEntity.CHECKED_MAIN_THREAD_EXECUTOR
+            );
         }
     }
 
@@ -1816,14 +1752,14 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     // Calen 1.18.2
     @Override
-    public final IMessage receivePayload(NetworkEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public final IMessage receivePayload(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
         int id = buffer.readUnsignedShort();
-        readPayload(id, buffer, ctx.getDirection(), ctx);
+        readPayload(id, buffer, MessageUtil.getNetworkDirection(ctx), ctx);
 
         // Make sure that we actually read the entire message rather than just discarding it
         MessageUtil.ensureEmpty(buffer, level().isClientSide, getClass() + ", id = " + getIdAllocator().getNameFor(id));
 
-        if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+        if (MessageUtil.isClientbound(ctx)) {
             spawnReceiveParticles(id);
         }
         return null;
@@ -1873,16 +1809,16 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     public static AttributeSupplier.Builder createAttributes() {
         return AttributeSupplier.builder()
-                .add(Attributes.MAX_HEALTH, 1)
+                .add(Attributes.MAX_HEALTH, 1.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE)
                 .add(Attributes.MOVEMENT_SPEED)
                 .add(Attributes.ARMOR)
                 .add(Attributes.ARMOR_TOUGHNESS)
-                .add(ForgeMod.SWIM_SPEED.get())
-                .add(ForgeMod.NAMETAG_DISTANCE.get())
-                .add(ForgeMod.ENTITY_GRAVITY.get()) // used in LivingEntity#travel
-                .add(ForgeMod.STEP_HEIGHT_ADDITION.get())
-                .add(Attributes.MOVEMENT_SPEED)
-                .add(Attributes.ATTACK_DAMAGE);
+                .add(Attributes.GRAVITY)
+                .add(Attributes.STEP_HEIGHT)
+                .add(Attributes.ATTACK_DAMAGE, 2.0D)
+                .add(Attributes.ATTACK_KNOCKBACK)
+                .add(Attributes.MINING_EFFICIENCY)
+                .add(Attributes.SUBMERGED_MINING_SPEED);
     }
 }

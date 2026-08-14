@@ -13,8 +13,6 @@ import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.robotics.BCRoboticsItems;
 import buildcraft.robotics.entity.EntityRobot;
-import com.google.common.collect.Maps;
-import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -36,35 +34,34 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nullable;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
 /** All of this is getting a mega-rewrite for Neptune */
 // public class RenderRobot extends Render<EntityRobot>
 public class RenderRobot extends EntityRenderer<EntityRobot> {
-    // private static final ResourceLocation overlay_red = new ResourceLocation(DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_side.png");
-    private static final ResourceLocation overlay_red = new ResourceLocation("buildcraftrobotics:textures/entities" + "/overlay_side.png");
-    // private static final ResourceLocation overlay_cyan = new ResourceLocation(DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_bottom.png");
-    private static final ResourceLocation overlay_cyan = new ResourceLocation("buildcraftrobotics:textures/entities" + "/overlay_bottom.png");
+    // private static final ResourceLocation overlay_red = ResourceLocation.parse(DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_side.png");
+    private static final ResourceLocation overlay_red = ResourceLocation.parse("buildcraftrobotics:textures/entities" + "/overlay_side.png");
+    // private static final ResourceLocation overlay_cyan = ResourceLocation.parse(DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_bottom.png");
+    private static final ResourceLocation overlay_cyan = ResourceLocation.parse("buildcraftrobotics:textures/entities" + "/overlay_bottom.png");
 
     // private final ItemEntity dummyEntityItem = new ItemEntity(null);
     // private final RenderEntityItem customRenderItem;
@@ -358,76 +355,41 @@ public class RenderRobot extends EntityRenderer<EntityRobot> {
         if (wearable.getItem() instanceof IRobotOverlayItem) {
             // ((IRobotOverlayItem) wearable.getItem()).renderRobotOverlay(wearable, textureManager);
             ((IRobotOverlayItem) wearable.getItem()).renderRobotOverlay(wearable);
-        } else if (wearable.getItem() instanceof ArmorItem) {
-            // GL11.glPushMatrix();
+        } else if (wearable.getItem() instanceof ArmorItem armorItem) {
             poseStack.pushPose();
-            // GL11.glScalef(1.0125F, 1.0125F, 1.0125F);
             poseStack.scale(1.0125F, 1.0125F, 1.0125F);
-            // GL11.glTranslatef(0.0f, -0.25f, 0.0f);
-            poseStack.translate(0.0f, -0.25f, 0.0f);
-            // GL11.glRotatef(180F, 0, 0, 1);
+            poseStack.translate(0.0F, -0.25F, 0.0F);
             poseStack.rotateAround(Axis.ZP.rotationDegrees(180F), 0, 0, 1);
 
-            // int color = wearable.getItem().getColorFromItemStack(wearable, 0);
-            int color;
-            if (wearable.getItem() instanceof DyeableLeatherItem) {
-                color = ((DyeableLeatherItem) wearable.getItem()).getColor(wearable);
-            } else {
-                color = 16777215;
-            }
-            // if (color != 16777215) {
-            //     GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT);
-            //     GL11.glColor3ub((byte) (color >> 16), (byte) ((color >> 8) & 255), (byte) (color & 255));
-            // }
-
-            // textureManager.bindTexture(new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, wearable, "", 0, "")));
-            ResourceLocation armorTexture = new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, wearable, "", EquipmentSlot.HEAD, ""));
-            // ModelBiped armorModel = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
             Model armorModel = ForgeHooksClient.getArmorModel(entity, wearable, EquipmentSlot.HEAD, null);
             poseStack.pushPose();
-            poseStack.rotateAround(Axis.YP.rotationDegrees(-90.0f), 0, 1, 0);
-            // poseStack.scale(1 / 16F, 1 / 16F, 1 / 16F);
-            boolean foil = wearable.hasFoil();
-            if (armorModel != null) {
-                // armorModel.render(entity, 0, 0, 0, -90f, 0, 1 / 16F);
+            poseStack.rotateAround(Axis.YP.rotationDegrees(-90.0F), 0, 1, 0);
 
-                // if (color != 16777215) {
-                //     GL11.glPopAttrib();
-                // }
-
-                if (color != 16777215) {
-                    float f = (float) (color >> 16 & 255) / 255.0F;
-                    float f1 = (float) (color >> 8 & 255) / 255.0F;
-                    float f2 = (float) (color & 255) / 255.0F;
-                    this.renderModel(poseStack, bufferSource, packedLight, foil, armorModel, f, f1, f2, this.getArmorResource(entity, wearable, EquipmentSlot.HEAD, null));
-                    this.renderModel(poseStack, bufferSource, packedLight, foil, armorModel, 1.0F, 1.0F, 1.0F, this.getArmorResource(entity, wearable, EquipmentSlot.HEAD, "overlay"));
+            int dyedColor = wearable.is(ItemTags.DYEABLE)
+                    ? FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(wearable, -6265536))
+                    : -1;
+            ArmorMaterial material = armorItem.getMaterial().value();
+            for (ArmorMaterial.Layer layer : material.layers()) {
+                int layerColor = layer.dyeable() ? dyedColor : -1;
+                ResourceLocation armorTexture = ForgeHooksClient.getArmorTexture(
+                        entity, wearable, EquipmentSlot.HEAD, layer, false);
+                if (armorModel != null) {
+                    renderModel(poseStack, bufferSource, packedLight, armorModel, layerColor, armorTexture);
                 } else {
-                    this.renderModel(poseStack, bufferSource, packedLight, foil, armorModel, 1.0F, 1.0F, 1.0F, this.getArmorResource(entity, wearable, EquipmentSlot.HEAD, null));
-                }
-            } else {
-                // GL11.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
-                // helmetBox.render(1 / 16F);
-
-                // if (color != 16777215) {
-                //     this.bindTexture(new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, wearable, "", 0, "overlay")));
-                //     helmetBox.render(1 / 16F);
-                //     GL11.glPopAttrib();
-                // }
-
-                if (color != 16777215) {
-                    // GL11.glPopAttrib();
-                    float f = (float) (color >> 16 & 255) / 255.0F;
-                    float f1 = (float) (color >> 8 & 255) / 255.0F;
-                    float f2 = (float) (color & 255) / 255.0F;
-                    this.renderModel(poseStack, bufferSource, packedLight, foil, helmetBox, f, f1, f2, this.getArmorResource(entity, wearable, EquipmentSlot.HEAD, null));
-                    this.renderModel(poseStack, bufferSource, packedLight, foil, helmetBox, 1.0F, 1.0F, 1.0F, this.getArmorResource(entity, wearable, EquipmentSlot.HEAD, "overlay"));
-                } else {
-                    this.renderModel(poseStack, bufferSource, packedLight, foil, helmetBox, 1.0F, 1.0F, 1.0F, this.getArmorResource(entity, wearable, EquipmentSlot.HEAD, null));
+                    renderModel(poseStack, bufferSource, packedLight, helmetBox, layerColor, armorTexture);
                 }
             }
-            poseStack.popPose();
 
-            // GL11.glPopMatrix();
+            if (wearable.hasFoil()) {
+                VertexConsumer glint = bufferSource.getBuffer(RenderType.armorEntityGlint());
+                if (armorModel != null) {
+                    armorModel.renderToBuffer(poseStack, glint, packedLight, OverlayTexture.NO_OVERLAY);
+                } else {
+                    helmetBox.render(poseStack, glint, packedLight, OverlayTexture.NO_OVERLAY);
+                }
+            }
+
+            poseStack.popPose();
             poseStack.popPose();
         }
         // else if (wearable.getItem() instanceof ItemSkull)
@@ -443,17 +405,7 @@ public class RenderRobot extends EntityRenderer<EntityRobot> {
         poseStack.pushPose();
         // GL11.glScalef(1.0125F, 1.0125F, 1.0125F);
         poseStack.scale(1.0125F, 1.0125F, 1.0125F);
-        GameProfile gameProfile = null;
-        if (wearable.hasTag()) {
-            CompoundTag nbt = wearable.getTag();
-            if (nbt.contains("Name")) {// FIXME: Come back to this!
-                // gameProfile = gameProfileCache.get(nbt.getString("Name"));
-            } else if (nbt.contains("SkullOwner", Tag.TAG_COMPOUND)) {
-                gameProfile = NbtUtils.readGameProfile(nbt.getCompound("SkullOwner"));
-                // nbt.putString("Name", gameProfile.getName());
-                // gameProfileCache.put(gameProfile.getName(), gameProfile);
-            }
-        }
+        ResolvableProfile profile = wearable.get(DataComponents.PROFILE);
 
 //        TileEntitySkullRenderer.instance.renderSkull(-0.5F, -0.25F, -0.5F, Direction.values()[wearable.getDamageValue() & 7], -90.0F, 1, gameProfile, 0);
 //        if (gameProfile != null) {
@@ -468,7 +420,7 @@ public class RenderRobot extends EntityRenderer<EntityRobot> {
         poseStack.translate(-0.5D, -0.25D, -0.5D);
         SkullBlock.Type skullblock$type = ((AbstractSkullBlock) ((BlockItem) wearable.getItem()).getBlock()).getType();
         SkullModelBase skullmodelbase = this.skullModels.get(skullblock$type);
-        RenderType rendertype = SkullBlockRenderer.getRenderType(skullblock$type, gameProfile);
+        RenderType rendertype = SkullBlockRenderer.getRenderType(skullblock$type, profile);
         SkullBlockRenderer.renderSkull(null, 180.0F, 0, poseStack, bufferSource, packedLight, skullmodelbase, rendertype);
         // GL11.glPopMatrix();
         poseStack.popPose();
@@ -488,9 +440,9 @@ public class RenderRobot extends EntityRenderer<EntityRobot> {
         // }
         poseStack.pushPose();
         if (glasses) {
-            box.render(poseStack, bufferSource.getBuffer(ENTITY_CUTOUT_NO_CULL_NO_DEPTH.apply(texture)), packedLight, OverlayTexture.NO_OVERLAY, 1 - storagePercent, storagePercent, 0, 1.0F);
+            box.render(poseStack, bufferSource.getBuffer(ENTITY_CUTOUT_NO_CULL_NO_DEPTH.apply(texture)), packedLight, OverlayTexture.NO_OVERLAY, FastColor.ARGB32.colorFromFloat(1.0F, 1.0F - storagePercent, storagePercent, 0.0F));
         } else {
-            box.render(poseStack, bufferSource.getBuffer(RenderType.entityCutoutNoCull(texture)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            box.render(poseStack, bufferSource.getBuffer(RenderType.entityCutoutNoCull(texture)), packedLight, OverlayTexture.NO_OVERLAY, -1);
         }
         poseStack.popPose();
 
@@ -509,14 +461,14 @@ public class RenderRobot extends EntityRenderer<EntityRobot> {
             // GL11.glColor4f(1.0F, 1.0F, 1.0F, storagePercent);
             // texManager.bindTexture(overlay_red);
             // box.render(factor);
-            box.render(poseStack, bufferSource.getBuffer(RenderType.entityTranslucent(overlay_red)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, storagePercent);
+            box.render(poseStack, bufferSource.getBuffer(RenderType.entityTranslucent(overlay_red)), packedLight, OverlayTexture.NO_OVERLAY, FastColor.ARGB32.colorFromFloat(storagePercent, 1.0F, 1.0F, 1.0F));
 
             // GL11.glDisable(GL11.GL_BLEND);
 
             // GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             // texManager.bindTexture(overlay_cyan);
             // box.render(factor);
-            box.render(poseStack, bufferSource.getBuffer(RenderType.entityTranslucent(overlay_cyan)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            box.render(poseStack, bufferSource.getBuffer(RenderType.entityTranslucent(overlay_cyan)), packedLight, OverlayTexture.NO_OVERLAY, -1);
 
             // GL11.glEnable(GL11.GL_LIGHTING);
             // GL11.glPopMatrix();
@@ -540,38 +492,14 @@ public class RenderRobot extends EntityRenderer<EntityRobot> {
         return prevRot + partialTicks * angle;
     }
 
-    // Calen 1.18.2 from HumanoidArmorLayer
-    private void renderModel(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, boolean foil, Model model, float r, float g, float b, ResourceLocation armorResource) {
-        VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(bufferSource, RenderType.armorCutoutNoCull(armorResource), false, foil);
-        model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, r, g, b, 1.0F);
+    // Calen 1.21.1: armor layers now provide their own texture and packed ARGB colour.
+    private void renderModel(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Model model, int color, ResourceLocation armorResource) {
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.armorCutoutNoCull(armorResource));
+        model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, color);
     }
 
-    private void renderModel(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, boolean foil, ModelPart model, float r, float g, float b, ResourceLocation armorResource) {
-        VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(bufferSource, RenderType.armorCutoutNoCull(armorResource), false, foil);
-        model.render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, r, g, b, 1.0F);
-    }
-
-    private static final Map<String, ResourceLocation> ARMOR_LOCATION_CACHE = Maps.newHashMap();
-
-    public ResourceLocation getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
-        ArmorItem item = (ArmorItem) stack.getItem();
-        String texture = item.getMaterial().getName();
-        String domain = "minecraft";
-        int idx = texture.indexOf(':');
-        if (idx != -1) {
-            domain = texture.substring(0, idx);
-            texture = texture.substring(idx + 1);
-        }
-        String s1 = String.format(Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, 1, type == null ? "" : String.format(Locale.ROOT, "_%s", type));
-
-        s1 = ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
-        ResourceLocation resourcelocation = ARMOR_LOCATION_CACHE.get(s1);
-
-        if (resourcelocation == null) {
-            resourcelocation = new ResourceLocation(s1);
-            ARMOR_LOCATION_CACHE.put(s1, resourcelocation);
-        }
-
-        return resourcelocation;
+    private void renderModel(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ModelPart model, int color, ResourceLocation armorResource) {
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.armorCutoutNoCull(armorResource));
+        model.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, color);
     }
 }

@@ -20,7 +20,7 @@ public class BCRoboticsEntities {
     public static void preInit() {
         for (RedstoneBoardNBT<?> boardNBT : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             if (boardNBT instanceof BCBoardNBT) {
-                RegistryObject<EntityType<EntityRobot>> robot = HELPER.addEntity("entity.robot", () -> EntityType.Builder.<EntityRobot>of((type, world) -> new EntityRobot(type, world, ((BCBoardNBT) boardNBT)), MobCategory.MISC).fireImmune().sized(0.5F, 0.5F), ((BCBoardNBT) boardNBT).getRobotId().getPath(), EntityRobot::createAttributes);
+                RegistryObject<EntityType<EntityRobot>> robot = HELPER.addEntity("entity.robot", () -> EntityType.Builder.<EntityRobot>of((type, world) -> new EntityRobot(type, world, ((BCBoardNBT) boardNBT)), MobCategory.MISC).fireImmune().sized(0.5F, 0.5F).eyeHeight(0.0F), ((BCBoardNBT) boardNBT).getRobotId().getPath(), EntityRobot::createAttributes);
                 robotMap.put(boardNBT, robot);
             }
         }

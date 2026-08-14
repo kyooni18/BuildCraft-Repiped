@@ -30,7 +30,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,7 +65,7 @@ public class TileRequester extends TileBC_Neptune implements IRequestProvider, I
     }
 
     @Override
-    public void readPayload(int command, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int command, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(command, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_SERVER && NET_SET_REQUEST == command) {
             setRequest(buffer.readUnsignedByte(), buffer.readItem());
@@ -157,8 +157,8 @@ public class TileRequester extends TileBC_Neptune implements IRequestProvider, I
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
 
         CompoundTag invNBT = inv.serializeNBT();
         nbt.put("inv", invNBT);
@@ -166,20 +166,20 @@ public class TileRequester extends TileBC_Neptune implements IRequestProvider, I
         // requests.serializeNBT();
         ListTag reqNBT = new ListTag();
         for (ItemStack request : requests) {
-            reqNBT.add(request.serializeNBT());
+            reqNBT.add(request.save(provider));
         }
         nbt.put("req", reqNBT);
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
 
         inv.deserializeNBT(nbt.getCompound("inv"));
         // requests.deserializeNBT(nbt.getCompound("req"));
         ListTag reqNBT = nbt.getList("req", Tag.TAG_COMPOUND);
         for (int i = 0; i < reqNBT.size(); i++) {
-            requests.set(i, ItemStack.of(reqNBT.getCompound(i)));
+            requests.set(i, ItemStack.parseOptional(provider, reqNBT.getCompound(i)));
         }
     }
 

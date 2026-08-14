@@ -134,9 +134,9 @@ public abstract class Snapshot {
     // public void deserializeNBT(CompoundTag nbt) throws InvalidInputDataException
     public void deserializeNBT(CompoundTag nbt) throws InvalidInputDataException {
         key = new Key(nbt.getCompound("key"));
-        size = NbtUtils.readBlockPos(nbt.getCompound("size"));
+        size = NBTUtilBC.readBlockPos(nbt.getCompound("size"));
         facing = NBTUtilBC.readEnum(nbt.get("facing"), Direction.class);
-        offset = NbtUtils.readBlockPos(nbt.getCompound("offset"));
+        offset = NBTUtilBC.readBlockPos(nbt.getCompound("offset"));
     }
 
     abstract public Snapshot copy();

@@ -1,5 +1,6 @@
 package buildcraft.lib.client.guide.entry;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
@@ -99,7 +100,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 try {
                     consumer.addChild(TAGS, PageLinkItemStack.create(false, stack, prof));
                 } catch (RuntimeException e) {
-                    throw new Error("Failed to create a page link for " + ItemUtil.getRegistryName(item) + " " + item.getClass() + " (" + stack.serializeNBT() + ")", e);
+                    throw new Error("Failed to create a page link for " + ItemUtil.getRegistryName(item) + " " + item.getClass() + " (" + stack + ")", e);
                 }
             }
             prof.pop();
@@ -131,12 +132,12 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 stack = MarkdownPageLoader.loadComplexItemStack(str.substring(1, str.length() - 1));
                 stack.setCount(1);
                 matchMeta = true;
-                matchNbt = stack.hasTag();
+                matchNbt = StackUtil.hasItemData(stack);
             } else {
                 if (str.startsWith("(") && str.endsWith(")")) {
                     str = str.substring(1, str.length() - 1);
                 }
-                ResourceLocation loc = new ResourceLocation(str);
+                ResourceLocation loc = ResourceLocation.parse(str);
                 Item item = ForgeRegistries.ITEMS.getValue(loc);
                 if (item == null) {
                     if (RegistryConfig.hasItemBeenDisabled(loc)) {

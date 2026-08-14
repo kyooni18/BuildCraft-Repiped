@@ -450,7 +450,7 @@ public class ColourUtil {
     public static ItemStack addColourTagToStack(ItemStack stack, DyeColor colour) {
         CompoundTag tag = new CompoundTag();
         tag.putString("colour", colour.getName());
-        stack.setTag(tag);
+        StackUtil.setItemData(stack, tag);
         return stack;
     }
 
@@ -458,7 +458,7 @@ public class ColourUtil {
         if (colour >= 0 && colour < 16) {
             CompoundTag tag = new CompoundTag();
             tag.putString("colour", DyeColor.byId(colour).getName());
-            stack.setTag(tag);
+            StackUtil.setItemData(stack, tag);
         }
         return stack;
     }
@@ -466,7 +466,7 @@ public class ColourUtil {
     // Colors: 0->no color 1-15->
     @Nullable
     public static DyeColor getStackColourFromTag(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
+        CompoundTag tag = StackUtil.getItemData(stack);
         if (tag != null) {
             if (tag.contains("colour")) {
                 DyeColor colour = DyeColor.byName(tag.getString("colour"), null);

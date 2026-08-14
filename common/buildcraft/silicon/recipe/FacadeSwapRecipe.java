@@ -18,9 +18,9 @@ import buildcraft.silicon.plug.FacadeInstance;
 import buildcraft.silicon.plug.FacadeStateManager;
 import buildcraft.transport.BCTransport;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 public enum FacadeSwapRecipe implements CraftingRecipe, IRecipeViewable.IViewableGrid {
     INSTANCE;
 
-    public static final ResourceLocation TYPE_ID = new ResourceLocation(BCSilicon.MODID, "facade_swap");
+    public static final ResourceLocation TYPE_ID = ResourceLocation.fromNamespaceAndPath(BCSilicon.MODID, "facade_swap");
 
     private static final int TIME_GAP = 500;
 
@@ -67,7 +67,7 @@ public enum FacadeSwapRecipe implements CraftingRecipe, IRecipeViewable.IViewabl
 
     @Override
 //    public boolean matches(InventoryCrafting inv, World world)
-    public boolean matches(CraftingContainer inv, Level world) {
+    public boolean matches(CraftingInput inv, Level world) {
 //        return !getCraftingResult(inv).isEmpty();
         return !assemble(inv, world.registryAccess()).isEmpty();
     }
@@ -75,9 +75,9 @@ public enum FacadeSwapRecipe implements CraftingRecipe, IRecipeViewable.IViewabl
     @NotNull
     @Override
 //    public ItemStack getCraftingResult(InventoryCrafting inv)
-    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
+    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registries) {
         ItemStack stackIn = StackUtil.EMPTY;
-        for (int s = 0; s < inv.getContainerSize(); s++) {
+        for (int s = 0; s < inv.size(); s++) {
             ItemStack stack = inv.getItem(s);
             if (!stack.isEmpty()) {
                 if (stackIn.isEmpty()) {
@@ -98,7 +98,7 @@ public enum FacadeSwapRecipe implements CraftingRecipe, IRecipeViewable.IViewabl
     @NotNull
     @Override
 //    public ItemStack getRecipeOutput()
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
         return StackUtil.EMPTY;
     }
 
@@ -145,10 +145,9 @@ public enum FacadeSwapRecipe implements CraftingRecipe, IRecipeViewable.IViewabl
 //    }
 
     @NotNull
-    @Override
 //    public ResourceLocation getRegistryName()
     public ResourceLocation getId() {
-        return new ResourceLocation(BCTransport.MODID, "facade_swap");
+        return ResourceLocation.fromNamespaceAndPath(BCTransport.MODID, "facade_swap");
     }
 
     @NotNull

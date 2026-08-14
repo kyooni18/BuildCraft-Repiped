@@ -96,12 +96,11 @@ public class RenderPartCube {
         // -- TEX_2F // texture
         // -- TEX_2S // lightmap
 //        vb.pos(x, y, z);
-        vb.vertex(poseStack.last().pose(), (float) x, (float) y, (float) z);
+        vb.addVertex(poseStack.last().pose(), (float) x, (float) y, (float) z);
         center.renderColour(vb);
         center.renderTex(vb);
         center.renderOverlay(vb); // Calen add
         center.renderLightMap(vb);
         center.renderNormal(poseStack.last().normal(), vb); // Calen add
-        vb.endVertex();
     }
 }

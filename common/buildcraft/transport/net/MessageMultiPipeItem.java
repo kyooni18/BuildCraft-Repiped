@@ -15,7 +15,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public class MessageMultiPipeItem implements IMessage {
 
                 @Override
 //                public IMessage onMessage(MessageMultiPipeItem message, MessageContext ctx)
-                public IMessage onMessage(MessageMultiPipeItem message, NetworkEvent.Context ctx) {
+                public IMessage onMessage(MessageMultiPipeItem message, CustomPayloadEvent.Context ctx) {
                     Level world = BCLibProxy.getProxy().getClientWorld();
                     if (world == null) {
                         return null;

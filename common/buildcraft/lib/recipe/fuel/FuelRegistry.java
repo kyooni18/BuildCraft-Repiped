@@ -51,7 +51,7 @@ public enum FuelRegistry implements IFuelManager {
     public Collection<IFuel> getFuels(Level world) {
         Collection<IFuel> ret = Lists.newArrayList();
         ret.addAll(unregisteredFuels);
-        world.getRecipeManager().byType(IFuel.TYPE).values().forEach(r -> ret.add((Fuel) r));
+        world.getRecipeManager().getAllRecipesFor(IFuel.TYPE).forEach(r -> ret.add(r.value()));
 //        return fuels;
         return ret;
     }
@@ -64,7 +64,7 @@ public enum FuelRegistry implements IFuelManager {
         }
         Collection<IFuel> fuels = Lists.newArrayList();
         fuels.addAll(unregisteredFuels);
-        world.getRecipeManager().byType(IFuel.TYPE).values().forEach(r -> fuels.add((Fuel) r));
+        world.getRecipeManager().getAllRecipesFor(IFuel.TYPE).forEach(r -> fuels.add(r.value()));
         for (IFuel fuel : fuels) {
             if (fuel.getFluid().isFluidEqual(fluid)) {
                 return fuel;

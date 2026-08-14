@@ -16,8 +16,7 @@ public class TransportItemModelPredicates {
                 {
                     ItemProperties.register(
                             BCTransportItems.wire.get(),
-                            new ResourceLocation("buildcraft:colour"),
-                            (stack, world, entity, pSeed) -> ColourUtil.getStackColourIdFromTag(stack)
+                            ResourceLocation.parse("buildcraft:colour"), (stack, world, entity, pSeed) -> ColourUtil.getStackColourIdFromTag(stack)
                     );
                 }
         );

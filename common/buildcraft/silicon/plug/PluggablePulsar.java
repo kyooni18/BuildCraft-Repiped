@@ -42,7 +42,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -102,8 +102,8 @@ public class PluggablePulsar extends PipePluggable {
         VariableInfoObject<Direction> infoSide = MODEL_VAR_INFO.createInfoObject(MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
         infoSide.setIsComplete = true;
-//        infoSide.possibleValues.addAll(Arrays.asList(Direction.VALUES));
-        infoSide.possibleValues.addAll(Arrays.asList(Direction.VALUES.clone()));
+//        infoSide.possibleValues.addAll(Arrays.asList(Direction.values()));
+        infoSide.possibleValues.addAll(Arrays.asList(Direction.values().clone()));
 
         VariableInfoDouble infoStage = MODEL_VAR_INFO.createInfoDouble(MODEL_STAGE);
         infoStage.cacheType = CacheType.IN_SET;
@@ -150,7 +150,7 @@ public class PluggablePulsar extends PipePluggable {
 
     @Override
 //    public void readPayload(PacketBuffer buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(FriendlyByteBuf buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(FriendlyByteBuf buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             readData(buffer);

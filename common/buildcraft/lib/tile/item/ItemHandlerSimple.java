@@ -75,23 +75,29 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     }
 
     @Override
+    public CompoundTag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
+        return serializeNBT();
+    }
+
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         ListTag list = new ListTag();
         for (ItemStack stack : stacks) {
-            CompoundTag itemNbt = new CompoundTag();
-            stack.save(itemNbt);
-            list.add(itemNbt);
+            list.add(StackUtil.saveStack(stack));
         }
         nbt.put("items", list);
         return nbt;
     }
 
     @Override
+    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, CompoundTag nbt) {
+        deserializeNBT(nbt);
+    }
+
     public void deserializeNBT(CompoundTag nbt) {
         ListTag list = nbt.getList("items", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size() && i < getSlots(); i++) {
-            setStackInternal(i, ItemStack.of(list.getCompound(i)));
+            setStackInternal(i, StackUtil.loadStack(list.getCompound(i)));
         }
         for (int i = list.size(); i < getSlots(); i++) {
             setStackInternal(i, StackUtil.EMPTY);

@@ -22,8 +22,8 @@ import java.util.function.IntSupplier;
 @Deprecated(forRemoval = true)
 public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReloadable {
     public static final IVariantType VARIANT_COLOUR_BLIND =
-//            loc -> ImmutableList.of(loc, new ResourceLocation(loc.getResourceDomain(), loc.getResourcePath() + "_cb"));
-            loc -> ImmutableList.of(loc, new ResourceLocation(loc.getNamespace(), loc.getPath() + "_cb"));
+//            loc -> ImmutableList.of(loc, ResourceLocation.fromNamespaceAndPath(loc.getResourceDomain(), loc.getResourcePath() + "_cb"));
+            loc -> ImmutableList.of(loc, ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), loc.getPath() + "_cb"));
     public static final IntSupplier INDEX_COLOUR_BLIND = () -> BCLibConfig.colourBlindMode ? 1 : 0;
 
     private final List<ResourceLocation> variantNames;

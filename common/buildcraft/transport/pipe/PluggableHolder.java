@@ -21,7 +21,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.io.IOException;
 
@@ -60,7 +60,7 @@ public final class PluggableHolder {
         }
         String id = nbt.getString("id");
         CompoundTag data = nbt.getCompound("data");
-        ResourceLocation identifier = new ResourceLocation(id);
+        ResourceLocation identifier = ResourceLocation.parse(id);
         PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
         if (def == null) {
             BCLog.logger.warn("Unknown pluggable id '" + id + "'");
@@ -102,7 +102,7 @@ public final class PluggableHolder {
     }
 
     private void readCreateInternal(FriendlyByteBuf buffer) throws InvalidInputDataException {
-        ResourceLocation identifier = new ResourceLocation(buffer.readUtf(256));
+        ResourceLocation identifier = ResourceLocation.parse(buffer.readUtf(256));
         PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
         if (def == null) {
             throw new InvalidInputDataException("Unknown remote pluggable \"" + identifier + "\"");
@@ -131,7 +131,7 @@ public final class PluggableHolder {
     }
 
     // public void readPayload(PacketBufferBC buffer, Dist netSide, MessageContext ctx) throws IOException
-    public void readPayload(PacketBufferBC buffer, NetworkDirection netSide, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, NetworkDirection netSide, CustomPayloadEvent.Context ctx) throws IOException {
         int id = buffer.readUnsignedByte();
         if (netSide == NetworkDirection.PLAY_TO_SERVER) {
             if (id == ID_UPDATE_PLUG) {

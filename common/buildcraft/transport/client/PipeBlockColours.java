@@ -21,7 +21,7 @@ public enum PipeBlockColours implements BlockColor {
             BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof TilePipeHolder) {
                 TilePipeHolder tilePipeHolder = (TilePipeHolder) tile;
-                Direction side = Direction.from3DDataValue(tintIndex % Direction.VALUES.length);
+                Direction side = Direction.from3DDataValue(tintIndex % Direction.values().length);
                 PipePluggable pluggable = tilePipeHolder.getPluggable(side);
                 if (pluggable != null) {
                     return pluggable.getBlockColor(tintIndex / 6);

@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkHooks;
 
 // Calen: use MessageUtil#serverOpenItemGui
 @Deprecated(forRemoval = true)
@@ -27,7 +26,7 @@ public enum BCCoreGuis {
         if (player instanceof ServerPlayer serverPlayer) {
 //            player.openMenu(state.getMenuProvider(player.level, pos));
             if (stack.getItem() instanceof ItemList_BC8 list) {
-                NetworkHooks.openScreen(serverPlayer, list, serverPlayer.blockPosition());
+                serverPlayer.openMenu(list, serverPlayer.blockPosition());
             } else {
                 player.sendSystemMessage(Component.translatable("buildcraft.error.open_null_menu"));
             }

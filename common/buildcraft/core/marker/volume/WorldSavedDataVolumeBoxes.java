@@ -10,8 +10,10 @@ package buildcraft.core.marker.volume;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.MessageManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -111,7 +113,7 @@ public class WorldSavedDataVolumeBoxes extends SavedData {
     @SuppressWarnings("NullableProblems")
     @Override
 //    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
-    public CompoundTag save(CompoundTag nbt) {
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.put("volumeBoxes", NBTUtilBC.writeCompoundList(volumeBoxes.stream().map(VolumeBox::writeToNBT)));
         return nbt;
     }
@@ -119,7 +121,7 @@ public class WorldSavedDataVolumeBoxes extends SavedData {
     @SuppressWarnings("NullableProblems")
     // Calen: not override, load by ourselves -> #get: ret.load(nbt)
 //    @Override
-    public void load(CompoundTag nbt) {
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
         volumeBoxes.clear();
         NBTUtilBC.readCompoundList(nbt.get("volumeBoxes"))
                 .map(volumeBoxTag -> new VolumeBox(world, volumeBoxTag))
@@ -132,13 +134,18 @@ public class WorldSavedDataVolumeBoxes extends SavedData {
         }
         DimensionDataStorage storage = ((ServerLevel) world).getDataStorage();
         currentWorld = world;
-        WorldSavedDataVolumeBoxes instance =
-                storage.get((nbt) ->
+        SavedData.Factory<WorldSavedDataVolumeBoxes> factory = new SavedData.Factory<>(
+                WorldSavedDataVolumeBoxes::new,
+                (nbt, provider) ->
                 {
                     WorldSavedDataVolumeBoxes ret = new WorldSavedDataVolumeBoxes();
-                    ret.load(nbt);
+                    ret.loadAdditional(nbt, provider);
                     return ret;
-                }, DATA_NAME);
+                },
+                DataFixTypes.LEVEL
+        );
+        WorldSavedDataVolumeBoxes instance =
+                storage.get(factory, DATA_NAME);
         if (instance == null) {
             instance = new WorldSavedDataVolumeBoxes();
 //            storage.setData(DATA_NAME, instance);

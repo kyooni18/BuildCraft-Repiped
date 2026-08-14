@@ -117,7 +117,7 @@ public class ElementTypeButton extends ElementType {
         if (sprite != null) {
             sprite = GuiUtil.subRelative(sprite, uvs[0], uvs[1], uvs[2], uvs[3], texture.texSize);
         } else {
-            ResourceLocation loc = SpriteUtil.transformLocation(new ResourceLocation(texture.origin));
+            ResourceLocation loc = SpriteUtil.transformLocation(ResourceLocation.parse(texture.origin));
             sprite = new SpriteRaw(loc, uvs[0], uvs[1], uvs[2], uvs[3], texture.texSize);
         }
         return new GuiSpriteScaled(sprite, sizeX, sizeY);

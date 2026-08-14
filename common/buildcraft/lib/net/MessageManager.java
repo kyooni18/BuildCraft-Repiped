@@ -22,10 +22,10 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.SimpleChannel;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -58,12 +58,11 @@ public class MessageManager {
         PerModHandler(IBuildCraftMod module) {
             this.module = module;
 //            this.netWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(module.getModId());
-            this.netWrapper = NetworkRegistry.newSimpleChannel(
-                    new ResourceLocation(module.getModId(), "default"),
-                    () -> BCCore.MOD_VERSION,
-                    (version) -> true,
-                    (version) -> true
-            );
+            this.netWrapper = ChannelBuilder
+                    .named(ResourceLocation.fromNamespaceAndPath(module.getModId(), "default"))
+                    .networkProtocolVersion(1)
+                    .acceptedVersions((status, version) -> true)
+                    .simpleChannel();
             knownMessages = new TreeMap<>(Comparator.comparing(Class::getName));
         }
     }
@@ -160,12 +159,13 @@ public class MessageManager {
                 int id = wholeId++;
                 postInitSingle(handler, id, info);
             }
+            handler.netWrapper.build();
         }
     }
 
     /**
      * Both direction is allowed if parameter direction of {@link SimpleChannel#messageBuilder(Class, int, NetworkDirection)} is null.
-     * When message handled, we should call {@link net.minecraftforge.network.NetworkEvent.Context#setPacketHandled(boolean)},
+     * When message handled, we should call {@link net.minecraftforge.network.CustomPayloadEvent.Context#setPacketHandled(boolean)},
      * or [Unknown custom packet identifier: buildcraftlib:default] will appear in console
      *
      * @param handler
@@ -188,16 +188,15 @@ public class MessageManager {
 
 //        handler.netWrapper.registerMessage(wrapHandler(info.clientHandler, msgClass), msgClass, id, Side.CLIENT);
 //        handler.netWrapper.registerMessage(wrapHandler(info.serverHandler, msgClass), msgClass, id, Side.SERVER);
-        handler.netWrapper.messageBuilder(msgClass, id, null)
+        handler.netWrapper.messageBuilder(msgClass, id)
                 .encoder(I::toBytes)
                 .decoder((buf) -> IMessage.staticFromBytes(msgClass, buf))
-                .consumerMainThread((msg, supplier) ->
+                .consumerMainThread((msg, context) ->
                 {
-                    NetworkEvent.Context context = supplier.get();
                     IMessageHandler<I, ?> messageHandler = null;
-                    if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+                    if (context.isServerSide()) {
                         messageHandler = info.serverHandler;
-                    } else if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                    } else if (context.isClientSide()) {
                         messageHandler = info.clientHandler;
                     }
                     IMessage reply = wrapHandler(messageHandler, msgClass).onMessage(msg, context);
@@ -215,7 +214,7 @@ public class MessageManager {
             return (message, context) ->
             {
 //                if (context.side == Dist.DEDICATED_SERVER)
-                if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+                if (context.isServerSide()) {
                     // Bad/Buggy client
                     Player player = context.getSender();
                     BCLog.logger.warn(
@@ -259,7 +258,7 @@ public class MessageManager {
      * @param message The message to send */
     public static void sendToAll(IMessage message) {
 //        getSimpleNetworkWrapper(message).sendToAll(message);
-        getSimpleNetworkWrapper(message).send(PacketDistributor.ALL.noArg(), message);
+        getSimpleNetworkWrapper(message).send(message, PacketDistributor.ALL.noArg());
     }
 
     /** Send this message to the specified player. The {@link IMessageHandler} for this message type should be on the
@@ -269,7 +268,7 @@ public class MessageManager {
      * @param player The player to send it to */
     public static void sendTo(IMessage message, ServerPlayer player) {
 //        getSimpleNetworkWrapper(message).sendTo(message, player);
-        getSimpleNetworkWrapper(message).send(PacketDistributor.PLAYER.with(() -> player), message);
+        getSimpleNetworkWrapper(message).send(message, PacketDistributor.PLAYER.with(player));
     }
 
     /** Send this message to everyone within a certain range of a point. The {@link IMessageHandler} for this message
@@ -281,7 +280,7 @@ public class MessageManager {
 
     public static void sendToAllAround(IMessage message, PacketDistributor.TargetPoint point) {
 //        getSimpleNetworkWrapper(message).sendToAllAround(message, point);
-        getSimpleNetworkWrapper(message).send(PacketDistributor.NEAR.with(() -> point), message);
+        getSimpleNetworkWrapper(message).send(message, PacketDistributor.NEAR.with(point));
     }
 
     /** Send this message to everyone within the supplied dimension. The {@link IMessageHandler} for this message type
@@ -292,19 +291,19 @@ public class MessageManager {
 //    public static void sendToDimension(IMessage message, int dimensionId)
     public static void sendToDimension(IMessage message, ResourceKey<Level> dimensionId) {
 //        getSimpleNetworkWrapper(message).sendToDimension(message, dimensionId);
-        getSimpleNetworkWrapper(message).send(PacketDistributor.DIMENSION.with(() -> dimensionId), message);
+        getSimpleNetworkWrapper(message).send(message, PacketDistributor.DIMENSION.with(dimensionId));
     }
 
     /** Send this message to the server. The {@link IMessageHandler} for this message type should be on the SERVER side.
      *
      * @param message The message to send */
     public static void sendToServer(IMessage message) {
-        getSimpleNetworkWrapper(message).sendToServer(message);
+        getSimpleNetworkWrapper(message).send(message, PacketDistributor.SERVER.noArg());
     }
 
     // Calen 1.18.2 form 1.8 for robotics
     public static void sendToEntity(IMessage message, Entity entity) {
 //        getSimpleNetworkWrapper(message).sendTo(message, player);
-        getSimpleNetworkWrapper(message).send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
+        getSimpleNetworkWrapper(message).send(message, PacketDistributor.TRACKING_ENTITY.with(entity));
     }
 }

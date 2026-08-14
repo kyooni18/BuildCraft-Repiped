@@ -52,7 +52,7 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,7 +76,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
     public static final int NET_CREATE_LANDING_PARTICLE;
 
-    private static final ResourceLocation ADVANCEMENT_PLACE_PIPE = new ResourceLocation(
+    private static final ResourceLocation ADVANCEMENT_PLACE_PIPE = ResourceLocation.parse(
             "buildcrafttransport:pipe_dream"
     );
 
@@ -117,7 +117,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     public TilePipeHolder(BlockPos pos, BlockState blockState) {
         super(BCTransportBlocks.pipeHolderTile.get(), pos, blockState);
 
-        for (Direction side : Direction.VALUES) {
+        for (Direction side : Direction.values()) {
             pluggables.put(side, new PluggableHolder(this, side));
         }
         caps.addCapabilityInstance(PipeApi.CAP_PIPE_HOLDER, this, EnumPipePart.VALUES);
@@ -128,13 +128,13 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     // Read + write
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
         if (pipe != null) {
             nbt.put("pipe", pipe.writeToNbt());
         }
         CompoundTag plugs = new CompoundTag();
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             CompoundTag plugTag = pluggables.get(face).writeToNbt();
             if (!plugTag.isEmpty()) {
                 plugs.put(face.getName(), plugTag);
@@ -148,8 +148,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
         if (nbt.contains("pipe")) {
             try {
                 pipe = new Pipe(this, nbt.getCompound("pipe"));
@@ -165,7 +165,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
             }
         }
         CompoundTag plugs = nbt.getCompound("plugs");
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             pluggables.get(face).readFromNbt(plugs.getCompound(face.getName()));
         }
         wireManager.readFromNbt(nbt.getCompound("wireManager"));
@@ -272,7 +272,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
         if (pipe != null) {
             pipe.onTick();
         }
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             pluggables.get(face).onTick();
         }
         if (pipe != null) {
@@ -312,7 +312,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
 //            level.notifyNeighborsOfStateChange(worldPosition, block, true);
             level.updateNeighborsAt(worldPosition, block);
             for (int i = 0; i < 6; i++) {
-                Direction face = Direction.VALUES[i];
+                Direction face = Direction.values()[i];
                 if (oldRedstoneValues[i] != redstoneValues[i]) {
 //                    level.notifyNeighborsOfStateChange(worldPosition.relative(face), block, true);
                     level.updateNeighborsAt(worldPosition.relative(face), block);
@@ -339,7 +339,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
                     buffer.writeBoolean(true);
                     pipe.writeCreationPayload(buffer);
                 }
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     pluggables.get(face).writeCreationPayload(buffer);
                 }
                 wireManager.writePayload(buffer, side);
@@ -371,7 +371,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
 
     @Override
 //    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -387,7 +387,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
                     eventBus.unregisterHandler(pipe.flow);
                     pipe = null;
                 }
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     pluggables.get(face).readCreationPayload(buffer);
                 }
                 wireManager.readPayload(buffer, side, ctx);
@@ -568,7 +568,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     @Override
     public boolean setRedstoneOutput(Direction side, int value) {
         if (side == null) {
-            for (Direction facing : Direction.VALUES) {
+            for (Direction facing : Direction.values()) {
                 redstoneValues[facing.ordinal()] = value;
             }
         } else {

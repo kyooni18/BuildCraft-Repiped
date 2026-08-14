@@ -48,11 +48,10 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
 //        setMaxStackSize(1); // Calen: moved to properties
     }
 
-    @Override
 //    public int getItemStackLimit(ItemStack stack)
     public int getMaxStackSize(ItemStack stack) {
 //        return stack.getItemDamage() == DAMAGE_CLEAN ? 16 : super.getItemStackLimit(stack);
-        return stack.getDamageValue() == DAMAGE_CLEAN ? 16 : super.getMaxStackSize(stack);
+        return stack.getDamageValue() == DAMAGE_CLEAN ? 16 : super.getDefaultMaxStackSize();
     }
 
     // Calen: not still useful in 1.18.2
@@ -76,7 +75,9 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             CompoundTag itemData = NBTUtilBC.getItemData(stack);
             itemData.remove(NBT_KEY);
             if (itemData.isEmpty()) {
-                stack.setTag(null);
+                StackUtil.setItemData(stack, null);
+            } else {
+                StackUtil.setItemData(stack, itemData);
             }
 //            stack.setItemDamage(DAMAGE_CLEAN);
             stack.setDamageValue(DAMAGE_CLEAN);
@@ -103,7 +104,9 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             CompoundTag itemData = NBTUtilBC.getItemData(StackUtil.asNonNull(stack));
             itemData.remove(NBT_KEY);
             if (itemData.isEmpty()) {
-                stack.setTag(null);
+                StackUtil.setItemData(stack, null);
+            } else {
+                StackUtil.setItemData(stack, itemData);
             }
             stack.setDamageValue(DAMAGE_CLEAN);
             return InteractionResult.SUCCESS;
@@ -228,7 +231,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
 
     public static ISchematicBlock getSchematicSafe(@Nonnull ItemStack stack) {
         // Calen FIX: when mouse hovers on unused schematic, #getSchematic will cause InvalidInputDataException
-        if ((!stack.hasTag()) || !(stack.getTag().contains("name"))) {
+        if ((!StackUtil.hasItemData(stack)) || !(StackUtil.getItemData(stack).contains("name"))) {
             return null;
         }
         // BC 1.12.2

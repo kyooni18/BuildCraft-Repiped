@@ -10,6 +10,7 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -99,7 +100,7 @@ public class RetroGenData extends SavedData {
 
     @Override
 //    public CompoundTag writeToNBT(CompoundTag nbt)
-    public CompoundTag save(CompoundTag nbt) {
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider registries) {
         Set<String> allNames = new HashSet<>();
         for (Set<String> used : gennedChunks.values()) {
             allNames.addAll(used);

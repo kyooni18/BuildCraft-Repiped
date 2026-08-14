@@ -54,7 +54,7 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
     @Override
     public RedstoneBoardNBT<?> getRedstoneBoard(CompoundTag nbt) {
         // return getRedstoneBoard(nbt.getString("id"));
-        return getRedstoneBoard(new ResourceLocation(nbt.getString("id")));
+        return getRedstoneBoard(ResourceLocation.parse(nbt.getString("id")));
     }
 
     @Override

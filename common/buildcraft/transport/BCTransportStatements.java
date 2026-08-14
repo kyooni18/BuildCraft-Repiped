@@ -55,8 +55,8 @@ public class BCTransportStatements {
             ACTION_EXTRACTION_PRESET[index.ordinal()] = new ActionExtractionPreset(index);
         }
 
-        ACTION_PIPE_DIRECTION = new ActionPipeDirection[Direction.VALUES.length];
-        for (Direction face : Direction.VALUES) {
+        ACTION_PIPE_DIRECTION = new ActionPipeDirection[Direction.values().length];
+        for (Direction face : Direction.values()) {
             ACTION_PIPE_DIRECTION[face.ordinal()] = new ActionPipeDirection(face);
         }
 

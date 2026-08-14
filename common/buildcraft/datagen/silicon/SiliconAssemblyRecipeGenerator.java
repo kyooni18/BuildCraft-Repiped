@@ -16,9 +16,10 @@ import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.item.ItemPluggableGate;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeProvider;
+import buildcraft.lib.recipe.FinishedRecipe;
+import buildcraft.datagen.base.BCCompatRecipeProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
@@ -30,17 +31,18 @@ import net.minecraftforge.common.Tags;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class SiliconAssemblyRecipeGenerator extends RecipeProvider {
-    private Consumer<FinishedRecipe> consumer;
+public class SiliconAssemblyRecipeGenerator extends BCCompatRecipeProvider {
+    private BCRecipeOutput consumer;
 
-    public SiliconAssemblyRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public SiliconAssemblyRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         this.consumer = consumer;
 
         ItemStack output = new ItemStack(BCSiliconItems.plugPulsar.get());
@@ -102,7 +104,7 @@ public class SiliconAssemblyRecipeGenerator extends RecipeProvider {
         for (DyeColor colour : ColourUtil.COLOURS) {
             String name = String.format("lens_regular_%s", colour.getName());
 //            IngredientStack stainedGlass = IngredientStack.of("blockGlass" + ColourUtil.getName(colour));
-            IngredientStack stainedGlass = IngredientStack.of(TagKey.create(Registries.ITEM, new ResourceLocation("forge:glass/" + colour.getName())));
+            IngredientStack stainedGlass = IngredientStack.of(TagKey.create(Registries.ITEM, ResourceLocation.parse("forge:glass/" + colour.getName())));
             ImmutableSet<IngredientStack> input1 = ImmutableSet.of(stainedGlass);
             ItemStack output1 = BCSiliconItems.plugLens.get().getStack(colour, false);
 //            AssemblyRecipeRegistry.register(new AssemblyRecipeBasic(name, 500 * MjAPI.MJ, input, output));
@@ -194,7 +196,7 @@ public class SiliconAssemblyRecipeGenerator extends RecipeProvider {
 //            ItemStack output = BCSiliconItems.plugGate.get().getStack(new GateVariant(logic, material, modifier));
             ItemStack output = ItemPluggableGate.getStack(new GateVariant(logic, material, modifier));
             ImmutableSet.Builder<IngredientStack> inputBuilder = new ImmutableSet.Builder<>();
-            inputBuilder.add(new IngredientStack(new IngredientNBTBC(toUpgrade)));
+            inputBuilder.add(new IngredientStack(IngredientNBTBC.of(toUpgrade)));
             inputBuilder.add(mods);
             ImmutableSet<IngredientStack> input = inputBuilder.build();
 //            AssemblyRecipeRegistry.register((new AssemblyRecipeBasic(name, MjAPI.MJ * multiplier, input, output)));
@@ -204,7 +206,7 @@ public class SiliconAssemblyRecipeGenerator extends RecipeProvider {
 
     private void makeGateAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier, EnumRedstoneChipset chipset, IngredientStack... additional) {
         ImmutableSet.Builder<IngredientStack> temp = ImmutableSet.builder();
-        temp.add(new IngredientStack(new IngredientNBTBC(chipset.getStack())));
+        temp.add(new IngredientStack(IngredientNBTBC.of(chipset.getStack())));
         temp.add(additional);
         ImmutableSet<IngredientStack> input = temp.build();
 
@@ -221,10 +223,5 @@ public class SiliconAssemblyRecipeGenerator extends RecipeProvider {
         output = ItemPluggableGate.getStack(new GateVariant(EnumGateLogic.OR, material, modifier));
 //        AssemblyRecipeRegistry.register((new AssemblyRecipeBasic(name, MjAPI.MJ * multiplier, input, output)));
         AssemblyRecipeBuilder.basic(MjAPI.MJ * multiplier, input, output).save(consumer, name);
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Silicon Assembly Recipe Generator";
     }
 }

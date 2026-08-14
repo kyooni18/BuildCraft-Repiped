@@ -48,7 +48,7 @@ public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
             boolean s = shade.evaluate();
             byte l = (byte) (light.evaluate() & 15);
             int rgba = RenderUtil.swapARGBforABGR((int) colour.evaluate());
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 VariableFaceData data = getFaceData(face, spriteLookup);
                 if (data != null) {
                     Vector3f radius = new Vector3f(t[0] - f[0], t[1] - f[1], t[2] - f[2]);

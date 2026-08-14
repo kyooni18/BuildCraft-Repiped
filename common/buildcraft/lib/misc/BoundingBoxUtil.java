@@ -31,7 +31,7 @@ public class BoundingBoxUtil {
         } else {
             BlockPos min = VecUtil.min(box.min(), additional);
             BlockPos max = VecUtil.max(box.max(), additional);
-            return new AABB(min, max.offset(VecUtil.POS_ONE));
+            return new AABB(min.getX(), min.getY(), min.getZ(), max.getX() + 1.0, max.getY() + 1.0, max.getZ() + 1.0);
         }
     }
 
@@ -53,7 +53,7 @@ public class BoundingBoxUtil {
         } else {
             BlockPos min = VecUtil.min(box1.min(), box2.min(), additional);
             BlockPos max = VecUtil.max(box1.max(), box2.max(), additional);
-            return new AABB(min, max.offset(VecUtil.POS_ONE));
+            return new AABB(min.getX(), min.getY(), min.getZ(), max.getX() + 1.0, max.getY() + 1.0, max.getZ() + 1.0);
         }
     }
 
@@ -86,7 +86,7 @@ public class BoundingBoxUtil {
                 max = VecUtil.max(max, p);
             }
         }
-        return new AABB(min, max.offset(VecUtil.POS_ONE));
+        return new AABB(min.getX(), min.getY(), min.getZ(), max.getX() + 1.0, max.getY() + 1.0, max.getZ() + 1.0);
     }
 
     /** Creates a box that extrudes from the specified face of the given block position. */

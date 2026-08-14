@@ -14,7 +14,9 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -27,13 +29,18 @@ public class VolumeSubCache extends MarkerSubCache<VolumeConnection> {
         super(world, MarkerCache.CACHES.indexOf(VolumeCache.INSTANCE));
         if (world instanceof ServerLevel serverLevel) {
 //            VolumeSavedData data = (VolumeSavedData) world.getPerWorldStorage().getOrLoadData(VolumeSavedData.class, VolumeSavedData.NAME);
-            VolumeSavedData data = (VolumeSavedData) serverLevel.getDataStorage().get(
-                    (nbt) ->
+            SavedData.Factory<VolumeSavedData> factory = new SavedData.Factory<>(
+                    VolumeSavedData::new,
+                    (nbt, provider) ->
                     {
                         VolumeSavedData ret = new VolumeSavedData();
                         ret.readFromNBT(nbt);
                         return ret;
                     },
+                    DataFixTypes.LEVEL
+            );
+            VolumeSavedData data = serverLevel.getDataStorage().get(
+                    factory,
                     VolumeSavedData.NAME
             );
             if (data == null) {
@@ -91,7 +98,7 @@ public class VolumeSubCache extends MarkerSubCache<VolumeConnection> {
         }
 
         ImmutableList.Builder<BlockPos> valids = ImmutableList.builder();
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (taken.contains(face.getAxis())) continue;
             for (int i = 1; i <= BCCoreConfig.markerMaxDistance; i++) {
                 BlockPos toTry = from.relative(face, i);

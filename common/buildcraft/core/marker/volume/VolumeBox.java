@@ -50,19 +50,19 @@ public class VolumeBox {
         player = nbt.contains("player") ? NbtUtils.loadUUID(nbt.getCompound("player")) : null;
         oldPlayer = nbt.contains("oldPlayer") ? NbtUtils.loadUUID(nbt.getCompound("oldPlayer")) : null;
         if (nbt.contains("held")) {
-            held = NbtUtils.readBlockPos(nbt.getCompound("held"));
+            held = NBTUtilBC.readBlockPos(nbt.getCompound("held"));
         }
         dist = nbt.getDouble("dist");
         if (nbt.contains("oldMin")) {
-            oldMin = NbtUtils.readBlockPos(nbt.getCompound("oldMin"));
+            oldMin = NBTUtilBC.readBlockPos(nbt.getCompound("oldMin"));
         }
         if (nbt.contains("oldMax")) {
-            oldMax = NbtUtils.readBlockPos(nbt.getCompound("oldMax"));
+            oldMax = NBTUtilBC.readBlockPos(nbt.getCompound("oldMax"));
         }
         NBTUtilBC.readCompoundList(nbt.get("addons")).forEach(addonsEntryTag ->
         {
             Class<? extends Addon> addonClass =
-                    AddonsRegistry.INSTANCE.getClassByName(new ResourceLocation(addonsEntryTag.getString("addonClass")));
+                    AddonsRegistry.INSTANCE.getClassByName(ResourceLocation.parse(addonsEntryTag.getString("addonClass")));
             try {
                 Addon addon = addonClass.newInstance();
                 addon.volumeBox = this;
@@ -229,7 +229,7 @@ public class VolumeBox {
         int count = buf.readInt();
         for (int i = 0; i < count; i++) {
             EnumAddonSlot slot = buf.readEnum(EnumAddonSlot.class);
-            ResourceLocation rl = new ResourceLocation(buf.readUtf(1024));
+            ResourceLocation rl = ResourceLocation.parse(buf.readUtf(1024));
             Class<? extends Addon> addonClass = AddonsRegistry.INSTANCE.getClassByName(rl);
             try {
                 if (addonClass == null) {

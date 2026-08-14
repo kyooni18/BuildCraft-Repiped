@@ -12,6 +12,7 @@ import buildcraft.lib.block.LocalBlockUpdateNotifier;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import com.google.common.collect.ImmutableList;
@@ -543,6 +544,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     }
 
     @Override
+    public CompoundTag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
+        return serializeNBT();
+    }
+
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putByteArray("checkResults", checkResults);
@@ -553,6 +558,10 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     }
 
     @Override
+    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, CompoundTag nbt) {
+        deserializeNBT(nbt);
+    }
+
     public void deserializeNBT(CompoundTag nbt) {
         updateSnapshot();
         checkResults = nbt.getByteArray("checkResults");
@@ -596,7 +605,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         @SuppressWarnings("WeakerAccess")
         public BreakTask(CompoundTag nbt) {
-            pos = NbtUtils.readBlockPos(nbt.getCompound("pos"));
+            pos = NBTUtilBC.readBlockPos(nbt.getCompound("pos"));
             power = nbt.getLong("power");
         }
 
@@ -651,11 +660,11 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         @SuppressWarnings("WeakerAccess")
         public PlaceTask(CompoundTag nbt) {
-            pos = NbtUtils.readBlockPos(nbt.getCompound("pos"));
+            pos = NBTUtilBC.readBlockPos(nbt.getCompound("pos"));
             items = ImmutableList.copyOf(
-                    NBTUtilBC.readCompoundList(nbt.get("items"))
+                            NBTUtilBC.readCompoundList(nbt.get("items"))
 //                            .map(ItemStack::new)
-                            .map(ItemStack::of)
+                            .map(StackUtil::loadStack)
                             .collect(Collectors.toList())
             );
             power = nbt.getLong("power");
@@ -677,7 +686,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         public CompoundTag writeToNBT() {
             CompoundTag nbt = new CompoundTag();
             nbt.put("pos", NbtUtils.writeBlockPos(pos));
-            nbt.put("items", NBTUtilBC.writeCompoundList(items.stream().map(ItemStack::serializeNBT)));
+            nbt.put("items", NBTUtilBC.writeCompoundList(items.stream().map(StackUtil::saveStack)));
             nbt.putLong("power", power);
             return nbt;
         }

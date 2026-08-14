@@ -4,7 +4,7 @@ import buildcraft.api.BCModules;
 import buildcraft.api.fuels.EnumCoolantType;
 import buildcraft.api.fuels.ICoolant;
 import com.google.gson.JsonObject;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -54,7 +54,7 @@ public class CoolantRecipeBuilder {
 
         @Override
         public ResourceLocation getId() {
-            return new ResourceLocation(BCModules.ENERGY.getModId(), "coolant/" + name);
+            return ResourceLocation.fromNamespaceAndPath(BCModules.ENERGY.getModId(), "coolant/" + name);
         }
 
         @Override

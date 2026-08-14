@@ -41,7 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class BlockQuarry extends BlockBCTile_Neptune<TileQuarry> implements IBlockWithFacing, IBlockWithTickableTE<TileQuarry> {
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:shaping_the_world");
+    private static final ResourceLocation ADVANCEMENT = ResourceLocation.parse("buildcraftbuilders:shaping_the_world");
 
     public BlockQuarry(String idBC, BlockBehaviour.Properties properties) {
         super(idBC, properties);
@@ -66,7 +66,7 @@ public class BlockQuarry extends BlockBCTile_Neptune<TileQuarry> implements IBlo
     private boolean isConnected(LevelAccessor world, BlockPos pos, BlockState state, Direction side) {
         Direction facing = side;
 //        if (Arrays.asList(Direction.HORIZONTALS).contains(facing))
-        if (Arrays.asList(Direction.BY_2D_DATA).contains(facing)) {
+        if (Arrays.asList(Direction.Plane.HORIZONTAL.stream().toArray(Direction[]::new)).contains(facing)) {
 //            facing = Direction.getHorizontal(
             facing = Direction.from2DDataValue(
 //                    side.getHorizontalIndex() + 2 + state.getValue(getFacingProperty()).getHorizontalIndex()
@@ -85,7 +85,7 @@ public class BlockQuarry extends BlockBCTile_Neptune<TileQuarry> implements IBlo
 
     @Override
     public BlockState getActualState(BlockState state, LevelAccessor world, BlockPos pos, BlockEntity tile) {
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             state =
                     state.setValue(BuildCraftProperties.CONNECTED_MAP.get(face), isConnected(world, pos, state, face));
         }
@@ -156,7 +156,11 @@ public class BlockQuarry extends BlockBCTile_Neptune<TileQuarry> implements IBlo
     public VoxelShape getInteractionShape(BlockState state, BlockGetter world, BlockPos pos) {
         VoxelShape shape = super.getInteractionShape(state, world, pos);
         if (world.getBlockEntity(pos) instanceof TileQuarry tile) {
-            return Shapes.or(shape, tile.getCollisionBoxes().toArray(new VoxelShape[0]));
+            VoxelShape localMovingShape = Shapes.empty();
+            for (VoxelShape movingPart : tile.getCollisionBoxes()) {
+                localMovingShape = Shapes.or(localMovingShape, movingPart.move(-pos.getX(), -pos.getY(), -pos.getZ()));
+            }
+            return Shapes.or(shape, localMovingShape);
         }
         return shape;
     }

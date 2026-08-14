@@ -35,7 +35,7 @@ public class FacadeBlockStateInfo implements IFacadeState {
         this.isTransparent = state.canOcclude();
         this.isVisible = !requiredStack.isEmpty();
         BlockGetter access = new SingleBlockAccess(state);
-        for (Direction side : Direction.VALUES) {
+        for (Direction side : Direction.values()) {
 //            isSideSolid[side.ordinal()] = state.isSideSolid(access, BlockPos.ZERO, side);
             isSideSolid[side.ordinal()] = state.isFaceSturdy(access, BlockPos.ZERO, side);
             // Calen: use VoxelShape, no blockFaceShape

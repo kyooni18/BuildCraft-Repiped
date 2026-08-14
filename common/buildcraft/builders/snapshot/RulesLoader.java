@@ -132,11 +132,7 @@ public class RulesLoader {
                                                                     boolean complex = base.contains("[");
 //                                                    return Block.getBlockFromName(
                                                                     return ForgeRegistries.BLOCKS.getValue(
-                                                                            new ResourceLocation(
-                                                                                    complex
-                                                                                            ? base.substring(0, base.indexOf("["))
-                                                                                            : base
-                                                                            )
+                                                                            ResourceLocation.parse(complex ? base.substring(0, base.indexOf("[")) : base)
                                                                     ) == blockState.getBlock() &&
                                                                             (!complex ||
                                                                                     Arrays.stream(

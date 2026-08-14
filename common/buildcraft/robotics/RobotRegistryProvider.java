@@ -4,6 +4,8 @@ import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.IRobotRegistryProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -19,11 +21,16 @@ public class RobotRegistryProvider implements IRobotRegistryProvider {
         if (!registries.containsKey(world.dimension()) || registries.get(world.dimension()).world != world) {
 
             // RobotRegistry newRegistry = (RobotRegistry) world.getPerWorldStorage().loadData(RobotRegistry.class, "robotRegistry");
-            RobotRegistry newRegistry = (RobotRegistry) ((ServerLevel) world).getDataStorage().get((nbt) -> {
-                RobotRegistry ret = new RobotRegistry();
-                ret.readFromNBT(nbt);
-                return ret;
-            }, "robotRegistry");
+            SavedData.Factory<RobotRegistry> factory = new SavedData.Factory<>(
+                    RobotRegistry::new,
+                    (nbt, registries) -> {
+                        RobotRegistry ret = new RobotRegistry();
+                        ret.readFromNBT(nbt);
+                        return ret;
+                    },
+                    DataFixTypes.LEVEL
+            );
+            RobotRegistry newRegistry = ((ServerLevel) world).getDataStorage().get(factory, "robotRegistry");
 
             if (newRegistry == null) {
                 // newRegistry = new RobotRegistry("robotRegistry");

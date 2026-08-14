@@ -23,14 +23,14 @@ public final class PrintingByteBuf extends PacketBufferBC {
     }
 
     @Override
-    public ByteBuf writeByte(int val) {
+    public FriendlyByteBuf writeByte(int val) {
         SYSOUT.print(padLength(2, val));
         super.writeByte(val);
         return this;
     }
 
     @Override
-    public ByteBuf writeBytes(byte[] val) {
+    public FriendlyByteBuf writeBytes(byte[] val) {
         for (byte b : val) {
             writeByte(Byte.toUnsignedInt(b));
         }
@@ -38,7 +38,7 @@ public final class PrintingByteBuf extends PacketBufferBC {
     }
 
     @Override
-    public ByteBuf writeBytes(byte[] src, int srcIndex, int length) {
+    public FriendlyByteBuf writeBytes(byte[] src, int srcIndex, int length) {
         for (int i = 0; i < length; i++) {
             writeByte(src[i + srcIndex]);
         }
@@ -46,13 +46,13 @@ public final class PrintingByteBuf extends PacketBufferBC {
     }
 
     @Override
-    public ByteBuf writeBytes(ByteBuf src) {
+    public FriendlyByteBuf writeBytes(ByteBuf src) {
         writeBytes(src, src.readableBytes());
         return this;
     }
 
     @Override
-    public ByteBuf writeBytes(ByteBuf src, int length) {
+    public FriendlyByteBuf writeBytes(ByteBuf src, int length) {
         for (int i = 0; i < length; i++) {
             writeByte(src.readByte());
         }
@@ -60,7 +60,7 @@ public final class PrintingByteBuf extends PacketBufferBC {
     }
 
     @Override
-    public ByteBuf writeBytes(ByteBuf src, int srcIndex, int length) {
+    public FriendlyByteBuf writeBytes(ByteBuf src, int srcIndex, int length) {
         for (int i = 0; i < length; i++) {
             writeByte(src.getByte(i + srcIndex));
         }
@@ -86,42 +86,42 @@ public final class PrintingByteBuf extends PacketBufferBC {
     }
 
     @Override
-    public ByteBuf writeShort(int val) {
+    public FriendlyByteBuf writeShort(int val) {
         SYSOUT.print(padLength(4, val));
         super.writeShort(val);
         return this;
     }
 
     @Override
-    public ByteBuf writeInt(int val) {
+    public FriendlyByteBuf writeInt(int val) {
         SYSOUT.print(padLength(8, val));
         super.writeInt(val);
         return this;
     }
 
     @Override
-    public ByteBuf writeLong(long val) {
+    public FriendlyByteBuf writeLong(long val) {
         SYSOUT.print(padLength(16, val));
         super.writeLong(val);
         return this;
     }
 
     @Override
-    public ByteBuf writeFloat(float val) {
+    public FriendlyByteBuf writeFloat(float val) {
         SYSOUT.print(padLength(8, Float.floatToRawIntBits(val)));
         super.writeFloat(val);
         return this;
     }
 
     @Override
-    public ByteBuf writeDouble(double val) {
+    public FriendlyByteBuf writeDouble(double val) {
         SYSOUT.print(padLength(16, Double.doubleToRawLongBits(val)));
         super.writeDouble(val);
         return this;
     }
 
     @Override
-    public ByteBuf setByte(int index, int value) {
+    public FriendlyByteBuf setByte(int index, int value) {
         SYSOUT.println("\n  Set " + index + " (" + new String(padLength(2, getByte(index)))//
                 + " ) to" + new String(padLength(2, value)));
         super.setByte(index, value);

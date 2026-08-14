@@ -187,7 +187,6 @@ public class MutableVertex {
         renderColour(vertexConsumer);
 //        renderNormal(pose.normal(), vertexConsumer);
         renderNormalWithoutPose(vertexConsumer);
-        vertexConsumer.endVertex();
     }
 
     /** Renders this vertex into the given {@link BufferBuilder}, assuming that the {@link VertexFormat} is
@@ -204,51 +203,51 @@ public class MutableVertex {
         renderOverlay(buffer);
         renderLightMap(buffer);
         renderNormal(lastMatrix.normal(), buffer);
-        buffer.endVertex();
     }
 
     // public void renderPosition(BufferBuilder bb)
     public void renderPosition(VertexConsumer bb, org.joml.Matrix4f matrix4f) {
 //        bb.pos(position_x, position_y, position_z);
-        bb.vertex(matrix4f, position_x, position_y, position_z);
+        bb.addVertex(matrix4f, position_x, position_y, position_z);
     }
 
     // Calen 1.20.1
     public void renderPositionWithoutPose(VertexConsumer bb) {
 //        bb.pos(position_x, position_y, position_z);
-        bb.vertex(position_x, position_y, position_z);
+        bb.addVertex(position_x, position_y, position_z);
     }
 
     public void renderNormal(org.joml.Matrix3f normal, VertexConsumer bb) {
-        bb.normal(normal, normal_x, normal_y, normal_z);
+        Vector3f transformed = normal.transform(new Vector3f(normal_x, normal_y, normal_z));
+        bb.setNormal(transformed.x(), transformed.y(), transformed.z());
     }
 
     // Calen 1.20.1
     public void renderNormalWithoutPose(VertexConsumer bb) {
-        bb.normal(normal_x, normal_y, normal_z);
+        bb.setNormal(normal_x, normal_y, normal_z);
     }
 
     // public void renderColour(BufferBuilder bb)
     public void renderColour(VertexConsumer bb) {
-        bb.color(colour_r, colour_g, colour_b, colour_a);
+        bb.setColor(colour_r, colour_g, colour_b, colour_a);
     }
 
     public void renderTex(VertexConsumer bb) {
-        bb.uv(tex_u, tex_v);
+        bb.setUv(tex_u, tex_v);
     }
 
     public void renderTex(BufferBuilder bb, ISprite sprite) {
-        bb.uv((float) sprite.getInterpU(tex_u), (float) sprite.getInterpV(tex_v));
+        bb.setUv((float) sprite.getInterpU(tex_u), (float) sprite.getInterpV(tex_v));
     }
 
     public void renderLightMap(VertexConsumer bb) {
 //        bb.lightmap(light_sky << 4, light_block << 4);
-        bb.uv2(lightc());
+        bb.setLight(lightc());
     }
 
     // Calen add
     public void renderOverlay(VertexConsumer bb) {
-        bb.overlayCoords(overlay);
+        bb.setOverlay(overlay);
     }
 
     // Mutating

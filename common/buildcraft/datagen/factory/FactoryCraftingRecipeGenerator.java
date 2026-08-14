@@ -5,26 +5,28 @@ import buildcraft.factory.BCFactory;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.BCFactoryItems;
 import buildcraft.lib.oredictionarytag.OreDictionaryTags;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeProvider;
+import buildcraft.datagen.base.BCCompatRecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class FactoryCraftingRecipeGenerator extends RecipeProvider {
+public class FactoryCraftingRecipeGenerator extends BCCompatRecipeProvider {
     private static final String MOD_ID = BCFactory.MODID;
 
-    public FactoryCraftingRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public FactoryCraftingRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         // autoworkbench_item
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BCFactoryBlocks.autoWorkbenchItems.get())
                 .pattern("gwg")
@@ -130,10 +132,5 @@ public class FactoryCraftingRecipeGenerator extends RecipeProvider {
                 .unlockedBy("has_item", has(Items.BUCKET))
                 .group(MOD_ID)
                 .save(consumer, MOD_ID + ":water_gel_to_bucket");
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Factory Crafting Recipe Generator";
     }
 }

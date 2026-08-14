@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -172,16 +172,15 @@ public class TileMarkerConstruction extends TileBC_Neptune implements ITickable,
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
 
         nbt.putByte("direction", (byte) direction.ordinal());
         nbt.putBoolean("canExcavate", canExcavate);
 
         // if (itemBlueprint != null)
         if (!itemBlueprint.isEmpty()) {
-            CompoundTag bptNBT = new CompoundTag();
-            itemBlueprint.save(bptNBT);
+            CompoundTag bptNBT = StackUtil.saveStack(itemBlueprint);
             nbt.put("itemBlueprint", bptNBT);
         }
 
@@ -195,14 +194,14 @@ public class TileMarkerConstruction extends TileBC_Neptune implements ITickable,
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
 
         direction = Direction.values()[(nbt.getByte("direction"))];
         canExcavate = nbt.getBoolean("canExcavate");
 
         if (nbt.contains("itemBlueprint")) {
-            itemBlueprint = ItemStack.of(nbt.getCompound("itemBlueprint"));
+            itemBlueprint = buildcraft.lib.misc.StackUtil.loadStack(nbt.getCompound("itemBlueprint"));
         }
 
         // The rest of load has to be done upon initialize.
@@ -271,7 +270,7 @@ public class TileMarkerConstruction extends TileBC_Neptune implements ITickable,
 
     @Override
     // public void receiveCommand(String command, Side side, Object sender, ByteBuf stream)
-    public void readPayload(int command, PacketBufferBC stream, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int command, PacketBufferBC stream, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(command, stream, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT && command == NET_RENDER_DATA) {
             readPayload(NET_LASER_BOX_UPDATE, stream, side, ctx);

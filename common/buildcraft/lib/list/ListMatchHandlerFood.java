@@ -1,6 +1,7 @@
 package buildcraft.lib.list;
 
 import buildcraft.api.lists.ListMatchHandler;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -10,13 +11,13 @@ public class ListMatchHandlerFood extends ListMatchHandler {
     @Override
     public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
         if (type == Type.TYPE) {
-            return stack.getItem().isEdible() && target.getItem().isEdible();
+            return stack.has(DataComponents.FOOD) && target.has(DataComponents.FOOD);
         }
         return false;
     }
 
     @Override
     public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
-        return stack.getItem().isEdible();
+        return stack.has(DataComponents.FOOD);
     }
 }

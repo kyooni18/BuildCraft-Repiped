@@ -1,6 +1,7 @@
 package buildcraft.datagen.energy;
 
 import buildcraft.energy.BCEnergyBlocks;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
@@ -11,8 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EnergyBlockLoot extends BlockLootSubProvider {
-    public EnergyBlockLoot() {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+    public EnergyBlockLoot(HolderLookup.Provider registries) {
+        super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
     }
 
     @Override

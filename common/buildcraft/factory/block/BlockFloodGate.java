@@ -83,7 +83,7 @@ public class BlockFloodGate extends BlockBCTile_Neptune<TileFloodGate> implement
 
     @Override
 //    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         Direction side = hitResult.getDirection();
 
         ItemStack heldItem = player.getItemInHand(hand);
@@ -100,15 +100,15 @@ public class BlockFloodGate extends BlockBCTile_Neptune<TileFloodGate> implement
                             floodGate.queue.clear();
                             floodGate.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
 //                            return true;
-                            return InteractionResult.SUCCESS;
+                            return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
                         }
                     }
                 }
             }
 //            return false;
-            return InteractionResult.FAIL;
+            return net.minecraft.world.ItemInteractionResult.FAIL;
         }
 //        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
-        return super.use(state, world, pos, player, hand, hitResult);
+        return super.useItemOn(stack, state, world, pos, player, hand, hitResult);
     }
 }

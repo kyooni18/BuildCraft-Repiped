@@ -14,7 +14,9 @@ import buildcraft.lib.net.MessageMarker;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.List;
 
@@ -23,13 +25,18 @@ public class PathSubCache extends MarkerSubCache<PathConnection> {
         super(world, MarkerCache.CACHES.indexOf(PathCache.INSTANCE));
         if (world instanceof ServerLevel serverLevel) {
 //            PathSavedData data = (PathSavedData) world.getPerWorldStorage().getOrLoadData(PathSavedData.class, PathSavedData.NAME);
-            PathSavedData data = serverLevel.getDataStorage().get(
-                    (nbt) ->
+            SavedData.Factory<PathSavedData> factory = new SavedData.Factory<>(
+                    PathSavedData::new,
+                    (nbt, provider) ->
                     {
                         PathSavedData ret = new PathSavedData();
                         ret.readFromNBT(nbt);
                         return ret;
                     },
+                    DataFixTypes.LEVEL
+            );
+            PathSavedData data = serverLevel.getDataStorage().get(
+                    factory,
                     PathSavedData.NAME
             );
             if (data == null) {

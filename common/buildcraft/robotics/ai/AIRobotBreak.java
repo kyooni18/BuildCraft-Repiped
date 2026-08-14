@@ -12,10 +12,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.FakePlayer;
+import buildcraft.api.core.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 
 public class AIRobotBreak extends AIRobot {
@@ -125,7 +125,7 @@ public class AIRobotBreak extends AIRobot {
 
         if (f > 1.0F) {
             // int i = EnchantmentHelper.getEfficiencyModifier(robot);
-            int i = EnchantmentHelper.getBlockEfficiency(robot);
+            int i = (int) robot.getAttributeValue(Attributes.MINING_EFFICIENCY);
 
             if (i > 0) {
                 float f1 = i * i + 1;

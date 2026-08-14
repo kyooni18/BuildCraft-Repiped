@@ -5,7 +5,7 @@ import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.recipes.IntegrationRecipe;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -55,7 +55,7 @@ public class IntegrationRecipeBuilder {
 
         @Override
         public ResourceLocation getId() {
-            return new ResourceLocation(namespace, "integration/" + name);
+            return ResourceLocation.fromNamespaceAndPath(namespace, "integration/" + name);
         }
 
         @Override

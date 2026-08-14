@@ -158,7 +158,7 @@ public class BCSiliconModels {
 //        putModel(event, "gate_item#inventory", ModelGateItem.INSTANCE);
         event.getModels().replaceAll((rl, model) ->
                 {
-                    if (rl instanceof ModelResourceLocation m && m.getPath().startsWith("plug_gate")) {
+                    if (rl instanceof ModelResourceLocation m && m.id().getPath().startsWith("plug_gate")) {
                         return ModelGateItem.INSTANCE;
                     } else {
                         return model;

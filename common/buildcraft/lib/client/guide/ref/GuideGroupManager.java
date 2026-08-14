@@ -214,11 +214,11 @@ public class GuideGroupManager {
 
     @Nullable
     public static GuideGroupSet get(String domain, String group) {
-        return get(new ResourceLocation(domain, group));
+        return get(ResourceLocation.fromNamespaceAndPath(domain, group));
     }
 
     public static GuideGroupSet getOrCreate(String domain, String group) {
-        return sets.computeIfAbsent(new ResourceLocation(domain, group), GuideGroupSet::new);
+        return sets.computeIfAbsent(ResourceLocation.fromNamespaceAndPath(domain, group), GuideGroupSet::new);
     }
 
     // Basic adders

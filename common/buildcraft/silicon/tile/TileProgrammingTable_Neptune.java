@@ -37,7 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -196,7 +196,7 @@ public class TileProgrammingTable_Neptune extends TileLaserTableBase implements 
 //    }
 
     @Override
-    public void readPayload(int id, PacketBufferBC stream, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC stream, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, stream, side, ctx);
 
         if (id == NET_GUI_DATA) {
@@ -247,14 +247,14 @@ public class TileProgrammingTable_Neptune extends TileLaserTableBase implements 
 
     @Override
     // public void readFromNBT(NBTTagCompound nbt)
-    public void load(CompoundTag nbt) {
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
         // super.readFromNBT(nbt);
-        super.load(nbt);
+        super.loadAdditional(nbt, provider);
 
         if (nbt.contains("recipeId") && nbt.contains("optionId")) {
             // currentRecipeId = nbt.getString("recipeId");
             ListTag recipeIdTag = nbt.getList("recipeId", Tag.TAG_STRING);
-            availableRecipeIds.addAll(NBTUtilBC.readStringList(recipeIdTag).map(ResourceLocation::new).collect(Collectors.toList()));
+            availableRecipeIds.addAll(NBTUtilBC.readStringList(recipeIdTag).map(ResourceLocation::parse).collect(Collectors.toList()));
             optionId = nbt.getByte("optionId");
         } else {
             // currentRecipeId = null;
@@ -266,9 +266,9 @@ public class TileProgrammingTable_Neptune extends TileLaserTableBase implements 
 
     @Override
     // public void writeToNBT(NBTTagCompound nbt)
-    public void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
         // super.writeToNBT(nbt);
-        super.saveAdditional(nbt);
+        super.saveAdditional(nbt, provider);
 
         // if (currentRecipeId != null)
         if (!availableRecipeIds.isEmpty()) {

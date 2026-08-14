@@ -20,8 +20,8 @@ public class RoboticsItemModelGenerator extends BCBaseItemModelGenerator {
     @Override
     protected void registerModels() {
         // blocks
-        withExistingParent(BCRoboticsBlocks.zonePlanner.get().getRegistryName().toString(), new ResourceLocation("buildcraftrobotics:block/zone_planner"));
-        withExistingParent(BCRoboticsBlocks.requester.get().getRegistryName().toString(), new ResourceLocation("buildcraftrobotics:block/requester"));
+        withExistingParent(BCRoboticsBlocks.zonePlanner.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftrobotics:block/zone_planner"));
+        withExistingParent(BCRoboticsBlocks.requester.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftrobotics:block/requester"));
 
         // robotStation
         getBuilder(BCRoboticsItems.robotStation.get().getRegistryName().toString()).parent(BUILTIN_ENTITY);

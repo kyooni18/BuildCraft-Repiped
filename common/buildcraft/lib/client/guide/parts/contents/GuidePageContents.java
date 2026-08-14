@@ -101,7 +101,7 @@ public class GuidePageContents extends GuidePageBase {
     public void updateScreen() {
         super.updateScreen();
 //        searchText.updateCursorCounter();
-        searchText.tick();
+        // EditBox no longer requires a per-tick cursor update in 1.21.1.
 //        if (lastSearchText.equals(searchText.getText()))
         if (lastSearchText.equals(searchText.getValue())) {
             if (numPages >= 3 && getPage() >= numPages) {

@@ -17,6 +17,7 @@ import net.minecraft.world.entity.vehicle.MinecartChest;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,7 @@ public enum StripesHandlerMinecartDestroy implements IStripesHandlerBlock {
 
     @Override
     public boolean handle(Level world, BlockPos pos, Direction direction, Player player, IStripesActivator activator) {
-        AABB box = new AABB(pos, pos.offset(1, 1, 1));
+        AABB box = new AABB(Vec3.atLowerCornerOf(pos), Vec3.atLowerCornerOf(pos.offset(1, 1, 1)));
 //        List<EntityMinecart> minecarts = world.getEntitiesWithinAABB(EntityMinecart.class, box);
         List<AbstractMinecart> minecarts = world.getEntitiesOfClass(AbstractMinecart.class, box);
 

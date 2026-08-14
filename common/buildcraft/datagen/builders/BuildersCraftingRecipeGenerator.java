@@ -1,27 +1,31 @@
 package buildcraft.datagen.builders;
 
+import buildcraft.datagen.base.BCCompatRecipeProvider;
+
 import buildcraft.builders.BCBuilders;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.lib.oredictionarytag.OreDictionaryTags;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class BuildersCraftingRecipeGenerator extends RecipeProvider {
+public class BuildersCraftingRecipeGenerator extends BCCompatRecipeProvider {
     private static final String MOD_ID = BCBuilders.MODID;
 
-    public BuildersCraftingRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public BuildersCraftingRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         // architect
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BCBuildersBlocks.architect.get())
                 .pattern("bmb")
@@ -127,10 +131,5 @@ public class BuildersCraftingRecipeGenerator extends RecipeProvider {
                 .unlockedBy("has_item", has(Items.PAPER))
                 .group(MOD_ID)
                 .save(consumer);
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Builders Crafting Recipe Generator";
     }
 }

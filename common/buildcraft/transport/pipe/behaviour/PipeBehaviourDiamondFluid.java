@@ -28,7 +28,7 @@ public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
     @PipeEventHandler
     public void sideCheck(PipeEventFluid.SideCheck sideCheck) {
         FluidStack toCompare = sideCheck.fluid;
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (sideCheck.isAllowed(face) && pipe.isConnected(face)) {
                 int offset = FILTERS_PER_SIDE * face.ordinal();
                 boolean sideAllowed = false;

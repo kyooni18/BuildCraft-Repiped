@@ -4,7 +4,7 @@ import buildcraft.api.BCModules;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.lib.misc.StackUtil;
 import com.google.gson.JsonObject;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
@@ -53,7 +53,7 @@ public class FuelRecipeBuilder {
 
         @Override
         public ResourceLocation getId() {
-            return new ResourceLocation(BCModules.ENERGY.getModId(), "fuel/" + name);
+            return ResourceLocation.fromNamespaceAndPath(BCModules.ENERGY.getModId(), "fuel/" + name);
         }
 
         @Override

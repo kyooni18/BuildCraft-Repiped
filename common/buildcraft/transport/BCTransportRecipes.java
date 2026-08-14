@@ -94,14 +94,14 @@ public class BCTransportRecipes {
 //        ItemStack result = new ItemStack(pipe, 8);
 //        IRecipe recipe = new ShapedOreRecipe(pipe.getRegistryName(), result, "lgr", 'l', left, 'r', right, 'g',
 //                "blockGlassColorless");
-//        recipe.setRegistryName(new ResourceLocation(pipe.getRegistryName() + "_colorless"));
+//        recipe.setRegistryName(ResourceLocation.parse(pipe.getRegistryName() + "_colorless"));
 //        ForgeRegistries.RECIPES.register(recipe);
 //
 //        for (DyeColor colour : DyeColor.values()) {
 //            ItemStack resultStack = new ItemStack(pipe, 8, colour.getMetadata() + 1);
 //            IRecipe colorRecipe = new ShapedOreRecipe(pipe.getRegistryName(), resultStack, "lgr", 'l', left, 'r', right,
 //                    'g', "blockGlass" + ColourUtil.getName(colour));
-//            colorRecipe.setRegistryName(new ResourceLocation(pipe.getRegistryName() + "_" + colour));
+//            colorRecipe.setRegistryName(ResourceLocation.parse(pipe.getRegistryName() + "_" + colour));
 //            ForgeRegistries.RECIPES.register(colorRecipe);
 //        }
 //    }
@@ -116,7 +116,7 @@ public class BCTransportRecipes {
 //        }
 //
 //        IRecipe returnRecipe = new ShapelessOreRecipe(to.getRegistryName(), new ItemStack(from), new ItemStack(to))
-//                .setRegistryName(new ResourceLocation(to.getRegistryName() + "_undo"));
+//                .setRegistryName(ResourceLocation.parse(to.getRegistryName() + "_undo"));
 //        ForgeRegistries.RECIPES.register(returnRecipe);
 //
 //        NonNullList<Ingredient> list = NonNullList.create();
@@ -124,14 +124,14 @@ public class BCTransportRecipes {
 //        list.add(CraftingHelper.getIngredient(additional));
 //
 //        IRecipe upgradeRecipe = new ShapelessRecipes(to.getRegistryName().getResourcePath(), new ItemStack(to), list)
-//                .setRegistryName(new ResourceLocation(to.getRegistryName() + "_colorless"));
+//                .setRegistryName(ResourceLocation.parse(to.getRegistryName() + "_colorless"));
 //        ForgeRegistries.RECIPES.register(upgradeRecipe);
 //
 //        for (DyeColor colour : ColourUtil.COLOURS) {
 //            ItemStack f = new ItemStack(from, 1, colour.getMetadata() + 1);
 //            ItemStack t = new ItemStack(to, 1, colour.getMetadata() + 1);
 //            IRecipe returnRecipeColored = new ShapelessOreRecipe(to.getRegistryName(), f, t)
-//                    .setRegistryName(new ResourceLocation(to.getRegistryName() + "_" + colour.getName() + "_undo"));
+//                    .setRegistryName(ResourceLocation.parse(to.getRegistryName() + "_" + colour.getName() + "_undo"));
 //            ForgeRegistries.RECIPES.register(returnRecipeColored);
 //
 //            NonNullList<Ingredient> colorList = NonNullList.create();
@@ -139,7 +139,7 @@ public class BCTransportRecipes {
 //            colorList.add(CraftingHelper.getIngredient(additional));
 //
 //            IRecipe upgradeRecipeColored = new ShapelessOreRecipe(to.getRegistryName(), colorList, t)
-//                    .setRegistryName(new ResourceLocation(to.getRegistryName() + "_" + colour.getName()));
+//                    .setRegistryName(ResourceLocation.parse(to.getRegistryName() + "_" + colour.getName()));
 //            ForgeRegistries.RECIPES.register(upgradeRecipeColored);
 //        }
 //    }

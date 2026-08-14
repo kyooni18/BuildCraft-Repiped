@@ -165,9 +165,5 @@ public class CreativeTabManager {
             return ResourceLocation.tryBuild(BCModules.BUILDCRAFT, this.name);
         }
 
-        @Override
-        public ResourceLocation getBackgroundLocation() {
-            return new ResourceLocation("textures/gui/container/creative_inventory/tab_" + "items.png");
-        }
     }
 }

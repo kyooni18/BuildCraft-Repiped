@@ -32,7 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -131,16 +131,16 @@ public class TileIntegrationTable extends TileLaserTableBase implements IHasWork
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
         if (recipe != null) {
             nbt.putString("recipe", recipe.name.toString());
         }
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
         if (nbt.contains("recipe")) {
             recipe = lookupRecipe(nbt.getString("recipe"));
         } else {
@@ -162,7 +162,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IHasWork
 
     @Override
 //    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
 
         if (id == NET_GUI_DATA) {
@@ -185,8 +185,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements IHasWork
     }
 
     private IntegrationRecipe lookupRecipe(String name) {
-        // return IntegrationRecipeRegistry.INSTANCE.getRecipe(new ResourceLocation(name));
-        return IntegrationRecipeRegistry.INSTANCE.getRecipe(new ResourceLocation(name), level);
+        // return IntegrationRecipeRegistry.INSTANCE.getRecipe(ResourceLocation.parse(name));
+        return IntegrationRecipeRegistry.INSTANCE.getRecipe(ResourceLocation.parse(name), level);
     }
 
     // MenuProvider

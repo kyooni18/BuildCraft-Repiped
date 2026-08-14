@@ -304,7 +304,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
                     if (texture == null) {
                         return false;
                     }
-                    particle.setSprite(texture);
+                // TODO 1.21: TextureSheetParticle#setSprite is protected; use a custom particle wrapper for explicit sprites.
                     particle.setPower(0.2F);
                     particle.scale(0.6F);
                     manager.add(particle);
@@ -338,7 +338,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
                                 TerrainParticle particle = new TerrainParticle(world, _x, _y, _z, 0, 0, 0, state);
                                 particle.setPos(_x, _y, _z);
-                                particle.setSprite(texture);
+                // TODO 1.21: TextureSheetParticle#setSprite is protected; use a custom particle wrapper for explicit sprites.
                                 manager.add(particle);
                             }
                         }

@@ -88,7 +88,7 @@ public class BlockLaserTable extends BlockBCTile_Neptune<TileLaserTableBase> imp
 
     @Override
 //    public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 //        switch(type) {
 //            case ASSEMBLY_TABLE:
 //                if (!world.isRemote) {
@@ -112,9 +112,9 @@ public class BlockLaserTable extends BlockBCTile_Neptune<TileLaserTableBase> imp
             if (world.getBlockEntity(pos) instanceof IBCTileMenuProvider tile) {
 //                BCSiliconGuis.ADVANCED_CRAFTING_TABLE.openGUI(player, pos, state);
                 MessageUtil.serverOpenTileGui(player, tile, pos);
-                return InteractionResult.SUCCESS;
+                return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
             }
         }
-        return InteractionResult.SUCCESS;
+        return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
     }
 }

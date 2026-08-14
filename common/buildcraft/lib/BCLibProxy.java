@@ -35,8 +35,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +87,7 @@ public abstract class BCLibProxy {
         return null;
     }
 
-    public Player getPlayerForContext(NetworkEvent.Context ctx) {
+    public Player getPlayerForContext(CustomPayloadEvent.Context ctx) {
         return ctx.getSender();
     }
 
@@ -194,8 +193,8 @@ public abstract class BCLibProxy {
         }
 
         @Override
-        public Player getPlayerForContext(NetworkEvent.Context ctx) {
-            if (ctx.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+        public Player getPlayerForContext(CustomPayloadEvent.Context ctx) {
+            if (ctx.isServerSide()) {
                 return super.getPlayerForContext(ctx);
             }
             return getClientPlayer();
@@ -250,8 +249,8 @@ public abstract class BCLibProxy {
 //                        throw new Error("We've got the wrong field! (Expected a file but got " + f + ")");
 //                    }
 //                    files.add((File) f);
-                    if (p.file.exists()) {
-                        files.add(p.file);
+                    if (p.zipFileAccess.file.exists()) {
+                        files.add(p.zipFileAccess.file);
                     }
                 }
                 opened.close();

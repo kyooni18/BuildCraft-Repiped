@@ -25,12 +25,12 @@ import buildcraft.silicon.plug.FacadePhasedState;
 import buildcraft.silicon.plug.FacadeStateManager;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nonnull;
@@ -43,7 +43,7 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
     public static final FacadeAssemblyRecipes INSTANCE = new FacadeAssemblyRecipes();
 
 //    static {
-//        INSTANCE.setRegistryName(new ResourceLocation("buildcrafttransport:facade_recipes"));
+//        INSTANCE.setRegistryName(ResourceLocation.parse("buildcrafttransport:facade_recipes"));
 //    }
 
     private static final int TIME_GAP = 500;
@@ -51,7 +51,7 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
     private static final ChangingObject<Long> MJ_COSTS = new ChangingObject<>(new Long[] { MJ_COST });
 
     public FacadeAssemblyRecipes() {
-        name = new ResourceLocation("buildcrafttransport:facade_recipes");
+        name = ResourceLocation.parse("buildcrafttransport:facade_recipes");
     }
 
     public static ItemStack createFacadeStack(FacadeBlockStateInfo info, boolean isHollow) {
@@ -166,12 +166,12 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
     }
 
     @Override
-    public ItemStack assemble(Container inv, RegistryAccess registryAccess) {
+    public ItemStack assemble(RecipeInput inv, HolderLookup.Provider provider) {
         return StackUtil.EMPTY;
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider provider) {
         return StackUtil.EMPTY;
     }
 }

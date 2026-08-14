@@ -222,7 +222,7 @@ public class Box implements IBox {
      * logic is different!
      */
     public AABB getBoundingBox() {
-        return new AABB(min, max.offset(VecUtil.POS_ONE));
+        return new AABB(Vec3.atLowerCornerOf(min), Vec3.atLowerCornerOf(max.offset(VecUtil.POS_ONE)));
     }
 
     // Calen Added

@@ -10,7 +10,7 @@ import buildcraft.lib.oredictionarytag.OreDictionaryTags;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -66,7 +66,7 @@ public class BCDatapackBuiltinEntriesProvider extends DatapackBuiltinEntriesProv
 
     public static Holder<Structure> CONFIGURED_INSTANCE_OIL_STRUCTURE;
 
-    public static void initDatagenStructures(BootstapContext<Structure> context) {
+    public static void initDatagenStructures(BootstrapContext<Structure> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
         HolderSet.Named<Biome> biomeHolderSet = biomes.getOrThrow(OreDictionaryTags.OIL_GEN);
 //        MappedRegistry<Structure> mappedRegistry = ForgeRegistries.BIOMES.getSlaveMap();
@@ -86,7 +86,7 @@ public class BCDatapackBuiltinEntriesProvider extends DatapackBuiltinEntriesProv
         );
     }
 
-    public static void initDatagenStructureSets(BootstapContext<StructureSet> context) {
+    public static void initDatagenStructureSets(BootstrapContext<StructureSet> context) {
 //        HolderGetter<Structure> structures = context.lookup(Registries.STRUCTURE);
 //        Holder.Reference<Structure> oil = structures.getOrThrow(STRUCTURE_KEY);
 

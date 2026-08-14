@@ -2,35 +2,42 @@ package buildcraft.lib.recipe.fuel;
 
 import buildcraft.api.fuels.IFuel;
 import buildcraft.lib.misc.JsonUtil;
+import buildcraft.lib.recipe.LegacyRecipeCodec;
 import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
-
 public class FuelRecipeSerializer implements RecipeSerializer<IFuel> {
-    public static final FuelRecipeSerializer INSTANCE;
+    public static final FuelRecipeSerializer INSTANCE = new FuelRecipeSerializer();
+    private static final MapCodec<IFuel> CODEC = LegacyRecipeCodec.mapCodec(
+            IFuel.TYPE_ID, FuelRecipeSerializer::fromJson, FuelRecipeSerializer::toJson);
+    private static final StreamCodec<RegistryFriendlyByteBuf, IFuel> STREAM_CODEC = LegacyRecipeCodec.streamCodec(CODEC);
 
-    static {
-        INSTANCE = new FuelRecipeSerializer();
+    private static IFuel fromJson(ResourceLocation recipeId, JsonObject json) {
+        FluidStack fluid = JsonUtil.deSerializeFluidStack(GsonHelper.getAsJsonObject(json, "fluid"));
+        long powerPerCycle = GsonHelper.getAsLong(json, "powerPerCycle");
+        int totalBurningTime = GsonHelper.getAsInt(json, "totalBurningTime");
+        boolean dirty = GsonHelper.getAsBoolean(json, "dirty", false);
+        if (dirty) {
+            FluidStack residue = JsonUtil.deSerializeFluidStack(GsonHelper.getAsJsonObject(json, "residue"));
+            return new FuelRegistry.DirtyFuel(recipeId, fluid, powerPerCycle, totalBurningTime, residue);
+        }
+        return new FuelRegistry.Fuel(recipeId, fluid, powerPerCycle, totalBurningTime);
     }
 
-    @Override
-    public FuelRegistry.Fuel fromJson(ResourceLocation recipeId, JsonObject json) {
-        String type = GsonHelper.getAsString(json, "type");
-        FluidStack fluid = JsonUtil.deSerializeFluidStack(json.getAsJsonObject("fluid"));
-        long powerPerCycle = json.get("powerPerCycle").getAsLong();
-        int totalBurningTime = GsonHelper.getAsInt(json, "totalBurningTime");
-        boolean dirty = GsonHelper.getAsBoolean(json, "dirty");
-        if (dirty) {
-            FluidStack residue = JsonUtil.deSerializeFluidStack(json.getAsJsonObject("residue"));
-            return new FuelRegistry.DirtyFuel(recipeId, fluid, powerPerCycle, totalBurningTime, residue);
-        } else {
-            return new FuelRegistry.Fuel(recipeId, fluid, powerPerCycle, totalBurningTime);
-        }
+    private static void toJson(IFuel recipe, JsonObject json) {
+        json.addProperty("id", recipe.getId().toString());
+        json.add("fluid", JsonUtil.serializeFluidStack(recipe.getFluid()));
+        json.addProperty("powerPerCycle", recipe.getPowerPerCycle());
+        json.addProperty("totalBurningTime", recipe.getTotalBurningTime());
+        boolean dirty = recipe instanceof FuelRegistry.DirtyFuel;
+        json.addProperty("dirty", dirty);
+        if (dirty) json.add("residue", JsonUtil.serializeFluidStack(((FuelRegistry.DirtyFuel) recipe).getResidue()));
     }
 
     public static void toJson(FuelRecipeBuilder builder, JsonObject json) {
@@ -39,34 +46,9 @@ public class FuelRecipeSerializer implements RecipeSerializer<IFuel> {
         json.addProperty("powerPerCycle", builder.powerPerCycle);
         json.addProperty("totalBurningTime", builder.totalBurningTime);
         json.addProperty("dirty", builder.dirty);
-        if (builder.dirty) {
-            json.add("residue", JsonUtil.serializeFluidStack(builder.residue));
-        }
+        if (builder.dirty) json.add("residue", JsonUtil.serializeFluidStack(builder.residue));
     }
 
-    @Nullable
-    @Override
-    public IFuel fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-        FluidStack fluid = buffer.readFluidStack();
-        long powerPerCycle = buffer.readLong();
-        int totalBurningTime = buffer.readInt();
-        boolean dirty = buffer.readBoolean();
-        if (dirty) {
-            FluidStack residue = buffer.readFluidStack();
-            return new FuelRegistry.DirtyFuel(recipeId, fluid, powerPerCycle, totalBurningTime, residue);
-        } else {
-            return new FuelRegistry.Fuel(recipeId, fluid, powerPerCycle, totalBurningTime);
-        }
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buffer, IFuel recipe) {
-        buffer.writeFluidStack(recipe.getFluid());
-        buffer.writeLong(recipe.getPowerPerCycle());
-        buffer.writeInt(recipe.getTotalBurningTime());
-        buffer.writeBoolean(recipe instanceof FuelRegistry.DirtyFuel);
-        if (recipe instanceof FuelRegistry.DirtyFuel dirtyFuel) {
-            buffer.writeFluidStack(dirtyFuel.getResidue());
-        }
-    }
+    @Override public MapCodec<IFuel> codec() { return CODEC; }
+    @Override public StreamCodec<RegistryFriendlyByteBuf, IFuel> streamCodec() { return STREAM_CODEC; }
 }

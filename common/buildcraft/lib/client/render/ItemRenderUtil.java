@@ -6,6 +6,7 @@
 
 package buildcraft.lib.client.render;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.model.MutableQuad;
@@ -135,7 +136,7 @@ public class ItemRenderUtil {
             category.setDetail("Item ID", () -> "" + ForgeRegistries.ITEMS.getKey(stack.getItem()));
 //            category.addDetail("Item Meta", () -> "" + stack.getMetadata());
 //            category.addDetail("Item NBT", () -> "" + stack.getTagCompound());
-            category.setDetail("Item NBT", () -> "" + stack.getTag());
+            category.setDetail("Item NBT", () -> "" + StackUtil.getItemData(stack));
             throw new ReportedException(report);
         }
     }

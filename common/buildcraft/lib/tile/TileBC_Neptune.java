@@ -31,12 +31,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -62,7 +63,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -553,7 +554,6 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         return new MessageUpdateTile(worldPosition, buffer);
     }
 
-    @Override
 //    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         handleUpdateTag(pkt.getTag());
@@ -567,25 +567,24 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
         ByteBuf buf = Unpooled.buffer();
         buf.writeShort(NET_RENDER_DATA);
         writePayload(NET_RENDER_DATA, new PacketBufferBC(buf), level.isClientSide ? Dist.CLIENT : Dist.DEDICATED_SERVER);
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
 
-        CompoundTag nbt = super.getUpdateTag();
+        CompoundTag nbt = super.getUpdateTag(provider);
         nbt.putByteArray("d", bytes);
         // Calen: in 1.18.2 #load is called when create TE
         // in 1.12.2 readFromNBT will not be called
-        this.saveAdditional(nbt);
+        this.saveAdditional(nbt, provider);
         return nbt;
     }
 
-    @Override
     public void handleUpdateTag(CompoundTag tag) {
         // Explicitly don't read the (server) data from NBT
-        super.load(tag);
+        super.loadAdditional(tag, RegistryAccess.EMPTY);
         if (!tag.contains("d", Tag.TAG_BYTE_ARRAY)) {
             // A bit odd, but ok - this was probably sent by something else
             return;
@@ -627,14 +626,14 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     }
 
     @Override
-    public final IMessage receivePayload(NetworkEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public final IMessage receivePayload(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
         int id = buffer.readUnsignedShort();
-        readPayload(id, buffer, ctx.getDirection(), ctx);
+        readPayload(id, buffer, MessageUtil.getNetworkDirection(ctx), ctx);
 
         // Make sure that we actually read the entire message rather than just discarding it
         MessageUtil.ensureEmpty(buffer, level.isClientSide, getClass() + ", id = " + getIdAllocator().getNameFor(id));
 
-        if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+        if (MessageUtil.isClientbound(ctx)) {
             spawnReceiveParticles(id);
         }
         return null;
@@ -667,7 +666,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
 
     /** @param ctx The context. Will be null if this is a generic update payload
      * @throws IOException if something went wrong */
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         // read render data with gui data
         if (id == NET_GUI_DATA) {
             readPayload(NET_RENDER_DATA, buffer, side, ctx);
@@ -703,12 +702,13 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     // ######################
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
         migrateOldNBT(nbt.getInt("data-version"), nbt);
         deltaManager.readFromNBT(nbt.getCompound("deltas"));
         if (nbt.contains("owner")) {
-            owner = NbtUtils.readGameProfile(nbt.getCompound("owner"));
+            CompoundTag ownerTag = nbt.getCompound("owner");
+            owner = new GameProfile(ownerTag.hasUUID("id") ? ownerTag.getUUID("id") : null, ownerTag.getString("name"));
         }
         if (nbt.contains("items", Tag.TAG_COMPOUND)) {
             itemManager.deserializeNBT(nbt.getCompound("items"));
@@ -731,12 +731,15 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
 
     @Override
 //    public CompoundTag writeToNBT(CompoundTag nbt)
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
         nbt.putInt("data-version", BCVersion.CURRENT.dataVersion);
         nbt.put("deltas", deltaManager.writeToNBT());
-        if (owner != null && owner.isComplete() && owner != FakePlayerProvider.NULL_PROFILE) {
-            nbt.put("owner", NbtUtils.writeGameProfile(new CompoundTag(), owner));
+        if (owner != null && owner.getId() != null && owner.getName() != null && owner != FakePlayerProvider.NULL_PROFILE) {
+            CompoundTag ownerTag = new CompoundTag();
+            ownerTag.putUUID("id", owner.getId());
+            ownerTag.putString("name", owner.getName());
+            nbt.put("owner", ownerTag);
         }
         CompoundTag items = itemManager.serializeNBT();
         if (!items.isEmpty()) {

@@ -9,11 +9,11 @@ package buildcraft.lib.recipe.assembly;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.recipes.IngredientStack;
 import com.google.common.collect.ImmutableSet;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeInput;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -90,12 +90,12 @@ public class AssemblyRecipeBasic extends AssemblyRecipe {
     // Recipe
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider provider) {
         return output.asList().get(0);
     }
 
     @Override
-    public ItemStack assemble(Container inv, RegistryAccess registryAccess) {
+    public ItemStack assemble(RecipeInput inv, HolderLookup.Provider provider) {
         return output.asList().get(0);
     }
 }

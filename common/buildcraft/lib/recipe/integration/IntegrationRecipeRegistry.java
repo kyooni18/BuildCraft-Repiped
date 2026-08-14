@@ -49,7 +49,7 @@ public class IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
     // public Iterable<IntegrationRecipe> getAllRecipes()
     public Iterable<IntegrationRecipe> getAllRecipes(Level world) {
         List<IntegrationRecipe> ret = Lists.newArrayList();
-        ret.addAll(world.getRecipeManager().getAllRecipesFor(IntegrationRecipe.TYPE));
+        world.getRecipeManager().getAllRecipesFor(IntegrationRecipe.TYPE).forEach(holder -> ret.add(holder.value()));
         ret.addAll(recipes.values());
         return ret;
     }
@@ -58,7 +58,7 @@ public class IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
     @Override
     // public IntegrationRecipe getRecipe(@Nonnull ResourceLocation name)
     public IntegrationRecipe getRecipe(@Nonnull ResourceLocation name, Level world) {
-        List<IntegrationRecipe> all = world.getRecipeManager().getAllRecipesFor(IntegrationRecipe.TYPE);
+        List<IntegrationRecipe> all = world.getRecipeManager().getAllRecipesFor(IntegrationRecipe.TYPE).stream().map(holder -> holder.value()).toList();
         List<IntegrationRecipe> found = all.stream().filter(r -> name.equals(r.name)).collect(Collectors.toList());
         if (!found.isEmpty()) {
             return found.get(0);

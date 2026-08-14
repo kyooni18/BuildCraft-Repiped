@@ -143,11 +143,10 @@ public enum ZonePlannerMapRenderer {
             return;
         }
 //        BufferBuilder builder = Tessellator.getInstance().getBuffer();
-        BufferBuilder builder = Tesselator.getInstance().getBuilder();
+        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 //        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR); // TODO: normals
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR); // TODO: normals
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 MapColourData data = zonePlannerMapChunk.getData(x, z);
@@ -169,10 +168,10 @@ public enum ZonePlannerMapRenderer {
 //        int glList = GL11.glGenLists(1);
 //        GL11.glNewList(glList, GL11.GL_COMPILE);
 //        Tessellator.getInstance().draw();
-        BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = builder.end();
+        MeshData meshData = builder.buildOrThrow();
 //        GL11.glEndList();
         vertexBuffer.bind();
-        vertexBuffer.upload(bufferbuilder$renderedbuffer);
+        vertexBuffer.upload(meshData);
         VertexBuffer.unbind();
 //        CHUNK_GL_CACHE.put(key, glList);
         CHUNK_GL_CACHE.put(key, vertexBuffer);

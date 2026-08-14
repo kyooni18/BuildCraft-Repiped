@@ -41,7 +41,7 @@ public class ItemBlocks {
 //        );
         ForgeRegistries.ITEMS.tags().getTag(ItemTags.BEDS).forEach(ItemBlocks::add);
         ForgeRegistries.ITEMS.tags().getTag(ItemTags.DOORS).forEach(ItemBlocks::add);
-        ForgeRegistries.ITEMS.tags().getTag(Tags.Items.HEADS).forEach(ItemBlocks::add);
+        ForgeRegistries.ITEMS.tags().getTag(ItemTags.SKULLS).forEach(ItemBlocks::add);
         ForgeRegistries.ITEMS.tags().getTag(ItemTags.SIGNS).forEach(ItemBlocks::add);
     }
 

@@ -112,7 +112,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
 //            int meta = nbt.getInt(FacadeAPI.NBT_CUSTOM_BLOCK_META);
             BlockState state = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound(FacadeAPI.NBT_CUSTOM_BLOCK_META));
 //            ItemStack stack = new ItemStack(nbt.getCompound(FacadeAPI.NBT_CUSTOM_ITEM_STACK));
-            ItemStack stack = ItemStack.of(nbt.getCompound(FacadeAPI.NBT_CUSTOM_ITEM_STACK));
+            ItemStack stack = buildcraft.lib.misc.StackUtil.loadStack(nbt.getCompound(FacadeAPI.NBT_CUSTOM_ITEM_STACK));
             if (regName.isEmpty()) {
 //                BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
                 BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + messageOuter.senderModId() + " - "
@@ -126,8 +126,8 @@ public enum FacadeStateManager implements IFacadeRegistry {
                         + id + " should have a valid ItemStack stored in " + FacadeAPI.NBT_CUSTOM_ITEM_STACK);
                 return;
             }
-//            Block block = Block.REGISTRY.getObject(new ResourceLocation(regName));
-            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(regName));
+//            Block block = Block.REGISTRY.getObject(ResourceLocation.parse(regName));
+            Block block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(regName));
             if (block == Blocks.AIR || block == null) {
 //                BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
                 BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + messageOuter.senderModId() + " - "
@@ -165,7 +165,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
         // if (block instanceof BlockSlime) {
         // return "it is a slime block";
         // }
-        if (block instanceof GlassBlock || block instanceof StainedGlassBlock) {
+        if (block instanceof TransparentBlock) {
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, "");
         }
         return new InteractionResultHolder<>(InteractionResult.PASS, "");
@@ -205,7 +205,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
         }
         Block block = state.getBlock();
 //        Item item = Item.getItemFromBlock(block);
-        ItemStack item = block.getCloneItemStack(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, state);
+        ItemStack item = new ItemStack(block.asItem());
 //        if (item == Items.AIR) {
 //            item = block.getItemDropped(state, new Random(0), 0);
 //        }

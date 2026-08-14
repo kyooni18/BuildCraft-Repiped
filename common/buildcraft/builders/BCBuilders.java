@@ -90,28 +90,36 @@ public class BCBuilders {
         BCBuildersConfig.saveConfigs();
     }
 
-    @SubscribeEvent
-    @OnlyIn(Dist.DEDICATED_SERVER)
-//    public static void onServerStarting(FMLServerStartingEvent event)
-    public static void onServerStarting(FMLDedicatedServerSetupEvent event) {
-        GlobalSavedDataSnapshots.reInit(Dist.DEDICATED_SERVER);
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.DEDICATED_SERVER)
+    public static final class DedicatedServerEvents {
+        private DedicatedServerEvents() {
+        }
+
+        @SubscribeEvent
+        public static void onServerStarting(FMLDedicatedServerSetupEvent event) {
+            GlobalSavedDataSnapshots.reInit(Dist.DEDICATED_SERVER);
+        }
     }
 
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public static void onTesrReg(RegisterRenderers event) {
-        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.architectTile, RenderArchitectTable::new);
-        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.builderTile, RenderBuilder::new);
-        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.fillerTile, RenderFiller::new);
-        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.quarryTile, RenderQuarry::new);
-        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.markerConstructionTile, RenderMarkerConstruction::new);
-    }
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static final class ClientEvents {
+        private ClientEvents() {
+        }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void clientSetup(FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(BCBuildersBlocks.frame.get(), RenderType.cutout());
-        BuildersItemModelPredicates.register(event);
+        @SubscribeEvent
+        public static void onTesrReg(RegisterRenderers event) {
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.architectTile, RenderArchitectTable::new);
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.builderTile, RenderBuilder::new);
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.fillerTile, RenderFiller::new);
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.quarryTile, RenderQuarry::new);
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.markerConstructionTile, RenderMarkerConstruction::new);
+        }
+
+        @SubscribeEvent
+        public static void clientSetup(FMLClientSetupEvent event) {
+            ItemBlockRenderTypes.setRenderLayer(BCBuildersBlocks.frame.get(), RenderType.cutout());
+            BuildersItemModelPredicates.register(event);
+        }
     }
 
     @SubscribeEvent

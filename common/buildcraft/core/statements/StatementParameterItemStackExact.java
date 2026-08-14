@@ -17,6 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraftforge.api.distmarker.Dist;
@@ -117,14 +118,12 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     public void writeToNbt(CompoundTag compound) {
         // if (stack != null)
         if (!stack.isEmpty()) {
-            CompoundTag tagCompound = new CompoundTag();
-            stack.save(tagCompound);
-            compound.put("stack", tagCompound);
+            compound.put("stack", StackUtil.saveStack(stack));
         }
     }
 
     public static StatementParameterItemStackExact readFromNbt(CompoundTag nbt) {
-        return new StatementParameterItemStackExact(ItemStack.of(nbt.getCompound("stack")));
+        return new StatementParameterItemStackExact(buildcraft.lib.misc.StackUtil.loadStack(nbt.getCompound("stack")));
     }
 
     @Override
@@ -180,9 +179,9 @@ public class StatementParameterItemStackExact implements IStatementParameter {
         if (stack.isEmpty()) {
             return ImmutableList.of();
         }
-        List<Component> tooltip = stack.getTooltipLines(null, TooltipFlag.Default.NORMAL);
+        List<Component> tooltip = stack.getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.Default.NORMAL);
         if (!tooltip.isEmpty()) {
-            tooltip.set(0, Component.literal(stack.getRarity().color.toString()).append(tooltip.get(0)));
+            tooltip.set(0, Component.literal(stack.getRarity().color().toString()).append(tooltip.get(0)));
             for (int i = 1; i < tooltip.size(); i++) {
                 tooltip.set(i, Component.literal(ChatFormatting.GRAY.toString()).append(tooltip.get(i)));
             }
@@ -196,10 +195,10 @@ public class StatementParameterItemStackExact implements IStatementParameter {
         if (stack.isEmpty()) {
             return ImmutableList.of();
         }
-        List<Component> tooltip = stack.getTooltipLines(null, TooltipFlag.Default.NORMAL);
+        List<Component> tooltip = stack.getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.Default.NORMAL);
         List<String> toolTipRet = new ArrayList<>(tooltip.size());
         if (!tooltip.isEmpty()) {
-            toolTipRet.set(0, Component.literal(stack.getRarity().color.toString()).append(tooltip.get(0)).getString());
+            toolTipRet.set(0, Component.literal(stack.getRarity().color().toString()).append(tooltip.get(0)).getString());
             for (int i = 1; i < tooltip.size(); i++) {
                 toolTipRet.set(i, Component.literal(ChatFormatting.GRAY.toString()).append(tooltip.get(i)).getString());
             }

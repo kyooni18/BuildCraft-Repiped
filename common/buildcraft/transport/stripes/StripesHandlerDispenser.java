@@ -9,8 +9,8 @@ package buildcraft.transport.stripes;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerItem;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
@@ -30,60 +31,6 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
 
     public static final List<Item> ITEMS = new ArrayList<>();
     public static final List<Class<? extends Item>> ITEM_CLASSES = new ArrayList<>();
-
-    public static class Source implements BlockSource {
-        private final ServerLevel world;
-        private final BlockPos pos;
-        private final Direction side;
-
-        public Source(ServerLevel world, BlockPos pos, Direction side) {
-            this.world = world;
-            this.pos = pos;
-            this.side = side;
-        }
-
-        @Override
-//        public double getX()
-        public double x() {
-            return pos.getX() + 0.5D;
-        }
-
-        @Override
-//        public double getY()
-        public double y() {
-            return pos.getY() + 0.5D;
-        }
-
-        @Override
-//        public double getZ()
-        public double z() {
-            return pos.getZ() + 0.5D;
-        }
-
-        @Override
-//        public BlockPos getBlockPos()
-        public BlockPos getPos() {
-            return pos;
-        }
-
-        @Override
-        public BlockState getBlockState() {
-            return Blocks.DISPENSER.defaultBlockState().setValue(DispenserBlock.FACING, side);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-//        public <T extends BlockEntity> T getBlockTileEntity()
-        public <T extends BlockEntity> T getEntity() {
-            return (T) world.getBlockEntity(pos);
-        }
-
-        @Override
-//        public Level getWorld()
-        public ServerLevel getLevel() {
-            return world;
-        }
-    }
 
     private static boolean shouldHandle(ItemStack stack) {
         if (ITEMS.contains(stack.getItem())) {
@@ -118,7 +65,10 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
         // return false;
         // }
 
-        BlockSource source = new Source((ServerLevel) world, pos, direction);
+        BlockState state = Blocks.DISPENSER.defaultBlockState().setValue(DispenserBlock.FACING, direction);
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        DispenserBlockEntity dispenser = blockEntity instanceof DispenserBlockEntity dispenserBlockEntity ? dispenserBlockEntity : null;
+        BlockSource source = new BlockSource((ServerLevel) world, pos, state, dispenser);
         ItemStack output = behaviour.dispense(source, stack.copy());
 //        player.getInventory().setInventorySlotContents(player.inventory.currentItem, output);
         player.getInventory().setItem(player.getInventory().selected, output);

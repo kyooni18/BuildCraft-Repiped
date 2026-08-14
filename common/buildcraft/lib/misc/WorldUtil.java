@@ -49,7 +49,7 @@ public class WorldUtil {
                             BlockHitResult.miss(Vec3.ZERO, Direction.NORTH, pos)
                     )
             )
-                    && blockIn.canSurvive(world.getBlockState(pos), world, pos);
+                    && world.getBlockState(pos).canSurvive(world, pos);
         }
     }
 }

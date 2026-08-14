@@ -24,7 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class RenderProgrammingTable implements BlockEntityRenderer<TileProgrammingTable_Neptune> {
     private final LazyLoadedValue<TextureAtlasSprite> glass_white = new LazyLoadedValue<>(() ->
-            Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation("block/white_stained_glass"))
+            Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(ResourceLocation.parse("block/white_stained_glass"))
     );
 
     public RenderProgrammingTable(BlockEntityRendererProvider.Context context) {
@@ -38,7 +38,7 @@ public class RenderProgrammingTable implements BlockEntityRenderer<TileProgrammi
         Minecraft.getInstance().getProfiler().push("programming");
 
         poseStack.pushPose();
-//        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().registerSprite(new ResourceLocation("blocks/glass_white"));
+//        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().registerSprite(ResourceLocation.parse("blocks/glass_white"));
         TextureAtlasSprite sprite = glass_white.get();
 //        int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), 0);
         int light1 = combinedLight >> 16 & 65535;

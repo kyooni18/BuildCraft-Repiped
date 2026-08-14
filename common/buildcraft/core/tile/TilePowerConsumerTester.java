@@ -32,9 +32,9 @@ public class TilePowerConsumerTester extends TileBC_Neptune implements IMjReceiv
 
     @Override
 //    public void readFromNBT(CompoundTag nbt)
-    public void load(CompoundTag nbt) {
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.readFromNBT(nbt);
-        super.load(nbt);
+        super.loadAdditional(nbt, provider);
         lastReceived = nbt.getLong("last");
         nextTickReceived = nbt.getLong("nt");
         lastTickReceived = nbt.getLong("lt");
@@ -43,9 +43,9 @@ public class TilePowerConsumerTester extends TileBC_Neptune implements IMjReceiv
 
     @Override
 //    public CompoundTag writeToNBT(CompoundTag nbt)
-    public void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        nbt = super.writeToNBT(nbt);
-        super.saveAdditional(nbt);
+        super.saveAdditional(nbt, provider);
         nbt.putLong("last", lastReceived);
         nbt.putLong("nt", nextTickReceived);
         nbt.putLong("lt", lastTickReceived);

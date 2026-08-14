@@ -66,7 +66,7 @@ public class SimpleScript {
             if (json == null) {
                 json = script.loadJson(name);
             }
-            ResourceLocation id = new ResourceLocation(script.domain, name);
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(script.domain, name);
             return ImmutableList.of(new ScriptActionAdd(id, json));
         });
         functions.put("remove", script ->
@@ -94,7 +94,7 @@ public class SimpleScript {
             if (json == null) {
                 json = script.loadJson(toAdd);
             }
-            ResourceLocation id = new ResourceLocation(script.domain, toAdd);
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(script.domain, toAdd);
             return ImmutableList.of(new ScriptActionReplace(toRemove, id, json, false));
         });
         functions.put("modify", script ->
@@ -113,7 +113,7 @@ public class SimpleScript {
             if (json == null) {
                 json = script.loadJson(toAdd);
             }
-            ResourceLocation id = new ResourceLocation(script.domain, toAdd);
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(script.domain, toAdd);
             return ImmutableList.of(new ScriptActionReplace(toRemove, id, json, true));
         });
     }
@@ -1005,7 +1005,7 @@ public class SimpleScript {
         public final ResourceLocation name;
 
         public ScriptActionRemove(String name) {
-            this.name = new ResourceLocation(name);
+            this.name = ResourceLocation.parse(name);
         }
     }
 
@@ -1030,7 +1030,7 @@ public class SimpleScript {
         public final JsonObject json;
 
         public ScriptActionReplace(String toReplace, ResourceLocation name, JsonObject json, boolean inheritTags) {
-            this.toReplace = new ResourceLocation(toReplace);
+            this.toReplace = ResourceLocation.parse(toReplace);
             this.name = name;
             this.json = json;
             this.inheritTags = inheritTags;

@@ -23,11 +23,11 @@ public class BCRoboticsPlugs {
 //        // TODO: remove this in 7.99.19!
 //        // This handles the migration of most of the transport pluggables into silicon
 //        String modId = BCModules.TRANSPORT.getModId();
-//        PipeApi.pluggableRegistry.register(new ResourceLocation(modId, def.identifier.getPath()), def);
+//        PipeApi.pluggableRegistry.register(ResourceLocation.fromNamespaceAndPath(modId, def.identifier.getPath()), def);
         return def;
     }
 
     private static ResourceLocation idFor(String name) {
-        return new ResourceLocation("buildcraftrobotics", name);
+        return ResourceLocation.fromNamespaceAndPath("buildcraftrobotics", name);
     }
 }

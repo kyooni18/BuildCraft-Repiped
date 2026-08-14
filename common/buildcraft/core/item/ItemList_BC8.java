@@ -37,7 +37,7 @@ import java.util.List;
 
 //public class ItemList_BC8 extends ItemBC_Neptune implements IList
 public class ItemList_BC8 extends ItemBC_Neptune implements IList, MenuProvider {
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:list");
+    private static final ResourceLocation ADVANCEMENT = ResourceLocation.parse("buildcraftcore:list");
 
     // Calen
     public static final String NBT_KEY = "label";
@@ -72,7 +72,7 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList, MenuProvider 
     @Override
     @OnlyIn(Dist.CLIENT)
 //    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag)
-    public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         String name = getName_INamedItem(StackUtil.asNonNull(stack));
 //        if (StringUtils.isNullOrEmpty(name)) return;
         if (StringUtil.isNullOrEmpty(name)) return;

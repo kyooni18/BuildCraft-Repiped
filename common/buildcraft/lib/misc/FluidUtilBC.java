@@ -42,7 +42,7 @@ public class FluidUtilBC {
             return;
         }
         FluidStack working = potential.copy();
-        for (Direction side : Direction.VALUES) {
+        for (Direction side : Direction.values()) {
             if (potential.getAmount() <= 0) {
                 break;
             }
@@ -225,7 +225,7 @@ public class FluidUtilBC {
 
     // Calen
     public static Fluid getItemFromRegistryName(String name) {
-        return getItemFromRegistryName(new ResourceLocation(name));
+        return getItemFromRegistryName(ResourceLocation.parse(name));
     }
 
     public static Fluid getItemFromRegistryName(ResourceLocation name) {

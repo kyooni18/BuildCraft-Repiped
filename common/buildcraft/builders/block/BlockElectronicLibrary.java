@@ -34,7 +34,7 @@ public class BlockElectronicLibrary extends BlockBCTile_Neptune<TileElectronicLi
     @Override
 //    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, Player player, InteractionHand hand,
 //                                    Direction side, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!world.isClientSide) {
 //            BCBuildersGuis.LIBRARY.openGUI(player, pos);
             // Calen
@@ -43,6 +43,6 @@ public class BlockElectronicLibrary extends BlockBCTile_Neptune<TileElectronicLi
             }
         }
 //        return true;
-        return InteractionResult.SUCCESS;
+        return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
     }
 }

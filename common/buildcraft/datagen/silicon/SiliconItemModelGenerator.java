@@ -49,14 +49,14 @@ public class SiliconItemModelGenerator extends BCBaseItemModelGenerator {
                 .texture("layer0", "buildcraftsilicon:item/redstone_chipset/quartz");
 
         // tables
-        withExistingParent(BCSiliconBlocks.advancedCraftingTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/advanced_crafting"));
-        withExistingParent(BCSiliconBlocks.assemblyTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/assembly"));
-        withExistingParent(BCSiliconBlocks.chargingTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/charging"));
-        withExistingParent(BCSiliconBlocks.integrationTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/integration"));
-        withExistingParent(BCSiliconBlocks.programmingTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/programming"));
+        withExistingParent(BCSiliconBlocks.advancedCraftingTable.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftsilicon:block/table/advanced_crafting"));
+        withExistingParent(BCSiliconBlocks.assemblyTable.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftsilicon:block/table/assembly"));
+        withExistingParent(BCSiliconBlocks.chargingTable.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftsilicon:block/table/charging"));
+        withExistingParent(BCSiliconBlocks.integrationTable.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftsilicon:block/table/integration"));
+        withExistingParent(BCSiliconBlocks.programmingTable.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftsilicon:block/table/programming"));
 
         // laser
-        withExistingParent(BCSiliconBlocks.laser.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/laser"));
+        withExistingParent(BCSiliconBlocks.laser.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftsilicon:block/laser"));
 
         // gate_copier
         ResourceLocation gateCopier = BCSiliconItems.gateCopier.get().getRegistryName();

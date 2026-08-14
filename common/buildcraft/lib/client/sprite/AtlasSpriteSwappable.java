@@ -99,7 +99,7 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
 //    public static TextureAtlasSprite loadSprite(ResourceManager manager, String name, ResourceLocation location,
 //                                                boolean careIfMissing) {
 //        // Load the initial variant
-//        TextureAtlasSprite sprite = makeAtlasSprite(new ResourceLocation(name));
+//        TextureAtlasSprite sprite = makeAtlasSprite(ResourceLocation.parse(name));
 //        try {
 //            // Copied almost directly from TextureMap.
 //            PngSizeInfo pngsizeinfo = PngSizeInfo.makeFromResource(manager.getResource(location));
@@ -116,8 +116,8 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
 //            }
 //            return null;
 //        }
-//        TextureAtlasSprite.Info info = new TextureAtlasSprite.Info(new ResourceLocation(name), 1, 1, AnimationMetadataSection.EMPTY);
-//        TextureAtlasSprite sprite = new TextureAtlasSprite(new TextureAtlas(new ResourceLocation(name)), )
+//        TextureAtlasSprite.Info info = new TextureAtlasSprite.Info(ResourceLocation.parse(name), 1, 1, AnimationMetadataSection.EMPTY);
+//        TextureAtlasSprite sprite = new TextureAtlasSprite(new TextureAtlas(ResourceLocation.parse(name)),  )
 //    }
 
 //    @Override

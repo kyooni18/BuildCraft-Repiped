@@ -22,7 +22,7 @@ public class PipeBehaviourClay extends PipeBehaviour {
 
     @PipeEventHandler
     public void orderSides(PipeEventItem.SideCheck ordering) {
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             ConnectedType type = pipe.getConnectedType(face);
             if (type == ConnectedType.TILE) {
                 /* We only really need to increase the priority, but using a larger number (100) means that it doesn't
@@ -35,7 +35,7 @@ public class PipeBehaviourClay extends PipeBehaviour {
 
     @PipeEventHandler
     public void orderSides(PipeEventFluid.SideCheck ordering) {
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             ConnectedType type = pipe.getConnectedType(face);
             if (type == ConnectedType.TILE) {
                 /* We only really need to increase the priority, but using a larger number (100) means that it doesn't

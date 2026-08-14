@@ -36,15 +36,15 @@ public abstract class LaserCompiledList {
 
     public static class Builder implements ILaserRenderer, AutoCloseable {
         public final RenderUtil.AutoTessellator tess;
+        private final BufferBuilder bufferBuilder;
         // private final boolean useColour;
 
         // public Builder(boolean useNormalColour)
         public Builder() {
 //            this.useColour = useNormalColour;
             tess = RenderUtil.getThreadLocalUnusedTessellator();
-            BufferBuilder bufferBuilder = tess.tessellator.getBuilder();
 //            bufferBuilder.begin(VertexFormat.Mode.QUADS, useNormalColour ? LaserRenderer_BC8.FORMAT_ALL : LaserRenderer_BC8.FORMAT_LESS);
-            bufferBuilder.begin(VertexFormat.Mode.QUADS, LaserRenderer_BC8.FORMAT_ALL);
+            bufferBuilder = tess.tessellator.begin(VertexFormat.Mode.QUADS, LaserRenderer_BC8.FORMAT_ALL);
         }
 
         @Override
@@ -59,31 +59,27 @@ public abstract class LaserCompiledList {
                 float diffuse
         ) {
 //            BufferBuilder bufferBuilder = tess.tessellator.getBuffer();
-            BufferBuilder bufferBuilder = tess.tessellator.getBuilder();
             // bufferBuilder.pos(x, y, z);
-            bufferBuilder.vertex(x, y, z);
+            bufferBuilder.addVertex((float) x, (float) y, (float) z);
 //            if (useColour) {
-            bufferBuilder.color(diffuse, diffuse, diffuse, 1.0f);
+            bufferBuilder.setColor(diffuse, diffuse, diffuse, 1.0f);
 //            }
             // bufferBuilder.tex(u, v);
-            bufferBuilder.uv((float) u, (float) v);
+            bufferBuilder.setUv((float) u, (float) v);
             // bufferBuilder.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
-            bufferBuilder.uv2(lmap);
-            bufferBuilder.endVertex();
+            bufferBuilder.setLight(lmap);
         }
 
         public LaserCompiledList build() {
 //            if (OpenGlHelper.useVbo()) {
 //            BufferBuilder bufferBuilder = tess.tessellator.getBuffer();
-            BufferBuilder bufferBuilder = tess.tessellator.getBuilder();
 //            VertexBuffer vertexBuffer = new VertexBuffer(bufferBuilder.getVertexFormat());
             VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 //            bufferBuilder.finishDrawing();
 //            bufferBuilder.reset();
-            BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = bufferBuilder.end();
 //            vertexBuffer.bufferData(bufferBuilder.getByteBuffer());
             vertexBuffer.bind();
-            vertexBuffer.upload(bufferbuilder$renderedbuffer);
+            vertexBuffer.upload(bufferBuilder.buildOrThrow());
 //            VertexBuffer.unbind();
 //            return new Vbo(useColour, vertexBuffer);
             return new Vbo(vertexBuffer);

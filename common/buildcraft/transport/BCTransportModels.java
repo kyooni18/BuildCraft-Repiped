@@ -36,6 +36,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -133,12 +134,12 @@ public class BCTransportModels {
         event.getModels().replaceAll(((resourceLocation, bakedModel) ->
         {
             if (resourceLocation instanceof ModelResourceLocation m) {
-                if (m.getNamespace().equals(BCTransport.MODID)) {
-                    if (m.getVariant().equals("inventory") && m.getPath().startsWith("pipe_")) {
+                if (m.id().getNamespace().equals(BCTransport.MODID)) {
+                    if (m.getVariant().equals("inventory") && m.id().getPath().startsWith("pipe_")) {
                         return ModelPipeItem.INSTANCE;
-                    } else if (m.getPath().equals("pipe_holder")) {
+                    } else if (m.id().getPath().equals("pipe_holder")) {
                         return ModelPipe.INSTANCE;
-                    } else if (m.getPath().contains("pipe")) {
+                    } else if (m.id().getPath().contains("pipe")) {
                         BCLog.logger.warn("Found unexpected pipe at ModelEvent.BakingCompleted: " + m);
                     }
                 }
@@ -152,7 +153,7 @@ public class BCTransportModels {
     }
 
     private static void putModel(ModelEvent.ModifyBakingResult event, String str, String variant, BakedModel model) {
-        event.getModels().replace(new ModelResourceLocation("buildcrafttransport", str, variant), model);
+        event.getModels().replace(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("buildcrafttransport", str), variant), model);
     }
 
     public static MutableQuad[] getStripesDynQuads(Direction side) {

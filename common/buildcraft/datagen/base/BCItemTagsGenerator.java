@@ -59,7 +59,7 @@ public class BCItemTagsGenerator extends ItemTagsProvider {
         // sealant
         tag(OreDictionaryTags.SEALANT)
                 .addOptionalTag(Tags.Items.DYES_GREEN)
-                .addOptionalTag(Tags.Items.SLIMEBALLS)
+                .addOptionalTag(Tags.Items.SLIME_BALLS)
         ;
 
         // misc

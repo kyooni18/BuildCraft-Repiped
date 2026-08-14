@@ -258,7 +258,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
             }
         }
         if (key.isHollow) {
-            for (Direction facing : Direction.VALUES) {
+            for (Direction facing : Direction.values()) {
                 if (facing.getAxis() != key.side.getAxis()) {
                     boolean positive = key.side.getAxisDirection() == Direction.AxisDirection.POSITIVE;
                     if (key.side.getAxis() == Direction.Axis.Z && facing.getAxis() == Direction.Axis.X ||
@@ -289,7 +289,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         for (MutableQuad quad : quads) {
             int tint = quad.getTint();
             if (tint != -1) {
-                quad.setTint(tint * Direction.VALUES.length + key.side.ordinal());
+                quad.setTint(tint * Direction.values().length + key.side.ordinal());
             }
         }
         return quads;

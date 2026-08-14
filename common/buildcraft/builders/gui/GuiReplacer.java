@@ -21,7 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiReplacer extends GuiBC8<ContainerReplacer> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/replacer.png");
+    private static final ResourceLocation TEXTURE_BASE = ResourceLocation.parse("buildcraftbuilders:textures/gui/replacer.png");
     private static final int SIZE_X = 176, SIZE_Y = 241;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 
@@ -64,7 +64,7 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
     @Override
     protected void drawForegroundLayer(GuiGraphics guiGraphics) {
 //        nameField.drawTextBox();
-        nameField.renderWidget(guiGraphics, 0, 0, Minecraft.getInstance().getFrameTime());
+        nameField.renderWidget(guiGraphics, 0, 0, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
     }
 
     @Override
@@ -73,7 +73,6 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
         // Calen FIXED: in 1.12.2 without super.tick(), ledgers will not spread
         super.containerTick();
 //        nameField.updateCursorCounter();
-        nameField.tick();
     }
 
     @Override

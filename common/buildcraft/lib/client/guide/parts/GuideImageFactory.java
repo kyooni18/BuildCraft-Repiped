@@ -53,7 +53,7 @@ public class GuideImageFactory implements GuidePartFactory {
 //        TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();
         Function<ResourceLocation, TextureAtlasSprite> textureMap = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS);
 //        TextureAtlasSprite stitched = textureMap.getAtlasSprite(location);
-        TextureAtlasSprite stitched = textureMap.apply(new ResourceLocation(location));
+        TextureAtlasSprite stitched = textureMap.apply(ResourceLocation.parse(location));
 //        if (stitched != textureMap.getSprite(MissingTextureAtlasSprite.getLocation()))
         if (stitched != textureMap.apply(MissingTextureAtlasSprite.getLocation())) {
             this.sprite = new SpriteAtlas(stitched);
@@ -62,7 +62,7 @@ public class GuideImageFactory implements GuidePartFactory {
         } else {
             ISprite s;
             int sw, sh;
-            ResourceLocation resLoc = new ResourceLocation(location);
+            ResourceLocation resLoc = ResourceLocation.parse(location);
 //            try (Resource resource = Minecraft.getInstance().getResourceManager().getResource(resLoc))
             try {
                 Resource resource = Minecraft.getInstance().getResourceManager().getResource(resLoc).get();
@@ -98,6 +98,6 @@ public class GuideImageFactory implements GuidePartFactory {
             load();
         }
         return new GuideImage(gui, sprite, srcWidth, srcHeight, width, height);
-//        return new GuideImage(gui, new SpriteAtlas(new TextureAtlas(new ResourceLocation("")).getSprite(MissingTextureAtlasSprite.getLocation())), 0, 0, 0, 0);
+//        return new GuideImage(gui, new SpriteAtlas(new TextureAtlas(ResourceLocation.fromNamespaceAndPath("")).getSprite(MissingTextureAtlasSprite.getLocation())), 0, 0, 0, 0);
     }
 }

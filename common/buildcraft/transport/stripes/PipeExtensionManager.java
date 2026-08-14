@@ -34,7 +34,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.FakePlayer;
+import buildcraft.api.core.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -98,7 +98,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
 
             // check other directions
             List<Direction> possible = new ArrayList<>();
-            for (Direction facing : Direction.VALUES) {
+            for (Direction facing : Direction.values()) {
                 if (facing.getAxis() != r.dir.getAxis()) {
                     if (isValidRetractionPath(w, r, facing)) {
                         possible.add(facing);
@@ -142,7 +142,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
 
 //        NBTTagCompound stripesNBTOld = new NBTTagCompound();
 //        stripesTileOld.writeToNBT(stripesNBTOld);
-        CompoundTag stripesNBTOld = stripesTileOld.saveWithFullMetadata();
+        CompoundTag stripesNBTOld = stripesTileOld.saveWithFullMetadata(net.minecraft.core.RegistryAccess.EMPTY);
 
         // Step 2: Remove previous pipe
 //        BlockSnapshot blockSnapshot2 = BlockSnapshot.getBlockSnapshot(w, p);
@@ -213,8 +213,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
     private void extend(Level w, PipeExtensionRequest r) {
         BlockPos p = r.pos.relative(r.dir);
 //        if (!w.isAirBlock(p) && !w.getBlockState(p).getBlock().isReplaceable(w, p))
-        if (!w.isEmptyBlock(p) && !w.getBlockState(p).getBlock().canBeReplaced(
-                w.getBlockState(p),
+        if (!w.isEmptyBlock(p) && !w.getBlockState(p).canBeReplaced(
                 new BlockPlaceContext(
                         w,
                         null,
@@ -247,7 +246,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         }
 
 //        stripesTileOld.writeToNBT(stripesNBTOld);
-        stripesNBTOld = stripesTileOld.saveWithFullMetadata();
+        stripesNBTOld = stripesTileOld.saveWithFullMetadata(net.minecraft.core.RegistryAccess.EMPTY);
 //        BlockSnapshot blockSnapshot1 = BlockSnapshot.getBlockSnapshot(w, r.pos);
         BlockSnapshot blockSnapshot1 = BlockSnapshot.create(w.dimension(), w, r.pos);
         boolean canceled = !BlockUtil.breakBlock((ServerLevel) w, r.pos, NonNullList.create(), r.pos, owner);
@@ -345,7 +344,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             return;
         }
         if (!canceled) {
-            stripesTileNew.load(stripesNBTOld);
+            stripesTileNew.loadWithComponents(stripesNBTOld, net.minecraft.core.RegistryAccess.EMPTY);
             stripesTileNew.onLoad();
         }
 
@@ -380,7 +379,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         IPipe pipe = CapUtil.getCapability(tile, PipeApi.CAP_PIPE, null).orElse(null);
         if (pipe != null) {
             boolean connected = false;
-            for (Direction facing : Direction.VALUES) {
+            for (Direction facing : Direction.values()) {
                 if (pipe.getConnectedType(facing) == IPipe.ConnectedType.TILE) {
                     return false;
                 }

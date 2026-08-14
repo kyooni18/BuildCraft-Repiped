@@ -94,7 +94,7 @@ public class EntityUtil {
 
     // Calen 1.20.1
     public static EntityType<?> getItemFromRegistryName(String name) {
-        return getItemFromRegistryName(new ResourceLocation(name));
+        return getItemFromRegistryName(ResourceLocation.parse(name));
     }
 
     public static EntityType<?> getItemFromRegistryName(ResourceLocation name) {

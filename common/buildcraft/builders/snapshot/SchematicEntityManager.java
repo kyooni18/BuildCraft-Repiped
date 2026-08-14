@@ -54,7 +54,7 @@ public class SchematicEntityManager {
 
     @Nonnull
     public static ISchematicEntity readFromNBT(CompoundTag schematicEntityTag) throws InvalidInputDataException {
-        ResourceLocation name = new ResourceLocation(schematicEntityTag.getString("name"));
+        ResourceLocation name = ResourceLocation.parse(schematicEntityTag.getString("name"));
         SchematicEntityFactory<?> factory = SchematicEntityFactoryRegistry.getFactoryByName(name);
         if (factory == null) {
             throw new InvalidInputDataException("Unknown schematic type " + name);

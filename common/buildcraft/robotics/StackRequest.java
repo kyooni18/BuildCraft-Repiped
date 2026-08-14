@@ -6,6 +6,7 @@ package buildcraft.robotics;
 
 import buildcraft.api.robots.*;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -78,9 +79,7 @@ public class StackRequest {
     public void writeToNBT(CompoundTag nbt) {
         nbt.putInt("slot", slot);
 
-        CompoundTag stackNBT = new CompoundTag();
-        stack.save(stackNBT);
-        nbt.put("stack", stackNBT);
+        nbt.put("stack", StackUtil.saveStack(stack));
 
         if (station != null) {
             nbt.put("stationIndex", NBTUtilBC.writeBlockPos(stationIndex));
@@ -92,7 +91,7 @@ public class StackRequest {
         if (nbt.contains("stationIndex")) {
             int slot = nbt.getInt("slot");
 
-            ItemStack stack = ItemStack.of(nbt.getCompound("stack"));
+            ItemStack stack = buildcraft.lib.misc.StackUtil.loadStack(nbt.getCompound("stack"));
 
             BlockPos stationIndex = NBTUtilBC.readBlockPos(nbt.get("stationIndex"));
             Direction stationSide = Direction.values()[nbt.getByte("stationSide")];

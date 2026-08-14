@@ -16,7 +16,7 @@ import net.minecraft.world.item.DyeColor;
 public class FilterEventHandler {
     @PipeEventHandler
     public static void sideCheck(PipeEventItem.SideCheck event) {
-        for (Direction side : Direction.VALUES) {
+        for (Direction side : Direction.values()) {
             if (!event.isAllowed(side)) {
                 continue;
             }

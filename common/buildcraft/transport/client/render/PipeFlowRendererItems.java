@@ -48,7 +48,7 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
         uvs.minV = (float) sprite.getInterpV(0);
         uvs.maxV = (float) sprite.getInterpV(1);
 
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             MutableQuad q = ModelUtil.createFace(face, center, radius, uvs);
             q.setCalculatedDiffuse();
             COLOURED_QUADS[face.ordinal()] = q;

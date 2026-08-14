@@ -184,7 +184,10 @@ public class MapManager implements Runnable {
                     // if (o != null && o instanceof Chunk)
                     if (o != null) {
                         // Chunk c = (Chunk) o;
-                        ChunkAccess c = o.getLastAvailable();
+                        ChunkAccess c = o.getTickingChunk();
+                        if (c == null) {
+                            continue;
+                        }
                         // if (!mw.hasChunk(c.xPosition, c.zPosition))
                         if (!mw.hasChunk(c.getPos().x, c.getPos().z)) {
                             // mw.updateChunkDelayed(c, (byte) (40 + VecUtil.RANDOM.nextInt(20)));

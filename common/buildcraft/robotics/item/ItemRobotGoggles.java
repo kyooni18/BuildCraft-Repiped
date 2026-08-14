@@ -1,7 +1,9 @@
 package buildcraft.robotics.item;
 
 import buildcraft.lib.item.IItemBuildCraft;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +33,7 @@ public class ItemRobotGoggles extends ArmorItem implements IItemBuildCraft {
 
     @Override
     // public void damageArmor(LivingEntity entity, ItemStack stack, DamageSource source, int damage, int slot)
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+    public int damageItem(ItemStack stack, int amount, ServerLevel level, ServerPlayer player, Consumer<Item> onBroken) {
         // Never damaged
         return 0;
     }

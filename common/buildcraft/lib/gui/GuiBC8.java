@@ -162,13 +162,12 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune<?>> extends AbstractC
         Matrix4f pose = poseStack.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader); // Calen: without this, the texture will not appear
         Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuilder();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(pose, (xCoord + 0.0F), (yCoord + heightIn), zLevel).uv((textureSprite.getU0()), ((float) textureSprite.getV1())).endVertex();
-        bufferbuilder.vertex(pose, (xCoord + widthIn), (yCoord + heightIn), zLevel).uv((textureSprite.getU1()), ((float) textureSprite.getV1())).endVertex();
-        bufferbuilder.vertex(pose, (xCoord + widthIn), (yCoord + 0), zLevel).uv((textureSprite.getU1()), ((float) textureSprite.getV0())).endVertex();
-        bufferbuilder.vertex(pose, (xCoord + 0.0F), (yCoord + 0), zLevel).uv((textureSprite.getU0()), ((float) textureSprite.getV0())).endVertex();
-        tessellator.end();
+        BufferBuilder bufferbuilder = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferbuilder.addVertex(pose, (xCoord + 0.0F), (yCoord + heightIn), zLevel).setUv((textureSprite.getU0()), ((float) textureSprite.getV1()));
+        bufferbuilder.addVertex(pose, (xCoord + widthIn), (yCoord + heightIn), zLevel).setUv((textureSprite.getU1()), ((float) textureSprite.getV1()));
+        bufferbuilder.addVertex(pose, (xCoord + widthIn), (yCoord + 0), zLevel).setUv((textureSprite.getU1()), ((float) textureSprite.getV0()));
+        bufferbuilder.addVertex(pose, (xCoord + 0.0F), (yCoord + 0), zLevel).setUv((textureSprite.getU0()), ((float) textureSprite.getV0()));
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
     }
 
     public void drawString(GuiGraphics guiGraphics, Font fontRenderer, String text, double x, double y, int colour) {
@@ -197,10 +196,18 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune<?>> extends AbstractC
     }
 
     @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        // Screen.render() dispatches here before AbstractContainerScreen renders its contents.
+        // Keep BuildCraft's fully-override menu semantics while avoiding the 1.21 recursion
+        // renderBackground -> renderBg -> renderBackground.
+        renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    }
+
+    @Override
 //    protected final void drawGuiContainerBackgroundLayer(PoseStack poseStack, float partialTicks, int mouseX, int mouseY)
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
 //        mainGui.drawBackgroundLayer(partialTicks, mouseX, mouseY, this::drawDefaultBackground);
-        mainGui.drawBackgroundLayer(guiGraphics, partialTicks, mouseX, mouseY, () -> renderBackground(guiGraphics));
+        mainGui.drawBackgroundLayer(guiGraphics, partialTicks, mouseX, mouseY, () -> renderTransparentBackground(guiGraphics));
         drawBackgroundLayer(partialTicks, guiGraphics);
         mainGui.drawElementBackgrounds(guiGraphics);
     }
@@ -212,7 +219,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune<?>> extends AbstractC
 
         drawForegroundLayer(guiGraphics);
 //        mainGui.drawElementForegrounds(this::drawDefaultBackground, poseStack);
-        mainGui.drawElementForegrounds(() -> renderBackground(guiGraphics), guiGraphics);
+        mainGui.drawElementForegrounds(() -> renderTransparentBackground(guiGraphics), guiGraphics);
         drawForegroundLayerAboveElements();
 
         mainGui.postDrawForeground(guiGraphics.pose());
@@ -261,9 +268,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune<?>> extends AbstractC
 
     // Calen 1.18.2
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        boolean ret = super.mouseScrolled(mouseX, mouseY, delta);
-        mainGui.mouseScrolled(mouseX, mouseY, delta);
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        boolean ret = super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        mainGui.mouseScrolled(mouseX, mouseY, scrollY);
         return ret;
     }
 

@@ -59,7 +59,7 @@ public class BlockMarkerVolume extends BlockMarkerBase {
 
     @Override
 //    public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!world.isClientSide) {
             BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof TileMarkerVolume) {
@@ -68,6 +68,6 @@ public class BlockMarkerVolume extends BlockMarkerBase {
                 volume.onManualConnectionAttempt(player);
             }
         }
-        return InteractionResult.SUCCESS;
+        return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
     }
 }

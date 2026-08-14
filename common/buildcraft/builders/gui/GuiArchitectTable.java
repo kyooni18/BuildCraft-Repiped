@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/architect.png");
+    private static final ResourceLocation TEXTURE_BASE = ResourceLocation.parse("buildcraftbuilders:textures/gui/architect.png");
     private static final int SIZE_X = 256, SIZE_Y = 166;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_PROGRESS = new GuiIcon(TEXTURE_BASE, 0, 166, 24, 17);
@@ -68,7 +68,7 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
         guiGraphics.drawString(font, title, leftPos + (float) (imageWidth - font.width(title)) / 2, topPos + 5, 0x404040, false);
 
 //        nameField.drawTextBox();
-        nameField.renderWidget(guiGraphics, 0, 0, Minecraft.getInstance().getFrameTime());
+        nameField.renderWidget(guiGraphics, 0, 0, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
     }
 
     @Override
@@ -77,7 +77,6 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
         // Calen FIXED: in 1.12.2 without super.containerTick(), the ledgers will not spread
         super.containerTick();
 //        nameField.updateCursorCounter();
-        nameField.tick();
     }
 
     @Override

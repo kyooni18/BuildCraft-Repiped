@@ -22,10 +22,11 @@ public final class CraftingUtil {
     // public static Recipe findMatchingRecipe(CraftingContainer par1InventoryCrafting, Level par2World)
     public static CraftingRecipe findMatchingRecipe(CraftingContainer par1InventoryCrafting, Level par2World) {
 //        List<IRecipe> recipes = GameRegistry.findRegistry(IRecipe.class).getValues();
-        List<CraftingRecipe> recipes = par2World.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, par1InventoryCrafting, par2World);
+        var craftInput = par1InventoryCrafting.asCraftInput();
+        List<CraftingRecipe> recipes = par2World.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, craftInput, par2World).stream().map(holder -> holder.value()).toList();
 //        for (IRecipe recipe : recipes)
         for (CraftingRecipe recipe : recipes) {
-            if (recipe.matches(par1InventoryCrafting, par2World)) {
+            if (recipe.matches(craftInput, par2World)) {
                 return recipe;
             }
         }

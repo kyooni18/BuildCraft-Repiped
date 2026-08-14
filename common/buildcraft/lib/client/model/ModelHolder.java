@@ -23,7 +23,7 @@ public abstract class ModelHolder {
     }
 
     public ModelHolder(String modelLocation) {
-        this(new ResourceLocation(modelLocation));
+        this(ResourceLocation.parse(modelLocation));
     }
 
     protected abstract void onModelBake();

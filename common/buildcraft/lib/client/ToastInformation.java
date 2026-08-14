@@ -7,8 +7,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public class ToastInformation implements Toast {
+    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/system");
     public final String localeKey;
     public final ISimpleDrawable icon;
     private final Object type;
@@ -31,7 +33,7 @@ public class ToastInformation implements Toast {
 //        GlStateManager.color(1.0F, 1.0F, 1.0F);
         RenderUtil.color(1.0F, 1.0F, 1.0F);
 //        toastGui.drawTexturedModalRect(0, 0, 0, 0, 160, 32);
-        guiGraphics.blit(TEXTURE, 0, 0, 0, 0, 160, 32);
+        guiGraphics.blitSprite(BACKGROUND_SPRITE, 0, 0, 160, 32);
         int x = 10;
         if (icon != null) {
 //            icon.drawAt(0, 0);

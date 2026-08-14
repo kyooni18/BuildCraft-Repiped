@@ -12,8 +12,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @OnlyIn(Dist.CLIENT)
 public class CoreItemModelPredicates {
-    public static final ResourceLocation PREDICATE_USED = new ResourceLocation("buildcraft", "used");
-    public static final ResourceLocation PREDICATE_MAP_TYPE = new ResourceLocation("buildcraft", "map_type");
+    public static final ResourceLocation PREDICATE_USED = ResourceLocation.fromNamespaceAndPath("buildcraft", "used");
+    public static final ResourceLocation PREDICATE_MAP_TYPE = ResourceLocation.fromNamespaceAndPath("buildcraft", "map_type");
 
     public static void register(FMLClientSetupEvent event) {
         event.enqueueWork(

@@ -5,6 +5,7 @@ import buildcraft.energy.generation.structure.OilGenerator.GenType;
 import buildcraft.energy.generation.structure.OilPlacer;
 import buildcraft.energy.generation.structure.OilStructure;
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.TimeUtil;
 import buildcraft.lib.misc.data.Box;
 import net.minecraft.ChatFormatting;
@@ -38,7 +39,7 @@ public class ItemOilPlacer extends ItemBC_Neptune {
 
         final ItemStack itemStack = player.getItemInHand(hand);
         if (player.isShiftKeyDown()) {
-            final CompoundTag tag = itemStack.getOrCreateTag();
+            final CompoundTag tag = StackUtil.getItemData(itemStack);
 
             if (tag.contains(TAG_TYPE)) {
                 final byte mode = tag.getByte(TAG_TYPE);
@@ -46,6 +47,7 @@ public class ItemOilPlacer extends ItemBC_Neptune {
             } else {
                 tag.putByte(TAG_TYPE, (byte) GenType.LARGE.ordinal());
             }
+            StackUtil.setItemData(itemStack, tag);
 
             GenType craterType = GenType.values()[tag.getByte(TAG_TYPE)];
 
@@ -59,9 +61,10 @@ public class ItemOilPlacer extends ItemBC_Neptune {
 
     private void place(ServerLevel level, ServerPlayer player, ItemStack stack, BlockPos pos) {
         player.sendSystemMessage(Component.literal(ChatFormatting.AQUA + ">>>>>>>>> " + TimeUtil.formatNow()));
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = StackUtil.getItemData(stack);
         if (!tag.contains(TAG_TYPE)) {
             tag.putByte(TAG_TYPE, (byte) GenType.LARGE.ordinal());
+            StackUtil.setItemData(stack, tag);
         }
 
         GenType genType = GenType.values()[tag.getByte(TAG_TYPE)];

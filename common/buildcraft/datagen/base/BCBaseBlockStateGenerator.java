@@ -18,10 +18,10 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import java.util.Arrays;
 
 public abstract class BCBaseBlockStateGenerator extends BlockStateProvider {
-    protected static final ResourceLocation CUBE = new ResourceLocation("minecraft", "block/cube");
-    protected static final ResourceLocation CUBE_ALL = new ResourceLocation("minecraft", "block/cube_all");
-    protected static final ResourceLocation BLOCK = new ResourceLocation("minecraft", "block/block");
-    private static final ResourceLocation BUILTIN_ENTITY_LOCATION = new ResourceLocation("minecraft", "builtin/entity");
+    protected static final ResourceLocation CUBE = ResourceLocation.fromNamespaceAndPath("minecraft", "block/cube");
+    protected static final ResourceLocation CUBE_ALL = ResourceLocation.fromNamespaceAndPath("minecraft", "block/cube_all");
+    protected static final ResourceLocation BLOCK = ResourceLocation.fromNamespaceAndPath("minecraft", "block/block");
+    private static final ResourceLocation BUILTIN_ENTITY_LOCATION = ResourceLocation.fromNamespaceAndPath("minecraft", "builtin/entity");
     protected static final ModelFile BUILTIN_ENTITY_MODEL = new ModelFile.UncheckedModelFile(BUILTIN_ENTITY_LOCATION);
 
     public BCBaseBlockStateGenerator(PackOutput output, String modid, ExistingFileHelper exFileHelper) {
@@ -62,7 +62,7 @@ public abstract class BCBaseBlockStateGenerator extends BlockStateProvider {
     }
 
     public <T extends Comparable<T>> void add4Facing(MultiPartBlockStateBuilder builder, ModelFile model, Property<T> property, T value) {
-        Arrays.stream(Direction.BY_2D_DATA).toList().forEach(direction ->
+        Arrays.stream(Direction.Plane.HORIZONTAL.stream().toArray(Direction[]::new)).toList().forEach(direction ->
                 {
                     if (property == null || value == null) {
                         builder

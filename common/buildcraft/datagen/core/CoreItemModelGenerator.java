@@ -115,7 +115,7 @@ public class CoreItemModelGenerator extends BCBaseItemModelGenerator {
         // fragile fluid shard
         withExistingParent(
                 BCCoreItems.fragileFluidShard.get().getRegistryName().toString(),
-                new ResourceLocation("forge", "item/bucket")
+                ResourceLocation.fromNamespaceAndPath("forge", "item/bucket")
         )
                 .texture("base", "buildcraftcore:item/fragile_fluid_shard_base")
                 .texture("fluid", "buildcraftcore:item/fragile_fluid_shard_fluid")
@@ -140,7 +140,7 @@ public class CoreItemModelGenerator extends BCBaseItemModelGenerator {
         ;
 
         // power_tester
-        withExistingParent(BCCoreBlocks.powerTester.get().getRegistryName().toString(), new ResourceLocation("buildcraftcore:block/power_tester"));
+        withExistingParent(BCCoreBlocks.powerTester.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftcore:block/power_tester"));
 
         // engine
         getBuilder(BCCoreBlocks.engineWood.get().getRegistryName().toString()).parent(BUILTIN_ENTITY);

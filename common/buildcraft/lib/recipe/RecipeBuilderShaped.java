@@ -88,7 +88,7 @@ public class RecipeBuilderShaped {
         for (int i = 0; i < objs.length; i++) {
             Object o = original[i];
             if (o instanceof ItemStack) {
-                o = new IngredientNBTBC((ItemStack) o);
+                o = IngredientNBTBC.of((ItemStack) o);
             }
             objs[i] = o;
         }

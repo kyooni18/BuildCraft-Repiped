@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.item.component.ResolvableProfile;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -28,8 +29,8 @@ import java.util.Map;
 
 public class SpriteUtil {
 
-    // private static final ResourceLocation LOCATION_SKIN_LOADING = new ResourceLocation("skin:loading");
-    private static final ResourceLocation LOCATION_SKIN_LOADING = new ResourceLocation("textures/entity/player/wide/steve.png");
+    // private static final ResourceLocation LOCATION_SKIN_LOADING = ResourceLocation.parse("skin:loading");
+    private static final ResourceLocation LOCATION_SKIN_LOADING = ResourceLocation.parse("textures/entity/player/wide/steve.png");
     private static final Map<GameProfile, GameProfile> CACHED = new HashMap<>();
 
     public static void bindBlockTextureMap() {
@@ -38,7 +39,7 @@ public class SpriteUtil {
     }
 
     public static void bindTexture(String identifier) {
-        bindTexture(new ResourceLocation(identifier));
+        bindTexture(ResourceLocation.parse(identifier));
     }
 
     public static void bindTexture(int identifier) {
@@ -53,7 +54,7 @@ public class SpriteUtil {
     /** Transforms the given {@link ResourceLocation}, adding ".png" to the end and prepending that
      * {@link ResourceLocation#getPath()} with "textures/", just like what {@link TextureAtlas} does. */
     public static ResourceLocation transformLocation(ResourceLocation location) {
-        return new ResourceLocation(location.getNamespace(), "textures/" + location.getPath() + ".png");
+        return ResourceLocation.fromNamespaceAndPath(location.getNamespace(), "textures/" + location.getPath() + ".png");
     }
 
     @Nullable
@@ -77,23 +78,14 @@ public class SpriteUtil {
             if (!CACHED.containsKey(profile)) {
                 CACHED.put(profile, profile); // Calen: to avoid auth check every tick before network access completed
                 GameProfile _profile = profile;
-//                CACHED.put(profile, TileEntitySkull.updateGameprofile(profile));
-                SkullBlockEntity.updateGameprofile(profile, (gameProfile) ->
-                {
-                    CACHED.put(_profile, gameProfile);
-                });
+                new ResolvableProfile(profile).resolve().thenAccept(resolved -> CACHED.put(_profile, resolved.gameProfile()));
             }
             GameProfile p2 = CACHED.get(profile);
             if (p2 == null) {
                 return null;
             }
             profile = p2;
-            Map<Type, MinecraftProfileTexture> map = mc.getSkinManager().getInsecureSkinInformation(profile);
-            MinecraftProfileTexture tex = map.get(Type.SKIN);
-            if (tex != null) {
-                return mc.getSkinManager().registerTexture(tex, Type.SKIN);
-            }
-            return LOCATION_SKIN_LOADING;
+            return mc.getSkinManager().getInsecureSkin(profile).texture();
         } catch (NullPointerException | ClassCastException e) {
             // Fix for https://github.com/BuildCraft/BuildCraft/issues/4419
             // I'm not quite sure why this throws an NPE but this should at

@@ -14,7 +14,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -46,8 +45,8 @@ public class ItemBlockBC_Neptune extends BlockItem implements IItemBuildCraft {
 
     @Override
 //    public void addInformation(ItemStack stack, Level world, List<String> tooltip, ITooltipFlag flags)
-    public void appendHoverText(ItemStack stack, Level world, List<Component> strings, TooltipFlag flag) {
-        super.appendHoverText(stack, world, strings, flag);
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> strings, TooltipFlag flag) {
+        super.appendHoverText(stack, context, strings, flag);
 //        String tipId = getUnlocalizedName(stack) + ".tip";
         String tipId = getDescriptionId(stack).replace(".name", ".tip");
         if (LocaleUtil.canLocalize(tipId)) {

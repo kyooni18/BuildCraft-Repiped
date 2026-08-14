@@ -54,7 +54,7 @@ public class RenderPipeHolder implements BlockEntityRenderer<TilePipeHolder> {
     // private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks, BufferBuilder bb)
     public void renderPluggables(TilePipeHolder pipe, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
         VertexConsumer buffer = bufferSource.getBuffer(Sheets.translucentCullBlockSheet());
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             PipePluggable plug = pipe.getPluggable(face);
             if (plug == null) {
                 continue;

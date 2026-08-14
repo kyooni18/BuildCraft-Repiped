@@ -109,7 +109,7 @@ public class ModelHolderStatic extends ModelHolder {
                         break;
                     }
                 } else {
-                    toRegisterSprites.add(new ResourceLocation(lookup));
+                    toRegisterSprites.add(ResourceLocation.parse(lookup));
                 }
                 if (ModelHolderRegistry.DEBUG) {
                     BCLog.logger.info("[lib.model.holder]  - " + lookup);
@@ -155,7 +155,7 @@ public class ModelHolderStatic extends ModelHolder {
                         break;
                     }
                 } else {
-                    toRegisterSprites.add(new ResourceLocation(lookup));
+                    toRegisterSprites.add(ResourceLocation.parse(lookup));
                 }
                 if (ModelHolderRegistry.DEBUG) {
                     BCLog.logger.info("[lib.model.holder]  - " + lookup);
@@ -205,7 +205,7 @@ public class ModelHolderStatic extends ModelHolder {
                     }
                 } else {
 //                    sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
-                    sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation(lookup));
+                    sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(ResourceLocation.parse(lookup));
                 }
                 list.add(quad.toQuad(sprite));
             }

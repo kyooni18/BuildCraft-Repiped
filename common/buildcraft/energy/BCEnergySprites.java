@@ -34,8 +34,8 @@ public class BCEnergySprites {
 //
 //        ResourceLocation[][] fromSprites = new ResourceLocation[3][2];
 //        for (int h = 0; h < 3; h++) {
-//            fromSprites[h][0] = new ResourceLocation("buildcraftenergy:blocks/fluids/heat_" + h + "_still");
-//            fromSprites[h][1] = new ResourceLocation("buildcraftenergy:blocks/fluids/heat_" + h + "_flow");
+//            fromSprites[h][0] = ResourceLocation.parse("buildcraftenergy:blocks/fluids/heat_" + h + "_still");
+//            fromSprites[h][1] = ResourceLocation.parse("buildcraftenergy:blocks/fluids/heat_" + h + "_flow");
 //        }
 //
 //        for (BCFluid f : BCEnergyFluids.allFluids) {

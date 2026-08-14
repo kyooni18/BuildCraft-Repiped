@@ -2,7 +2,7 @@ package buildcraft.lib.gui.recipe;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.lang.reflect.Field;
 import java.util.Set;
@@ -41,7 +41,7 @@ public class RecipeListPhantom extends RecipeCollection {
     }
 
     @Override
-    public boolean isCraftable(Recipe recipe) {
+    public boolean isCraftable(RecipeHolder<?> recipe) {
         return true;
     }
 

@@ -55,13 +55,11 @@ public class ItemGoggles extends ArmorItem implements IItemBuildCraft {
 //        return HELMET_PROPERTIES;
 //    }
 
-    @Override
 //    public int getArmorDisplay(Player player, @Nonnull ItemStack armor, int slot)
     public int getDamage(ItemStack stack) {
         return 0;
     }
 
-    @Override
 //    public void damageArmor(LivingEntity entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot)
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         // Invulnerable goggles

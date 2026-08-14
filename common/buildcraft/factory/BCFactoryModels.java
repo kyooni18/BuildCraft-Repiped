@@ -109,9 +109,9 @@ public class BCFactoryModels {
         // ModelHeatExchange modelHeatExchange = new ModelHeatExchange();
         ModelHeatExchange modelHeatExchange = new ModelHeatExchange(spriteTasks::add);
         event.getModels().replaceAll((rl, m) -> (
-                rl.getNamespace().equals(BCFactory.MODID)
-                        && rl.getPath().contains("heat_exchange")
-                        && !rl.getPath().contains("inventory")
+                rl.id().getNamespace().equals(BCFactory.MODID)
+                        && rl.id().getPath().contains("heat_exchange")
+                        && !rl.id().getPath().contains("inventory")
         ) ? modelHeatExchange : m);
         event.getModels().replace(
                 new ModelResourceLocation(BCFactoryBlocks.heatExchange.getId(), "inventory"),

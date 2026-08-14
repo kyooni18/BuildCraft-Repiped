@@ -32,7 +32,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -222,7 +222,7 @@ public abstract class ContainerBC_Neptune<MENU_PROVIDER extends MenuProvider> ex
     public void writeMessage(int id, PacketBufferBC buffer, Dist side) {
     }
 
-    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection direction, NetworkEvent.Context ctx) throws IOException {
+    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection direction, CustomPayloadEvent.Context ctx) throws IOException {
         if (id == NET_WIDGET) {
             int widgetId = buffer.readUnsignedShort();
             if (widgetId < 0 || widgetId >= widgets.size()) {
@@ -253,7 +253,7 @@ public abstract class ContainerBC_Neptune<MENU_PROVIDER extends MenuProvider> ex
         }
     }
 
-    private void readSingleSetPhantom(PacketBufferBC buffer, NetworkEvent.Context ctx) throws IOException {
+    private void readSingleSetPhantom(PacketBufferBC buffer, CustomPayloadEvent.Context ctx) throws IOException {
         int idx = buffer.readVarInt();
         ItemStack stack = buffer.readItem();
         if (idx >= 0 && idx < slots.size()) {

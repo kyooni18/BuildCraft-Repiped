@@ -169,7 +169,7 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
                 }
                 poseStack.pushPose();
 //                poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     ModelUtil.createFace(
                                     face,
                                     new Vector3f(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F),
@@ -212,12 +212,12 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
     private VertexConsumer vertex(double x, double y, double z, float u, float v) {
         buffer
 //                .vertex(pose.pose(), (float) (x - bb.minX), (float) (y - bb.minY), (float) (z - bb.minZ))
-                .vertex(pose.pose(), (float) (x), (float) (y), (float) (z))
-                .color(255, 255, 255, 255)
-                .uv(u, v)
-                .overlayCoords(OverlayTexture.NO_OVERLAY)
-                .uv2(COLOUR)
-                .normal(pose.normal(), 1, 1, 1)
+                .addVertex(pose.pose(), (float) (x), (float) (y), (float) (z))
+                .setColor(255, 255, 255, 255)
+                .setUv(u, v)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(COLOUR)
+                .setNormal(pose, 1, 1, 1)
 //                .endVertex()
         ;
         return buffer;

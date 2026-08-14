@@ -4,74 +4,62 @@ import buildcraft.api.BCModules;
 import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.recipes.IntegrationRecipe;
 import buildcraft.lib.misc.JsonUtil;
+import buildcraft.lib.recipe.LegacyRecipeCodec;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class IntegrationRecipeSerializer implements RecipeSerializer<IntegrationRecipe> {
-    public static final IntegrationRecipeSerializer INSTANCE;
-
-    static {
-        INSTANCE = new IntegrationRecipeSerializer();
-    }
+    public static final IntegrationRecipeSerializer INSTANCE = new IntegrationRecipeSerializer();
+    private static final MapCodec<IntegrationRecipe> CODEC = LegacyRecipeCodec.mapCodec(
+            IntegrationRecipe.TYPE_ID, IntegrationRecipeSerializer::fromJson, IntegrationRecipeSerializer::toJson);
+    private static final StreamCodec<RegistryFriendlyByteBuf, IntegrationRecipe> STREAM_CODEC = LegacyRecipeCodec.streamCodec(CODEC);
 
     private IntegrationRecipeSerializer() {
     }
 
-    @Override
-    public IntegrationRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+    private static IntegrationRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
         long requiredMicroJoules = GsonHelper.getAsLong(json, "requiredMicroJoules");
         IngredientStack centerStack = JsonUtil.deSerializeIngredientStack(GsonHelper.getAsJsonObject(json, "centerStack"));
-        JsonArray requirementsJson = GsonHelper.getAsJsonArray(json, "requirements");
         List<IngredientStack> requirements = Lists.newArrayList();
-        requirementsJson.forEach(j -> requirements.add(JsonUtil.deSerializeIngredientStack(j.getAsJsonObject())));
-        ItemStack output = JsonUtil.deSerializeItemStack(json.getAsJsonObject("output"));
-
+        GsonHelper.getAsJsonArray(json, "requirements").forEach(j -> requirements.add(JsonUtil.deSerializeIngredientStack(j.getAsJsonObject())));
+        ItemStack output = JsonUtil.deSerializeItemStack(GsonHelper.getAsJsonObject(json, "output"));
         return new IntegrationRecipeBasic(recipeId, requiredMicroJoules, centerStack, ImmutableList.copyOf(requirements), output);
+    }
+
+    private static void toJson(IntegrationRecipe recipe, JsonObject json) {
+        json.addProperty("id", recipe.getId().toString());
+        json.addProperty("requiredMicroJoules", recipe.getRequiredMicroJoules());
+        json.add("centerStack", JsonUtil.serializeIngredientStack(recipe.getCenterStack()));
+        JsonArray requirements = new JsonArray();
+        recipe.getRequirements().forEach(stack -> requirements.add(JsonUtil.serializeIngredientStack(stack)));
+        json.add("requirements", requirements);
+        json.add("output", JsonUtil.serializeItemStack(recipe.getExampleOutput()));
     }
 
     public static void toJson(IntegrationRecipeBuilder builder, JsonObject json) {
         json.addProperty("type", BCModules.SILICON.getModId() + ":integration");
-
         json.addProperty("requiredMicroJoules", builder.requiredMicroJoules);
         json.add("centerStack", JsonUtil.serializeIngredientStack(builder.centerStack));
-        JsonArray requirementsJson = new JsonArray();
-        builder.requirements.forEach(ingredientStack -> requirementsJson.add(JsonUtil.serializeIngredientStack(ingredientStack)));
-        json.add("requirements", requirementsJson);
+        JsonArray requirements = new JsonArray();
+        builder.requirements.forEach(stack -> requirements.add(JsonUtil.serializeIngredientStack(stack)));
+        json.add("requirements", requirements);
         json.add("output", JsonUtil.serializeItemStack(builder.exampleOutput));
     }
 
-    @Nullable
     @Override
-    public IntegrationRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-        long requiredMicroJoules = buffer.readLong();
-        IngredientStack centerStack = IngredientStack.fromNetwork(buffer);
-        int requirementsSize = buffer.readInt();
-        List<IngredientStack> requirements = Lists.newArrayList();
-        for (int i = 0; i < requirementsSize; i++) {
-            requirements.add(IngredientStack.fromNetwork(buffer));
-        }
-        ItemStack output = buffer.readItem();
-
-        return new IntegrationRecipeBasic(recipeId, requiredMicroJoules, centerStack, ImmutableList.copyOf(requirements), output);
-    }
+    public MapCodec<IntegrationRecipe> codec() { return CODEC; }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, IntegrationRecipe recipe) {
-        buffer.writeLong(recipe.getRequiredMicroJoules());
-        recipe.getCenterStack().toNetwork(buffer);
-        ImmutableList<IngredientStack> requirements = recipe.getRequirements();
-        buffer.writeInt(requirements.size());
-        requirements.forEach(ingredientStack -> ingredientStack.toNetwork(buffer));
-        buffer.writeItem(recipe.getExampleOutput());
-    }
+    public StreamCodec<RegistryFriendlyByteBuf, IntegrationRecipe> streamCodec() { return STREAM_CODEC; }
 }

@@ -7,10 +7,11 @@ import buildcraft.robotics.BCRoboticsBlocks;
 import buildcraft.robotics.BCRoboticsItems;
 import buildcraft.silicon.BCSiliconItems;
 import buildcraft.transport.BCTransportItems;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeProvider;
+import buildcraft.datagen.base.BCCompatRecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
@@ -18,17 +19,18 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class RoboticsCraftingRecipeGenerator extends RecipeProvider {
+public class RoboticsCraftingRecipeGenerator extends BCCompatRecipeProvider {
     private static final String MOD_ID = BCFactory.MODID;
 
-    public RoboticsCraftingRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public RoboticsCraftingRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         // zonePlanner
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BCRoboticsBlocks.zonePlanner.get())
                 .pattern("wdw")
@@ -84,10 +86,5 @@ public class RoboticsCraftingRecipeGenerator extends RecipeProvider {
                 .unlockedBy("has_item", has(BCSiliconItems.chipsetGold.get()))
                 .group(MOD_ID)
                 .save(consumer);
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Robotics Crafting Recipe Generator";
     }
 }

@@ -1,6 +1,7 @@
 package buildcraft.datagen.core;
 
 import buildcraft.core.BCCoreBlocks;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
@@ -10,8 +11,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CoreBlockLoot extends BlockLootSubProvider {
-    public CoreBlockLoot() {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+    public CoreBlockLoot(HolderLookup.Provider registries) {
+        super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
     }
 
     @Override

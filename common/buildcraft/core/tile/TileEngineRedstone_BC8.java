@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nonnull;
 
 public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:free_power");
+    private static final ResourceLocation ADVANCEMENT = ResourceLocation.parse("buildcraftcore:free_power");
     private boolean givenAdvancement = false;
 
     public TileEngineRedstone_BC8(BlockPos pos, BlockState blockState) {

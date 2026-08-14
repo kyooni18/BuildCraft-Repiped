@@ -3,7 +3,7 @@ package buildcraft.lib.recipe.refinery;
 import buildcraft.api.BCModules;
 import buildcraft.api.recipes.IRefineryRecipeManager.IHeatExchangerRecipe;
 import com.google.gson.JsonObject;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
@@ -51,7 +51,7 @@ public class HeatExchangeRecipeBuilder {
 
         @Override
         public ResourceLocation getId() {
-            return new ResourceLocation(BCModules.ENERGY.getModId(), "heat_exchange/" + type.getlowerName() + "/" + name);
+            return ResourceLocation.fromNamespaceAndPath(BCModules.ENERGY.getModId(), "heat_exchange/" + type.getlowerName() + "/" + name);
         }
 
         @Override

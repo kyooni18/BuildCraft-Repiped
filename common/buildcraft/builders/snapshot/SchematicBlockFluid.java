@@ -49,7 +49,7 @@ public class SchematicBlockFluid implements ISchematicBlock {
     @Override
     public Set<BlockPos> getRequiredBlockOffsets() {
 //        return Stream.concat(Arrays.stream(Direction.HORIZONTALS), Stream.of(Direction.DOWN))
-        return Stream.concat(Arrays.stream(Direction.BY_2D_DATA), Stream.of(Direction.DOWN))
+        return Stream.concat(Arrays.stream(Direction.Plane.HORIZONTAL.stream().toArray(Direction[]::new)), Stream.of(Direction.DOWN))
 //                .map(Direction::getDirectionVec)
                 .map(Direction::getNormal)
                 .map(BlockPos::new)
@@ -88,7 +88,7 @@ public class SchematicBlockFluid implements ISchematicBlock {
         }
         if (world.setBlock(blockPos, blockState, Block.UPDATE_ALL_IMMEDIATE)) {
             Stream.concat(
-                            Stream.of(Direction.VALUES)
+                            Stream.of(Direction.values())
 //                                    .map(Direction::getDirectionVec)
                                     .map(Direction::getNormal)
                                     .map(BlockPos::new),

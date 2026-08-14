@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 // Calen
 public class ItemUtil {
     public static Item getItemFromRegistryName(String name) {
-        return getItemFromRegistryName(new ResourceLocation(name));
+        return getItemFromRegistryName(ResourceLocation.parse(name));
     }
 
     public static Item getItemFromRegistryName(ResourceLocation name) {

@@ -96,7 +96,7 @@ public class RenderSnapshotBuilder {
             poseStack.translate(-tilePos.getX(), -tilePos.getY(), -tilePos.getZ());
 
             int i = 0;
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 ModelUtil.createFace(
                                 face,
                                 new Vector3f((float) robotPos.x, (float) robotPos.y, (float) robotPos.z),

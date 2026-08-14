@@ -25,7 +25,7 @@ public class AssemblyRecipeRegistry {
     private static final List<IAssemblyRecipe> REGISTRY = new LinkedList<>();
 
     public static List<IAssemblyRecipe> getAll(Level world) {
-        List<IAssemblyRecipe> ret = world.getRecipeManager().getAllRecipesFor(IAssemblyRecipe.TYPE);
+        List<IAssemblyRecipe> ret = world.getRecipeManager().getAllRecipesFor(IAssemblyRecipe.TYPE).stream().map(holder -> holder.value()).toList();
         Lists.newArrayList(ret).addAll(REGISTRY);
         return ret;
     }

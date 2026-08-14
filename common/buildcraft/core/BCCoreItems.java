@@ -49,7 +49,7 @@ public final class BCCoreItems {
     public static RegistryObject<ItemGoggles> goggles;
 
     public static void preInit() {
-        wrench = HELPER.addItem("item.wrench", ItemPropertiesCreator.common1().setNoRepair(), ItemWrench_Neptune::new);
+        wrench = HELPER.addItem("item.wrench", ItemPropertiesCreator.common1(), ItemWrench_Neptune::new);
         gearWood = HELPER.addItem("item.gear.wood", ItemPropertiesCreator.common64(), ItemBC_Neptune::new);
         gearStone = HELPER.addItem("item.gear.stone", ItemPropertiesCreator.common64(), ItemBC_Neptune::new);
         gearIron = HELPER.addItem("item.gear.iron", ItemPropertiesCreator.common64(), ItemBC_Neptune::new);

@@ -35,7 +35,8 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
 //        boolean all = stack.getItem() == Item.getItemFromBlock(BCBlocks.Silicon.ASSEMBLY_TABLE);
         boolean all = stack.getItem() == Item.byBlock(BCBlocks.Silicon.ASSEMBLY_TABLE);
 //        for (AssemblyRecipe recipe : AssemblyRecipeRegistry.REGISTRY.values())
-        for (IAssemblyRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(AssemblyRecipe.TYPE)) {
+        for (var recipeHolder : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(AssemblyRecipe.TYPE)) {
+            IAssemblyRecipe recipe = recipeHolder.value();
             for (ItemStack output : recipe.getOutputPreviews()) {
 //                if (all || recipe.getInputsFor(output).stream().anyMatch((definition) -> definition.ingredient.apply(stack)))
                 if (all || recipe.getInputsFor(output).stream().anyMatch((definition) -> definition.ingredient.test(stack))) {
@@ -53,7 +54,8 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
             return recipes;
         }
 //        for (AssemblyRecipe recipe : AssemblyRecipeRegistry.REGISTRY.values())
-        for (IAssemblyRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(AssemblyRecipe.TYPE)) {
+        for (var recipeHolder : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(AssemblyRecipe.TYPE)) {
+            IAssemblyRecipe recipe = recipeHolder.value();
             for (ItemStack output : recipe.getOutputPreviews()) {
                 if (StackUtil.isCraftingEquivalent(output, stack, false)) {
                     recipes.add(getFactory(recipe, output));

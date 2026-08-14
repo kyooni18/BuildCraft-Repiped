@@ -45,8 +45,8 @@ public enum StripesHandlerShears implements IStripesHandlerItem {
             if (shearableBlock.isShearable(stack, world, pos)) {
                 List<ItemStack> drops = shearableBlock.onSheared(null, stack, world, pos, 0);
 //                if (stack.attemptDamageItem(1, player.getRNG(), player instanceof ServerPlayer ? (ServerPlayer) player : null))
-                if (stack.hurt(1, player.getRandom(), player instanceof ServerPlayer ? (ServerPlayer) player : null)) {
-                    stack.shrink(1);
+                if (player instanceof ServerPlayer serverPlayer && world instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                    stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> stack.shrink(1));
                 }
                 world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE); // Might become obsolete in 1.12+
                 for (ItemStack dropStack : drops) {

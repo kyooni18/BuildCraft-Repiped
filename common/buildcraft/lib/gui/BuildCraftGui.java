@@ -61,7 +61,7 @@ public class BuildCraftGui {
     public static final IVariableNodeBoolean isDebuggingShown;
 
     static {
-        ResourceLocation debugDef = new ResourceLocation("buildcraftlib", "base");
+        ResourceLocation debugDef = ResourceLocation.fromNamespaceAndPath("buildcraftlib", "base");
         isDebuggingShown = GuiConfigManager.getOrAddBoolean(debugDef, "debugging_is_shown", false);
         isDebuggingEnabled = GuiConfigManager.getOrAddBoolean(debugDef, "debugging_is_enabled", false);
     }
@@ -183,7 +183,7 @@ public class BuildCraftGui {
         // Calen: smoother than the in-para partialTicks
         // FIX FOR MC-121719 // https://bugs.mojang.com/browse/MC-121719
 //        partialTicks = mc.getRenderPartialTicks();
-        partialTicks = mc.getFrameTime();
+        partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
         // END FIX
 
 //        RenderHelper.disableStandardItemLighting();

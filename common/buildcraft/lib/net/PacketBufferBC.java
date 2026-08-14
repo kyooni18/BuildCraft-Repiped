@@ -9,8 +9,16 @@ package buildcraft.lib.net;
 import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraft.world.phys.Vec3;
 
 /** Special {@link FriendlyByteBuf} class that provides methods specific to "offset" reading and writing - like writing a
@@ -29,8 +37,30 @@ public class PacketBufferBC extends FriendlyByteBuf {
     /** Holds the current set of flags that will be written out. This only saves having a read */
     private int writePartialCache;
 
+    private final RegistryAccess registryAccess;
+
     public PacketBufferBC(ByteBuf wrapped) {
         super(wrapped);
+        if (wrapped instanceof RegistryFriendlyByteBuf registryBuf) {
+            this.registryAccess = registryBuf.registryAccess();
+        } else if (wrapped instanceof PacketBufferBC bcBuf) {
+            this.registryAccess = bcBuf.registryAccess;
+        } else {
+            this.registryAccess = RegistryAccess.EMPTY;
+        }
+    }
+
+    private RegistryFriendlyByteBuf registryBuffer() {
+        return new RegistryFriendlyByteBuf(this, registryAccess);
+    }
+
+    public PacketBufferBC writeComponent(Component component) {
+        ComponentSerialization.STREAM_CODEC.encode(registryBuffer(), component);
+        return this;
+    }
+
+    public Component readComponent() {
+        return ComponentSerialization.STREAM_CODEC.decode(registryBuffer());
     }
 
     /** Returns the given {@link ByteBuf} as {@link PacketBufferBC}. if the given instance is already a
@@ -48,6 +78,30 @@ public class PacketBufferBC extends FriendlyByteBuf {
         PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
         writer.write(buffer);
         return buffer;
+    }
+
+    public ItemStack readItem() {
+        return ItemStack.OPTIONAL_STREAM_CODEC.decode(registryBuffer());
+    }
+
+    public PacketBufferBC writeItemStack(ItemStack stack, boolean limitedTag) {
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(registryBuffer(), stack);
+        return this;
+    }
+
+    public PacketBufferBC writeItem(ItemStack stack) {
+        return writeItemStack(stack, false);
+    }
+
+    public <T> PacketBufferBC writeRegistryId(IForgeRegistry<T> registry, T value) {
+        ResourceLocation key = registry.getKey(value);
+        writeResourceLocation(key == null ? ResourceLocation.parse("minecraft:empty") : key);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T readRegistryId() {
+        return (T) ForgeRegistries.FLUIDS.getValue(readResourceLocation());
     }
 
     @Override

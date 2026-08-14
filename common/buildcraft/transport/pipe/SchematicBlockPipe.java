@@ -62,7 +62,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
         if (tileEntity == null) {
             throw new IllegalStateException();
         }
-        tileNbt = tileEntity.serializeNBT();
+        tileNbt = tileEntity.saveWithFullMetadata(net.minecraft.core.RegistryAccess.EMPTY);
     }
 
     @Nonnull
@@ -94,21 +94,21 @@ public class SchematicBlockPipe implements ISchematicBlock {
 
             // plug
             CompoundTag plugs = tileNbt.getCompound("plugs");
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 CompoundTag nbt = plugs.getCompound(face.getName());
                 if (nbt.isEmpty()) {
                     continue;
                 }
                 CompoundTag data = nbt.getCompound("data");
                 String id = nbt.getString("id");
-                ResourceLocation identifier = new ResourceLocation(id);
+                ResourceLocation identifier = ResourceLocation.parse(id);
                 PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
                 ItemStack plugItemStack = def.readFromNbt(null, Direction.NORTH, data).getPickStack();
                 builder.add(plugItemStack);
             }
 
             // wire
-            ResourceLocation wireId = new ResourceLocation(TagManager.getTag("item.wire", EnumTagType.REGISTRY_NAME));
+            ResourceLocation wireId = ResourceLocation.parse(TagManager.getTag("item.wire", EnumTagType.REGISTRY_NAME));
             Item wireItem = ForgeRegistries.ITEMS.getValue(wireId);
             CompoundTag wireManagerNbt = tileNbt.getCompound("wireManager");
             int[] wiresArray = wireManagerNbt.getIntArray("parts");
@@ -123,7 +123,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
                 for (int i = 0; i < itemsNbt.size(); i++) {
                     CompoundTag itemNbt = itemsNbt.getCompound(i).getCompound("stack");
                     if (!itemNbt.isEmpty()) {
-                        ItemStack stack = ItemStack.of(itemNbt);
+                        ItemStack stack = buildcraft.lib.misc.StackUtil.loadStack(itemNbt);
                         if (!stack.isEmpty()) {
                             builder.add(stack);
                         }
@@ -180,7 +180,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
         boolean setBlockResult = world.setBlock(blockPos, state, Block.UPDATE_ALL_IMMEDIATE);
         if (setBlockResult) {
 //            TileEntity tileEntity = TileEntity.create(world, tileNbt);
-            BlockEntity tileEntity = BlockEntity.loadStatic(blockPos, state, tileNbt);
+            BlockEntity tileEntity = BlockEntity.loadStatic(blockPos, state, tileNbt, net.minecraft.core.RegistryAccess.EMPTY);
             if (tileEntity != null) {
                 // Calen: tileEntity#setLevel and tileEntity#clearRemoved will be called in world#setBlockEntity
 //                tileEntity.setWorld(world);
@@ -204,7 +204,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
         BlockState state = BCTransportBlocks.pipeHolder.get().defaultBlockState();
         if (world.setBlock(blockPos, state, 0)) {
 //            TileEntity tileEntity = TileEntity.create(world, tileNbt);
-            BlockEntity tileEntity = BlockEntity.loadStatic(blockPos, state, tileNbt);
+            BlockEntity tileEntity = BlockEntity.loadStatic(blockPos, state, tileNbt, net.minecraft.core.RegistryAccess.EMPTY);
             if (tileEntity != null) {
                 // Calen: tileEntity#setLevel and tileEntity#clearRemoved will be called in world.setBlockEntity
 //                tileEntity.setWorld(world);
@@ -324,12 +324,12 @@ public class SchematicBlockPipe implements ISchematicBlock {
             if (filtersNbt.contains("items")) {
                 ListTag itemsNbt = filtersNbt.getList("items", Tag.TAG_COMPOUND);
                 Map<Direction, List<Tag>> oldFilters = new HashMap<>();
-                for (Direction dir : Direction.BY_2D_DATA) {
+                for (Direction dir : Direction.Plane.HORIZONTAL.stream().toArray(Direction[]::new)) {
                     int startPos = dir.get3DDataValue() * 9;
                     List<Tag> filtersOfCurrentDir = new ArrayList<>(itemsNbt.subList(startPos, startPos + 9));
                     oldFilters.put(dir, filtersOfCurrentDir);
                 }
-                for (Direction dirOld : Direction.BY_2D_DATA) {
+                for (Direction dirOld : Direction.Plane.HORIZONTAL.stream().toArray(Direction[]::new)) {
                     Direction dirNew = RotationUtil.rotateFacing(dirOld, rotation);
                     List<Tag> filters = oldFilters.get(dirOld);
                     int startPos = dirNew.get3DDataValue() * 9;

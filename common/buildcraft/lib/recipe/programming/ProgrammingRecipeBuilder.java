@@ -4,7 +4,7 @@ import buildcraft.api.BCModules;
 import buildcraft.api.recipes.IProgrammingRecipe;
 import buildcraft.api.recipes.IngredientStack;
 import com.google.gson.JsonObject;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -63,7 +63,7 @@ public class ProgrammingRecipeBuilder {
 
         @Override
         public ResourceLocation getId() {
-            return new ResourceLocation(namespace, "programming/" + name);
+            return ResourceLocation.fromNamespaceAndPath(namespace, "programming/" + name);
         }
 
         @Override

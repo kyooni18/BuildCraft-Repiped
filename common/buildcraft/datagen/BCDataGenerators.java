@@ -54,37 +54,37 @@ public class BCDataGenerators {
         packGenerator.addProvider(packOutput -> new BCBiomeTagsGenerator(packOutput, lookupProvider, existingFileHelper));
 
         // Crafting Recipes
-        packGenerator.addProvider(BuildersCraftingRecipeGenerator::new);
-        packGenerator.addProvider(CoreCraftingRecipeGenerator::new);
-        packGenerator.addProvider(EnergyCraftingRecipeGenerator::new);
-        packGenerator.addProvider(FactoryCraftingRecipeGenerator::new);
-        packGenerator.addProvider(LibCraftingRecipeGenerator::new);
-        packGenerator.addProvider(SiliconCraftingRecipeGenerator::new);
-        packGenerator.addProvider(TransportCraftingRecipeGenerator::new);
-        packGenerator.addProvider(RoboticsCraftingRecipeGenerator::new);
+        packGenerator.addProvider(packOutput -> new BuildersCraftingRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new CoreCraftingRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new EnergyCraftingRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new FactoryCraftingRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new LibCraftingRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new SiliconCraftingRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new TransportCraftingRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new RoboticsCraftingRecipeGenerator(packOutput, lookupProvider));
         // Mod Recipes
-        packGenerator.addProvider(SiliconFacadeSwapRecipeGenerator::new);
-        packGenerator.addProvider(EnergyOilRecipeGenerator::new);
-        packGenerator.addProvider(SiliconAssemblyRecipeGenerator::new);
-        packGenerator.addProvider(TransportAssemblyRecipeGenerator::new);
-        packGenerator.addProvider(RoboticsIntegrationRecipeGenerator::new);
-        packGenerator.addProvider(RoboticsProgrammingRecipeGenerator::new);
+        packGenerator.addProvider(packOutput -> new SiliconFacadeSwapRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new EnergyOilRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new SiliconAssemblyRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new TransportAssemblyRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new RoboticsIntegrationRecipeGenerator(packOutput, lookupProvider));
+        packGenerator.addProvider(packOutput -> new RoboticsProgrammingRecipeGenerator(packOutput, lookupProvider));
 
         // Advancement
-        packGenerator.addProvider(packOutput -> new CoreAdvancementGenerator(packOutput, existingFileHelper));
-        packGenerator.addProvider(packOutput -> new EnergyAdvancementGenerator(packOutput, existingFileHelper));
-        packGenerator.addProvider(packOutput -> new FactoryAdvancementGenerator(packOutput, existingFileHelper));
-        packGenerator.addProvider(packOutput -> new SiliconAdvancementGenerator(packOutput, existingFileHelper));
-        packGenerator.addProvider(packOutput -> new TransportAdvancementGenerator(packOutput, existingFileHelper));
-        packGenerator.addProvider(packOutput -> new BuildersAdvancementGenerator(packOutput, existingFileHelper));
+        packGenerator.addProvider(packOutput -> new CoreAdvancementGenerator(packOutput, existingFileHelper, lookupProvider));
+        packGenerator.addProvider(packOutput -> new EnergyAdvancementGenerator(packOutput, existingFileHelper, lookupProvider));
+        packGenerator.addProvider(packOutput -> new FactoryAdvancementGenerator(packOutput, existingFileHelper, lookupProvider));
+        packGenerator.addProvider(packOutput -> new SiliconAdvancementGenerator(packOutput, existingFileHelper, lookupProvider));
+        packGenerator.addProvider(packOutput -> new TransportAdvancementGenerator(packOutput, existingFileHelper, lookupProvider));
+        packGenerator.addProvider(packOutput -> new BuildersAdvancementGenerator(packOutput, existingFileHelper, lookupProvider));
 
         // Loot Table
-        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.CORE, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(CoreBlockLoot::new, LootContextParamSets.BLOCK))));
-        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.ENERGY, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(EnergyBlockLoot::new, LootContextParamSets.BLOCK))));
-        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.FACTORY, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(FactoryBlockLoot::new, LootContextParamSets.BLOCK))));
-        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.SILICON, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(SiliconBlockLoot::new, LootContextParamSets.BLOCK))));
-        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.TRANSPORT, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(TransportBlockLoot::new, LootContextParamSets.BLOCK))));
-        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.BUILDERS, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(BuildersBlockLoot::new, LootContextParamSets.BLOCK))));
+        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.CORE, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(CoreBlockLoot::new, LootContextParamSets.BLOCK)), lookupProvider));
+        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.ENERGY, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(EnergyBlockLoot::new, LootContextParamSets.BLOCK)), lookupProvider));
+        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.FACTORY, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(FactoryBlockLoot::new, LootContextParamSets.BLOCK)), lookupProvider));
+        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.SILICON, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(SiliconBlockLoot::new, LootContextParamSets.BLOCK)), lookupProvider));
+        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.TRANSPORT, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(TransportBlockLoot::new, LootContextParamSets.BLOCK)), lookupProvider));
+        packGenerator.addProvider(packOutput -> new BCBaseLootTableProvider(BCModules.BUILDERS, packOutput, Set.of(), ImmutableList.of(new LootTableProvider.SubProviderEntry(BuildersBlockLoot::new, LootContextParamSets.BLOCK)), lookupProvider));
 
         // BlockState and Block Model
         packGenerator.addProvider(packOutput -> new CoreBlockStateGenerator(packOutput, existingFileHelper));

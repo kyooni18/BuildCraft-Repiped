@@ -56,7 +56,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -77,10 +77,10 @@ public class PluggableGate extends PipePluggable implements IWireEmitter, IBCTil
     private static final VoxelShape[] BOXES = new VoxelShape[6];
 
     private static final ResourceLocation ADVANCEMENT_PLACE_GATE
-            = new ResourceLocation("buildcrafttransport:pipe_logic");
+            = ResourceLocation.parse("buildcrafttransport:pipe_logic");
 
     private static final ResourceLocation ADVANCEMENT_PLACE_ADV_GATE
-            = new ResourceLocation("buildcrafttransport:extended_logic");
+            = ResourceLocation.parse("buildcrafttransport:extended_logic");
 
     public final GateLogic logic;
 
@@ -133,7 +133,7 @@ public class PluggableGate extends PipePluggable implements IWireEmitter, IBCTil
         VariableInfoObject<Direction> infoSide = MODEL_VAR_INFO.createInfoObject(MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
         infoSide.setIsComplete = true;
-        Collections.addAll(infoSide.possibleValues, Direction.VALUES);
+        Collections.addAll(infoSide.possibleValues, Direction.values());
 
         VariableInfoBoolean infoIsOn = MODEL_VAR_INFO.createInfoBoolean(MODEL_IS_ON);
         infoIsOn.cacheType = CacheType.ALWAYS;
@@ -203,7 +203,7 @@ public class PluggableGate extends PipePluggable implements IWireEmitter, IBCTil
 
     @Override
 //    public void readPayload(PacketBuffer b, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(FriendlyByteBuf b, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(FriendlyByteBuf b, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         logic.readPayload(PacketBufferBC.asPacketBufferBc(b), side, ctx);
     }
 

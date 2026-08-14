@@ -41,7 +41,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -78,10 +78,10 @@ public class TilePump extends TileMiner {
     }
 
     private static final ResourceLocation ADVANCEMENT_DRAIN_ANY
-            = new ResourceLocation("buildcraftfactory:draining_the_world");
+            = ResourceLocation.parse("buildcraftfactory:draining_the_world");
 
     private static final ResourceLocation ADVANCEMENT_DRAIN_OIL
-            = new ResourceLocation("buildcraftfactory:oil_platform");
+            = ResourceLocation.parse("buildcraftfactory:oil_platform");
 
     private final Tank tank = new Tank("tank", 16 * FluidType.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
@@ -428,15 +428,15 @@ public class TilePump extends TileMiner {
     // NBT
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
         oilSpringPos = NBTUtilBC.readBlockPos(nbt.get("oilSpringPos"));
     }
 
     @Override
 //    public CompoundTag writeToNBT(CompoundTag nbt) {
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
         if (oilSpringPos != null) {
             nbt.put("oilSpringPos", NBTUtilBC.writeBlockPos(oilSpringPos));
         }
@@ -457,7 +457,7 @@ public class TilePump extends TileMiner {
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {

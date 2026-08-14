@@ -80,7 +80,7 @@ public class SingleUseTank extends Tank {
     public void readTankFromNBT(CompoundTag nbt) {
         super.readTankFromNBT(nbt);
         if (nbt.contains(NBT_ACCEPTED_FLUID, Tag.TAG_STRING)) {
-            ResourceLocation fluidName = new ResourceLocation(nbt.getString(NBT_ACCEPTED_FLUID));
+            ResourceLocation fluidName = ResourceLocation.parse(nbt.getString(NBT_ACCEPTED_FLUID));
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
             setAcceptedFluid(fluid);
         } else {

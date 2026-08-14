@@ -9,6 +9,7 @@ package buildcraft.lib.marker;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.NBTUtilBC;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -67,7 +68,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         markerPositions.clear();
         markerConnections.clear();
 

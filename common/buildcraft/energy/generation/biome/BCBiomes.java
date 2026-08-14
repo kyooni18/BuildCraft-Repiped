@@ -4,7 +4,7 @@ import buildcraft.energy.BCEnergy;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.AquaticPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -41,7 +41,7 @@ public class BCBiomes {
 //        reg.register(FMLJavaModLoadingContext.get().getModEventBus());
 //    }
 
-    public static void initBiome(BootstapContext<Biome> context) {
+    public static void initBiome(BootstrapContext<Biome> context) {
         HolderGetter<PlacedFeature> placedFeatureHolderGetter = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<ConfiguredWorldCarver<?>> configuredWorldCarverHolderGetter = context.lookup(Registries.CONFIGURED_CARVER);
 

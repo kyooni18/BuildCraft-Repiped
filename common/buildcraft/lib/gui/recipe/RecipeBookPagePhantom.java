@@ -4,6 +4,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeBookPage;
 import net.minecraft.client.gui.screens.recipebook.RecipeButton;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -39,8 +40,9 @@ public class RecipeBookPagePhantom extends RecipeBookPage {
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton, int p_194196_4_, int p_194196_5_, int p_194196_6_, int p_194196_7_) {
         if (super.mouseClicked(mouseX, mouseY, mouseButton, p_194196_4_, p_194196_5_, p_194196_6_, p_194196_7_)) {
 //            IRecipe recipe = getLastClickedRecipe();
-            Recipe<?> recipe = getLastClickedRecipe();
-            if (recipe != null && recipe instanceof CraftingRecipe craftingRecipe) {
+            RecipeHolder<?> recipeHolder = getLastClickedRecipe();
+            Recipe<?> recipe = recipeHolder == null ? null : recipeHolder.value();
+            if (recipe instanceof CraftingRecipe craftingRecipe) {
 //                gui.recipeSetter.accept(recipe);
                 gui.recipeSetter.accept(craftingRecipe);
             }

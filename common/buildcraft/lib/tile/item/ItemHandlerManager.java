@@ -134,20 +134,28 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     @Override
+    public CompoundTag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
+        return serializeNBT();
+    }
+
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         for (Entry<String, INBTSerializable<CompoundTag>> entry : handlers.entrySet()) {
             String key = entry.getKey();
-            nbt.put(key, entry.getValue().serializeNBT());
+            nbt.put(key, entry.getValue().serializeNBT(net.minecraft.core.RegistryAccess.EMPTY));
         }
         return nbt;
     }
 
     @Override
+    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, CompoundTag nbt) {
+        deserializeNBT(nbt);
+    }
+
     public void deserializeNBT(CompoundTag nbt) {
         for (Entry<String, INBTSerializable<CompoundTag>> entry : handlers.entrySet()) {
             String key = entry.getKey();
-            entry.getValue().deserializeNBT(nbt.getCompound(key));
+            entry.getValue().deserializeNBT(net.minecraft.core.RegistryAccess.EMPTY, nbt.getCompound(key));
         }
     }
 

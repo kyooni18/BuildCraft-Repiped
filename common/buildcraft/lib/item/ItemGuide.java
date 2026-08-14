@@ -6,6 +6,7 @@
 
 package buildcraft.lib.item;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.BCLibMenuTypes;
 import buildcraft.lib.container.ContainerGuide;
 import buildcraft.lib.guide.GuideBook;
@@ -32,7 +33,7 @@ import javax.annotation.Nullable;
 
 public class ItemGuide extends ItemBC_Neptune implements MenuProvider {
     private static final String DEFAULT_BOOK = "buildcraftcore:main";
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:guide");
+    private static final ResourceLocation ADVANCEMENT = ResourceLocation.parse("buildcraftcore:guide");
     private static final String TAG_BOOK_NAME = "BookName";
 
     public ItemGuide(String idBC, Item.Properties properties) {
@@ -70,7 +71,7 @@ public class ItemGuide extends ItemBC_Neptune implements MenuProvider {
     }
 
     public static String getBookName(ItemStack stack) {
-        CompoundTag nbt = stack.getTag();
+        CompoundTag nbt = StackUtil.getItemData(stack);
         if (nbt == null || !nbt.contains(TAG_BOOK_NAME, Tag.TAG_STRING)) {
             // So that existing guide books continue to work
             return ItemGuide.DEFAULT_BOOK;

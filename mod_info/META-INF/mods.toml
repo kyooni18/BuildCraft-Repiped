@@ -1,7 +1,8 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="[52,)"
 license="Minecraft Mod Public License"
 issueTrackerURL=""
+accessTransformers=["META-INF/accesstransformer.cfg"]
 [[mods]]
 modId="buildcraftlib"
 displayName="BuildCraft Lib"
@@ -93,13 +94,13 @@ authors="SpaceToad, BuildCraft Team"
 [[dependencies.buildcraftcore]]
     modId="forge"
     mandatory=true
-    versionRange="[47,)"
+    versionRange="[52,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.buildcraftcore]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20,1.20.2)"
+    versionRange="[1.21.1,1.21.2)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.buildcraftcore]]

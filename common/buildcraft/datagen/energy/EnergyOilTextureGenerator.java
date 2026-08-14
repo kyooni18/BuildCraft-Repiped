@@ -36,8 +36,8 @@ public class EnergyOilTextureGenerator extends BCBaseTextureGenerator {
     public CompletableFuture<?> run(CachedOutput cache) {
         ResourceLocation[][] fromSprites = new ResourceLocation[3][2];
         for (int h = 0; h < 3; h++) {
-            fromSprites[h][0] = new ResourceLocation("buildcraftlib:block/fluid/heat_" + h + "_still");
-            fromSprites[h][1] = new ResourceLocation("buildcraftlib:block/fluid/heat_" + h + "_flow");
+            fromSprites[h][0] = ResourceLocation.parse("buildcraftlib:block/fluid/heat_" + h + "_still");
+            fromSprites[h][1] = ResourceLocation.parse("buildcraftlib:block/fluid/heat_" + h + "_flow");
         }
 
         List<CompletableFuture<?>> futures = new ArrayList<CompletableFuture<?>>();
@@ -56,11 +56,11 @@ public class EnergyOilTextureGenerator extends BCBaseTextureGenerator {
 
             try {
                 // Normal
-                futures.addAll(recolourAndSave(mainOutput, new ResourceLocation(normalStillTexture), lightColour, darkColour, sprites[0], cache));
-                futures.addAll(recolourAndSave(mainOutput, new ResourceLocation(normalFlowTexture), lightColour, darkColour, sprites[1], cache));
+                futures.addAll(recolourAndSave(mainOutput, ResourceLocation.parse(normalStillTexture), lightColour, darkColour, sprites[0], cache));
+                futures.addAll(recolourAndSave(mainOutput, ResourceLocation.parse(normalFlowTexture), lightColour, darkColour, sprites[1], cache));
                 // Christmas
-                futures.addAll(recolourAndSave(mainOutput, new ResourceLocation(normalStillTexture + "_christmas"), lightColour_christmas, darkColour_christmas, sprites[0], cache));
-                futures.addAll(recolourAndSave(mainOutput, new ResourceLocation(normalFlowTexture + "_christmas"), lightColour_christmas, darkColour_christmas, sprites[1], cache));
+                futures.addAll(recolourAndSave(mainOutput, ResourceLocation.parse(normalStillTexture + "_christmas"), lightColour_christmas, darkColour_christmas, sprites[0], cache));
+                futures.addAll(recolourAndSave(mainOutput, ResourceLocation.parse(normalFlowTexture + "_christmas"), lightColour_christmas, darkColour_christmas, sprites[1], cache));
             } catch (IOException e) {
                 LOGGER.error("Couldn't save texture of {}", FluidUtilBC.getRegistryName(container.getStill()), e);
             }

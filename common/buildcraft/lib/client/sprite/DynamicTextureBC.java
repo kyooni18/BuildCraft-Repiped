@@ -8,6 +8,7 @@ package buildcraft.lib.client.sprite;
 
 import buildcraft.lib.misc.RenderUtil;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -106,22 +107,20 @@ public class DynamicTextureBC {
 //        Tessellator tessellator = Tessellator.getInstance();
         Tesselator tessellator = Tesselator.getInstance();
 //        BufferBuilder bb = tessellator.getBuffer();
-        BufferBuilder bb = tessellator.getBuilder();
-        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder bb = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         vertexUV(bb, screenX + 0, screenY + clipHeight, zLevel, (clipX + 0) * f, (clipY + clipHeight) * f1);
         vertexUV(bb, screenX + clipWidth, screenY + clipHeight, zLevel, (clipX + clipWidth) * f, (clipY + clipHeight) * f1);
         vertexUV(bb, screenX + clipWidth, screenY + 0, zLevel, (clipX + clipWidth) * f, (clipY + 0) * f1);
         vertexUV(bb, screenX + 0, screenY + 0, zLevel, (clipX + 0) * f, (clipY + 0) * f1);
 //        tessellator.draw();
-        tessellator.end();
+        BufferUploader.drawWithShader(bb.buildOrThrow());
     }
 
     private static void vertexUV(BufferBuilder bb, double x, double y, double z, double u, double v) {
 //        bb.pos(x, y, z);
-        bb.vertex(x, y, z);
+        bb.addVertex((float) x, (float) y, (float) z);
 //        bb.tex(u, v);
-        bb.uv((float) u, (float) v);
-        bb.endVertex();
+        bb.setUv((float) u, (float) v);
     }
 
     // Calen 1.20.1

@@ -29,12 +29,12 @@ public enum CropHandlerCocoa implements ICropHandler {
     @Override
     public boolean canSustainPlant(Level world, ItemStack seed, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        return state.is(BlockTags.JUNGLE_LOGS) && !Arrays.stream(Direction.BY_2D_DATA).allMatch(direction -> world.getBlockState(pos.relative(direction)).is(Blocks.COCOA));
+        return state.is(BlockTags.JUNGLE_LOGS) && !Arrays.stream(Direction.Plane.HORIZONTAL.stream().toArray(Direction[]::new)).allMatch(direction -> world.getBlockState(pos.relative(direction)).is(Blocks.COCOA));
     }
 
     @Override
     public boolean plantCrop(Level world, Player player, ItemStack seed, BlockPos pos) {
-        for (Direction direction : Direction.BY_2D_DATA) {
+        for (Direction direction : Direction.Plane.HORIZONTAL.stream().toArray(Direction[]::new)) {
             if (BlockUtil.useItemOnBlock(world, player, seed, pos, direction)) {
                 return true;
             }

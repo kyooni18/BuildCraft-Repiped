@@ -19,7 +19,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class GuiRequester extends GuiBC8<ContainerRequester> {
 
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftrobotics:textures/gui/requester_gui.png");
+    private static final ResourceLocation TEXTURE_BASE = ResourceLocation.parse("buildcraftrobotics:textures/gui/requester_gui.png");
     private static final int SIZE_X = 196, SIZE_Y = 181;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 

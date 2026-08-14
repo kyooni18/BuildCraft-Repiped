@@ -5,7 +5,7 @@ import buildcraft.api.recipes.EnumAssemblyRecipeType;
 import buildcraft.api.recipes.IAssemblyRecipe;
 import buildcraft.api.recipes.IngredientStack;
 import com.google.gson.JsonObject;
-import net.minecraft.data.recipes.FinishedRecipe;
+import buildcraft.lib.recipe.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -67,7 +67,7 @@ public class AssemblyRecipeBuilder {
 
         @Override
         public ResourceLocation getId() {
-            return new ResourceLocation(namespace, "assembly/" + name);
+            return ResourceLocation.fromNamespaceAndPath(namespace, "assembly/" + name);
         }
 
         @Override

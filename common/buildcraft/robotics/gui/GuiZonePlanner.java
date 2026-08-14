@@ -34,6 +34,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fStack;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
@@ -44,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner.png");
+    private static final ResourceLocation TEXTURE_BASE = ResourceLocation.parse("buildcraftrobotics:textures/gui/zone_planner.png");
     private static final int SIZE_X = 256, SIZE_Y = 228;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_PROGRESS_INPUT = new GuiIcon(TEXTURE_BASE, 9, 228, 28, 9);
@@ -126,13 +127,13 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
 //    }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if (delta != 0) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (scrollY != 0) {
             // Calen: 1.12.2 Mouse.getEventDWheel = 1.18.2 mouseScrolled delta*120
 //            scaleSpeed -= delta / 30F;
-            scaleSpeed -= delta * 4.0F;
+            scaleSpeed -= scrollY * 4.0F;
         }
-        return super.mouseScrolled(mouseX, mouseY, delta);
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override
@@ -240,7 +241,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     }
 
     // private BlockPos rayTrace(int screenX, int screenY)
-    private BlockPos rayTrace(double screenX, double screenY, PoseStack modelViewStack, Matrix4f projectionMatrix) {
+    private BlockPos rayTrace(double screenX, double screenY, Matrix4f modelViewMatrix, Matrix4f projectionMatrix) {
         BlockPos found = null;
 //        FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(16);
 //        FloatBuffer modelViewBuffer = BufferUtils.createFloatBuffer(16);
@@ -258,7 +259,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
 
 //        GLU.gluUnProject(screenX, screenY, 0f, modelViewBuffer, projectionBuffer, viewportBuffer, positionNearBuffer);
 //        GLU.gluUnProject(screenX, screenY, 1f, modelViewBuffer, projectionBuffer, viewportBuffer, positionFarBuffer);
-        Matrix4f mul = new Matrix4f(projectionMatrix).mul(modelViewStack.last().pose()); // mul: A.mul(B)=B*A
+        Matrix4f mul = new Matrix4f(projectionMatrix).mul(modelViewMatrix); // mul: A.mul(B)=B*A
         mul.unproject((float) screenX, (float) screenY, 0f, viewport, positionNear);
         mul.unproject((float) screenX, (float) screenY, 1f, viewport, positionFar);
 
@@ -404,17 +405,17 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         projectionMatrix.perspective(70.0F, (float) sizeX / sizeY, 1F, 10000.0F);
         RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.ORTHOGRAPHIC_Z);
 //        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
 //        GlStateManager.loadIdentity();
-        modelViewStack.pushPose();
-        modelViewStack.setIdentity();
+        modelViewStack.pushMatrix();
+        modelViewStack.identity();
 //        RenderHelper.enableStandardItemLighting();
         Lighting.setupFor3DItems();
 //        GlStateManager.enableRescaleNormal();
 //        GlStateManager.rotate(90, 1, 0, 0); // look down
         modelViewStack.rotateAround(Axis.XP.rotationDegrees(90), 1, 0, 0);
 //        GlStateManager.pushMatrix();
-        modelViewStack.pushPose();
+        modelViewStack.pushMatrix();
 //        GlStateManager.translate(-positionX, -camY, -positionZ);
         modelViewStack.translate(-positionX, -camY, -positionZ);
 //        GlStateManager.disableBlend();
@@ -555,7 +556,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             }
             if (!layer.getChunkPoses().isEmpty()) {
 //                Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-                Tesselator.getInstance().getBuilder().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+                BufferBuilder layerBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
                 for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
                     for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                         ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
@@ -589,19 +590,16 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                     continue;
                                 }
 //                                int color = DyeColor.byMetadata(i).getColorValue();
-                                float[] color = DyeColor.byId(i).getTextureDiffuseColors();
-//                                int r = (color >> 16) & 0xFF;
-                                byte r = (byte) (color[0] * 255.0F);
-//                                int g = (color >> 8) & 0xFF;
-                                byte g = (byte) (color[1] * 255.0F);
-//                                int b = (color >> 0) & 0xFF;
-                                byte b = (byte) (color[2] * 255.0F);
+                                int color = DyeColor.byId(i).getTextureDiffuseColor();
+                                byte r = (byte) ((color >> 16) & 0xFF);
+                                byte g = (byte) ((color >> 8) & 0xFF);
+                                byte b = (byte) (color & 0xFF);
                                 byte a = 0x55;
 //                                ZonePlannerMapRenderer.INSTANCE.setColor(r << 16 | g << 8 | b << 0 | a << 24);
                                 ZonePlannerMapRenderer.INSTANCE.setColor(r, g, b, a);
                                 ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(
 //                                        Tessellator.getInstance().getBuffer(),
-                                        Tesselator.getInstance().getBuilder(),
+                                        layerBuilder,
                                         blockX,
                                         height + 0.1,
                                         blockZ,
@@ -613,7 +611,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                     }
                 }
 //                Tessellator.getInstance().draw();
-                this.uploadBufferBuilderAndRender(Tesselator.getInstance().getBuilder(), modelViewStack, projectionMatrix, GameRenderer.getPositionColorShader());
+                this.uploadBufferBuilderAndRender(layerBuilder, modelViewStack, projectionMatrix, GameRenderer.getPositionColorShader());
             }
         }
 //        GlStateManager.disableBlend();
@@ -623,7 +621,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
 
         lastSelected = found;
 //        GlStateManager.popMatrix();
-        modelViewStack.popPose();
+        modelViewStack.popMatrix();
 //        GlStateManager.disableRescaleNormal();
 //        GlStateManager.matrixMode(GL11.GL_PROJECTION);
 //        GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
@@ -632,7 +630,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         RenderSystem.restoreProjectionMatrix();
 //        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 //        GlStateManager.popMatrix();
-        modelViewStack.popPose();
+        modelViewStack.popMatrix();
 //        RenderHelper.disableStandardItemLighting();
 //        GlStateManager.disableBlend();
         RenderUtil.disableBlend();
@@ -641,22 +639,22 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         RenderSystem.applyModelViewMatrix();
     }
 
-    private void renderVertexBuffer(VertexBuffer vertexBuffer, PoseStack modelViewStack, Matrix4f projectionMatrix) {
+    private void renderVertexBuffer(VertexBuffer vertexBuffer, Matrix4f modelViewMatrix, Matrix4f projectionMatrix) {
         RenderSystem.setShaderColor(1, 1, 1, 1);
         FogRenderer.setupNoFog();
         vertexBuffer.bind();
-        vertexBuffer.drawWithShader(modelViewStack.last().pose(), projectionMatrix, GameRenderer.getPositionColorShader());
+        vertexBuffer.drawWithShader(modelViewMatrix, projectionMatrix, GameRenderer.getPositionColorShader());
         VertexBuffer.unbind();
     }
 
-    private void uploadBufferBuilderAndRender(BufferBuilder builder, PoseStack modelViewStack, Matrix4f projectionMatrix, ShaderInstance shader) {
-        BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = builder.end();
+    private void uploadBufferBuilderAndRender(BufferBuilder builder, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, ShaderInstance shader) {
+        MeshData meshData = builder.buildOrThrow();
         RenderSystem.setShaderColor(1, 1, 1, 1);
         FogRenderer.setupNoFog();
         VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
         vertexBuffer.bind();
-        vertexBuffer.upload(bufferbuilder$renderedbuffer);
-        vertexBuffer.drawWithShader(modelViewStack.last().pose(), projectionMatrix, shader);
+        vertexBuffer.upload(meshData);
+        vertexBuffer.drawWithShader(modelViewMatrix, projectionMatrix, shader);
         VertexBuffer.unbind();
     }
 }

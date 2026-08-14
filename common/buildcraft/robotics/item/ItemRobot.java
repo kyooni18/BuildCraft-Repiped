@@ -16,6 +16,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.robotics.BCRoboticsEntities;
 import buildcraft.robotics.BCRoboticsItems;
 import buildcraft.robotics.entity.EntityRobot;
@@ -32,6 +33,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -39,7 +41,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 // public class ItemRobot extends ItemBC_Neptune implements IEnergyContainerItem
@@ -49,22 +50,9 @@ public class ItemRobot extends ItemBC_Neptune implements IMjContainerItem {
 
     public ItemRobot(String idBC, Properties properties, RedstoneBoardRobotNBT robotNBT) {
         // super(BCCreativeTab.get("boards"));
-        super(idBC, properties);
+        super(idBC, properties.stacksTo(robotNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard() ? 1 : 16));
         // setMaxStackSize(1);
         this.robotNBT = robotNBT;
-    }
-
-    @Override
-    public int getMaxStackSize(ItemStack stack) {
-        // CompoundTag cpt = getNBT(stack);
-        // RedstoneBoardRobotNBT boardNBT = getRobotNBT(cpt);
-        RedstoneBoardRobotNBT boardNBT = this.robotNBT;
-
-        if (boardNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
-            return 1;
-        } else {
-            return 16;
-        }
     }
 
     public EntityRobot createRobot(ItemStack stack, Level world) {
@@ -107,13 +95,13 @@ public class ItemRobot extends ItemBC_Neptune implements IMjContainerItem {
 
     @Override
 //    public void addInformation(ItemStack stack, Player player, List list, boolean advanced)
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
         CompoundTag cpt = getNBT(stack);
         // RedstoneBoardRobotNBT boardNBT = getRobotNBT(cpt);
         RedstoneBoardRobotNBT boardNBT = this.robotNBT;
 
         if (boardNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
-            boardNBT.addInformation(stack, world, list, flag);
+            boardNBT.addInformation(stack, context.level(), list, flag);
 
             long energy = getEnergy(cpt);
             long pct = energy * 100 / EntityRobotBase.MAX_POWER;
@@ -135,7 +123,9 @@ public class ItemRobot extends ItemBC_Neptune implements IMjContainerItem {
         // CompoundTag boardCpt = new CompoundTag();
         // board.createBoard(boardCpt);
         // NBTUtilBC.getItemData(robot).put("board", boardCpt);
-        NBTUtilBC.getItemData(robot).putLong(MjBattery.NBT_STORED, energy);
+        CompoundTag data = NBTUtilBC.getItemData(robot);
+        data.putLong(MjBattery.NBT_STORED, energy);
+        StackUtil.setItemData(robot, data);
         // return robot;
         return robot;
     }
@@ -173,6 +163,7 @@ public class ItemRobot extends ItemBC_Neptune implements IMjContainerItem {
         long energyReceived = Math.min(EntityRobotBase.MAX_POWER - currentEnergy, maxReceive);
         if (!simulate) {
             setEnergy(cpt, currentEnergy + energyReceived);
+            StackUtil.setItemData(container, cpt);
         }
         return energyReceived;
     }
@@ -189,6 +180,7 @@ public class ItemRobot extends ItemBC_Neptune implements IMjContainerItem {
         long energyExtracted = Math.min(currentEnergy, maxExtract);
         if (!simulate) {
             setEnergy(cpt, currentEnergy - energyExtracted);
+            StackUtil.setItemData(container, cpt);
         }
         return energyExtracted;
     }
@@ -306,19 +298,10 @@ public class ItemRobot extends ItemBC_Neptune implements IMjContainerItem {
         cpt.putLong(MjBattery.NBT_STORED, energy);
     }
 
-    // Calen 1.18.2
-    @Override
+    // Energy-backed durability bar. Item damage itself is not used for robots.
     public boolean isDamaged(ItemStack stack) {
-        CompoundTag cpt = getNBT(stack);
-        RedstoneBoardRobotNBT boardNBT = this.robotNBT;
-
-        if (boardNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
-
-            long energy = getEnergy(cpt);
-            return energy < EntityRobotBase.MAX_POWER;
-        } else {
-            return false;
-        }
+        return this.robotNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()
+                && getEnergy(stack) < EntityRobotBase.MAX_POWER;
     }
 
     @Override
@@ -327,44 +310,21 @@ public class ItemRobot extends ItemBC_Neptune implements IMjContainerItem {
     }
 
     @Override
-    public int getBarColor(ItemStack stack) {
-        CompoundTag cpt = getNBT(stack);
-        RedstoneBoardRobotNBT boardNBT = this.robotNBT;
+    public int getBarWidth(ItemStack stack) {
+        if (this.robotNBT == RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
+            return 0;
+        }
+        double fraction = Math.max(0.0D, Math.min(1.0D, (double) getEnergy(stack) / EntityRobotBase.MAX_POWER));
+        return Math.round((float) (13.0D * fraction));
+    }
 
-        if (boardNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
-            long energy = getEnergy(cpt);
+    @Override
+    public int getBarColor(ItemStack stack) {
+        if (this.robotNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
+            long energy = getEnergy(stack);
             long pct = energy * 100 / EntityRobotBase.MAX_POWER;
             return (pct >= 80 ? ChatFormatting.GREEN : (pct >= 50 ? ChatFormatting.YELLOW : (pct >= 30 ? ChatFormatting.GOLD : (pct >= 20 ? ChatFormatting.RED : ChatFormatting.DARK_RED)))).getColor();
-        } else {
-            return 0;
         }
-    }
-
-    @Override
-    public void setDamage(ItemStack stack, int damage) {
-    }
-
-    @Override
-    public int getDamage(ItemStack stack) {
-        CompoundTag cpt = getNBT(stack);
-        RedstoneBoardRobotNBT boardNBT = this.robotNBT;
-
-        if (boardNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
-            long energy = getEnergy(cpt);
-            return (int) ((EntityRobotBase.MAX_POWER - energy) / MjAPI.MJ);
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public int getMaxDamage(ItemStack stack) {
-        RedstoneBoardRobotNBT boardNBT = this.robotNBT;
-
-        if (boardNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
-            return (int) (EntityRobotBase.MAX_POWER / MjAPI.MJ);
-        } else {
-            return 0;
-        }
+        return 0;
     }
 }

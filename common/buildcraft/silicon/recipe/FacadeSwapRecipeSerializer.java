@@ -8,7 +8,7 @@ public class FacadeSwapRecipeSerializer extends SimpleCraftingRecipeSerializer<F
     public static final FacadeSwapRecipeSerializer INSTANCE;
 
     static {
-        INSTANCE = new FacadeSwapRecipeSerializer((id, category) -> FacadeSwapRecipe.INSTANCE);
+        INSTANCE = new FacadeSwapRecipeSerializer(category -> FacadeSwapRecipe.INSTANCE);
     }
 
     public FacadeSwapRecipeSerializer(SimpleCraftingRecipeSerializer.Factory<FacadeSwapRecipe> constructor) {

@@ -5,7 +5,6 @@ import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.oredictionarytag.OreDictionaryTags;
 import buildcraft.lib.registry.CreativeTabManager;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -15,7 +14,7 @@ import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Mth;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +23,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
@@ -42,6 +42,8 @@ public class PipeTabButton {
     private static int colour = 0;
     private static Method m_removeWidget;
     private static Method m_addRenderableWidget;
+    private static Field f_selectedTab;
+    private static Field f_scrollOffs;
 
 
     static {
@@ -58,8 +60,14 @@ public class PipeTabButton {
                 m_removeWidget.setAccessible(true);
                 m_addRenderableWidget = Screen.class.getDeclaredMethod("addRenderableWidget", GuiEventListener.class);
                 m_addRenderableWidget.setAccessible(true);
+                f_selectedTab = CreativeModeInventoryScreen.class.getDeclaredField("selectedTab");
+                f_selectedTab.setAccessible(true);
+                f_scrollOffs = CreativeModeInventoryScreen.class.getDeclaredField("scrollOffs");
+                f_scrollOffs.setAccessible(true);
             } catch (NoSuchMethodException ex) {
                 BCLog.logger.error(e);
+            } catch (NoSuchFieldException ex) {
+                BCLog.logger.error(ex);
             }
         }
     }
@@ -73,7 +81,7 @@ public class PipeTabButton {
         try {
             if (event.getScreen() instanceof CreativeModeInventoryScreen screen) {
                 // pipes tab
-                if (screen.selectedTab == CreativeTabManager.getTab("buildcraft.pipes")) {
+                if (getSelectedTab(screen) == CreativeTabManager.getTab("buildcraft.pipes")) {
                     // screen changed
                     if (screen != PipeTabButton.screen) {
                         if (PipeTabButton.screen != null) {
@@ -134,22 +142,35 @@ public class PipeTabButton {
         } else {
             return;
         }
-        updateTabItems(screen);
+        try {
+            updateTabItems(screen);
+        } catch (IllegalAccessException e) {
+            BCLog.logger.error(e);
+        }
     }
 
-    private static void updateTabItems(CreativeModeInventoryScreen screen) {
+    private static CreativeModeTab getSelectedTab(CreativeModeInventoryScreen screen) throws IllegalAccessException {
+        return (CreativeModeTab) f_selectedTab.get(screen);
+    }
+
+    private static void setScrollOffs(CreativeModeInventoryScreen screen, float scrollOffs) throws IllegalAccessException {
+        f_scrollOffs.setFloat(screen, scrollOffs);
+    }
+
+    private static void updateTabItems(CreativeModeInventoryScreen screen) throws IllegalAccessException {
+        CreativeModeTab selectedTab = getSelectedTab(screen);
         // show all
         if (colour == 0) {
             screen.getMenu().items.clear();
-            screen.getMenu().items.addAll(screen.selectedTab.getDisplayItems());
-            screen.scrollOffs = 0.0F;
+            screen.getMenu().items.addAll(selectedTab.getDisplayItems());
+            setScrollOffs(screen, 0.0F);
             screen.getMenu().scrollTo(0.0F);
             button.setMessage(colourToComponent());
         }
         // limited
         else {
             screen.getMenu().items.clear();
-            screen.getMenu().items.addAll(screen.selectedTab.getDisplayItems());
+            screen.getMenu().items.addAll(selectedTab.getDisplayItems());
             DyeColor dyeColor = colour == 1 ? null : DyeColor.byId(colour - 2);
             TagKey<Item> tag = OreDictionaryTags.pipeColorTags.get(dyeColor);
             Iterator<ItemStack> itr = screen.getMenu().items.iterator();
@@ -159,7 +180,7 @@ public class PipeTabButton {
                     itr.remove();
                 }
             }
-            screen.scrollOffs = 0.0F;
+            setScrollOffs(screen, 0.0F);
             screen.getMenu().scrollTo(0.0F);
             button.setMessage(colourToComponent());
         }
@@ -195,47 +216,7 @@ public class PipeTabButton {
 
         @Override
         public void renderWidget(GuiGraphics guiGraphics, int x, int y, float particleTicks) {
-            Minecraft minecraft = Minecraft.getInstance();
-            guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
-            RenderSystem.enableBlend();
-            RenderSystem.enableDepthTest();
-//            int i = this.getYImage(this.isHoveredOrFocused()); // 1.18.2
-            int i = this.getTextureY(); // 1.20.1
-            // LU
-            guiGraphics.blit(
-                    WIDGETS_LOCATION,
-                    this.getX(), this.getY(),
-//                    0, 46 + i * 20, // 1.18.2
-                    0, i, // 1.20.1
-                    this.width / 2, this.height / 2
-            );
-            // LD
-            guiGraphics.blit(
-                    WIDGETS_LOCATION,
-                    this.getX(), this.getY() + this.height / 2,
-//                    0, 46 + (i + 1) * 20 - this.height / 2, // 1.18.2
-                    0, i + 20 - this.height / 2, // 1.20.1
-                    this.width / 2, this.height / 2
-            );
-            // RU
-            guiGraphics.blit(
-                    WIDGETS_LOCATION,
-                    this.getX() + this.width / 2, this.getY(),
-//                    200 - this.width / 2, 46 + i * 20, // 1.18.2
-                    200 - this.width / 2, i, // 1.20.1
-                    this.width / 2, this.height / 2
-            );
-            // RD
-            guiGraphics.blit(
-                    WIDGETS_LOCATION,
-                    this.getX() + this.width / 2, this.getY() + this.height / 2,
-//                    200 - this.width / 2, 46 + (i + 1) * 20 - this.height / 2, // 1.18.2
-                    200 - this.width / 2, i + 20 - this.height / 2, // 1.20.1
-                    this.width / 2, this.height / 2
-            );
-            guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            int j = getFGColor();
-            this.renderString(guiGraphics, minecraft.font, j | Mth.ceil(this.alpha * 255.0F) << 24);
+            super.renderWidget(guiGraphics, x, y, particleTicks);
         }
 
         @Override

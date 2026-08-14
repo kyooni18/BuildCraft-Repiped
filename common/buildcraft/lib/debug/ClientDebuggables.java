@@ -38,7 +38,7 @@ public class ClientDebuggables {
 //                        mc.player.hasReducedDebug() ||
                         mc.player.isReducedDebugInfo() ||
 //                        !mc.gameSettings.showDebugInfo ||
-                        !mc.options.renderDebug ||
+                        !mc.getDebugOverlay().showDebugScreen() ||
                         !ItemDebugger.isShowDebugInfo(mc.player)
         )
         {

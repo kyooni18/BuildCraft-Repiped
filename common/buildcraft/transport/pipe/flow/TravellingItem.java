@@ -78,7 +78,7 @@ public class TravellingItem {
     public TravellingItem(CompoundTag nbt, long tickNow) {
         clientItemLink = () -> ItemStack.EMPTY;
 //        stack = new ItemStack(nbt.getCompound("stack"));
-        stack = ItemStack.of(nbt.getCompound("stack"));
+        stack = buildcraft.lib.misc.StackUtil.loadStack(nbt.getCompound("stack"));
         int c = nbt.getByte("colour");
         this.colour = c == 0 ? null : DyeColor.byId(c - 1);
         this.toCenter = nbt.getBoolean("toCenter");
@@ -102,7 +102,7 @@ public class TravellingItem {
 
     public CompoundTag writeToNbt(long tickNow) {
         CompoundTag nbt = new CompoundTag();
-        nbt.put("stack", stack.serializeNBT());
+        nbt.put("stack", buildcraft.lib.misc.StackUtil.saveStack(stack));
         nbt.putByte("colour", (byte) (colour == null ? 0 : colour.getId() + 1));
         nbt.putBoolean("toCenter", toCenter);
         nbt.putDouble("speed", speed);

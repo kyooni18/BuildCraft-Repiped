@@ -34,7 +34,7 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
     private TextureAtlasSprite icon;
 
     public BCBoardNBT(String id, String name, Class<? extends RedstoneBoardRobot> board, String boardType) {
-        this.id = new ResourceLocation(id);
+        this.id = ResourceLocation.parse(id);
         this.boardType = boardType;
         // this.upperName = name.substring(0, 1).toUpperCase() + name.substring(1);
         String upperName = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -45,11 +45,11 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
             }
         }
         this.upperName = upperName;
-        // this.texture = new ResourceLocation(DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_" + name + ".png");
-        this.robotTexture = new ResourceLocation("buildcraftrobotics:entities/robot_" + name);
-        this.robotItemTexture = new ResourceLocation("buildcraftrobotics:item/robot/robot_" + name);
-        this.robotTextureFullLocation = new ResourceLocation("buildcraftrobotics:textures/entities/robot_" + name + ".png");
-        this.robotId = new ResourceLocation("buildcraftrobotics:robot_" + name);
+        // this.texture = ResourceLocation.parse(DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_" + name + ".png");
+        this.robotTexture = ResourceLocation.parse("buildcraftrobotics:entities/robot_" + name);
+        this.robotItemTexture = ResourceLocation.parse("buildcraftrobotics:item/robot/robot_" + name);
+        this.robotTextureFullLocation = ResourceLocation.parse("buildcraftrobotics:textures/entities/robot_" + name + ".png");
+        this.robotId = ResourceLocation.parse("buildcraftrobotics:robot_" + name);
 
         Constructor<? extends RedstoneBoardRobot> boardInitLocal;
         try {

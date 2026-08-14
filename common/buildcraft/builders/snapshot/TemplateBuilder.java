@@ -11,7 +11,7 @@ import buildcraft.api.template.TemplateApi;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.FakePlayer;
+import buildcraft.api.core.FakePlayer;
 
 import java.util.Collections;
 import java.util.List;

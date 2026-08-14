@@ -82,13 +82,18 @@ public class BCEnergy {
         BCEnergyProxy.getProxy().fmlInit();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void clientInit(FMLClientSetupEvent event) {
-        // Calen: from BCFluidBlock#<init>
-        for (RegistryObject<BCFluid.Source> fluid : BCEnergyFluids.allStill) {
-            ItemBlockRenderTypes.setRenderLayer(fluid.get().getSource(), RenderType.solid());
-            ItemBlockRenderTypes.setRenderLayer(fluid.get().getFlowing(), RenderType.solid());
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static final class ClientEvents {
+        private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void clientInit(FMLClientSetupEvent event) {
+            // Calen: from BCFluidBlock#<init>
+            for (RegistryObject<BCFluid.Source> fluid : BCEnergyFluids.allStill) {
+                ItemBlockRenderTypes.setRenderLayer(fluid.get().getSource(), RenderType.solid());
+                ItemBlockRenderTypes.setRenderLayer(fluid.get().getFlowing(), RenderType.solid());
+            }
         }
     }
 

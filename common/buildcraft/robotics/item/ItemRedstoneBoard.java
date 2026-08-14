@@ -9,11 +9,10 @@ import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.lib.item.ItemBC_Neptune;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemRedstoneBoard extends ItemBC_Neptune {
@@ -21,13 +20,8 @@ public class ItemRedstoneBoard extends ItemBC_Neptune {
 
     public ItemRedstoneBoard(String idBC, Properties properties, RedstoneBoardNBT<?> boardNBT) {
         // super(BCCreativeTab.get("boards"));
-        super(idBC, properties);
+        super(idBC, properties.stacksTo(boardNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard() ? 1 : 16));
         this.boardNBT = boardNBT;
-    }
-
-    @Override
-    public int getMaxStackSize(ItemStack stack) {
-        return getBoardNBT(stack) != RedstoneBoardRegistry.instance.getEmptyRobotBoard() ? 1 : 16;
     }
 
     @Override
@@ -39,9 +33,9 @@ public class ItemRedstoneBoard extends ItemBC_Neptune {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
         RedstoneBoardNBT<?> board = getBoardNBT(stack);
-        board.addInformation(stack, world, list, flag);
+        board.addInformation(stack, context.level(), list, flag);
     }
 
     // Calen 1.18.2: created independent items

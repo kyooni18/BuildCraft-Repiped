@@ -169,8 +169,7 @@ public class BCEnergyFluids {
 
         // Attributes
         BCFluidAttributes.Builder attributeBuilder = BCFluidAttributes.builder(
-                        new ResourceLocation(fluidTexture + STILL_SUFFIX),
-                        new ResourceLocation(fluidTexture + FLOW_SUFFIX)
+                        ResourceLocation.parse(fluidTexture + STILL_SUFFIX), ResourceLocation.parse(fluidTexture + FLOW_SUFFIX)
                 )
                 // def.setHeat(heat)
                 .setHeat(heat)
@@ -279,7 +278,8 @@ public class BCEnergyFluids {
         int b = color & 0xFF;
 
 //        for (MapColor mapColor : MapColor.COLORS)
-        for (MapColor mapColor : MapColor.MATERIAL_COLORS) {
+        for (int mapColorId = 0; mapColorId < 64; mapColorId++) {
+            MapColor mapColor = MapColor.byId(mapColorId);
 //            if (mapColor == null || mapColor.colorValue == 0)
             if (mapColor == null || mapColor.col == 0) {
                 continue;

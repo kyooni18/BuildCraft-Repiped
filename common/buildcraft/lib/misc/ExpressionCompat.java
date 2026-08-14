@@ -47,7 +47,7 @@ public class ExpressionCompat {
         ENUM_FACING.put_t_t("getOpposite", Direction::getOpposite);
         ENUM_FACING.put_t_o("getAxis", Axis.class, Direction::getAxis);
         ENUM_FACING.put_t_o("(string)", String.class, Direction::getName);
-        for (Direction f : Direction.VALUES) {
+        for (Direction f : Direction.values()) {
             ENUM_FACING.putConstant("" + f, f);
         }
 

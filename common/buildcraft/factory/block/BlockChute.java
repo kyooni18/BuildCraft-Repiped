@@ -59,7 +59,7 @@ public class BlockChute extends BlockBCTile_Neptune<TileChute> implements IBlock
 
     @Override
 //    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!world.isClientSide) {
 //            BCFactoryGuis.CHUTE.openGUI(player, pos);
             if (world.getBlockEntity(pos) instanceof TileChute tile) {
@@ -67,7 +67,7 @@ public class BlockChute extends BlockBCTile_Neptune<TileChute> implements IBlock
             }
         }
 //        return true;
-        return InteractionResult.SUCCESS;
+        return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
     }
 
 //    @Override
@@ -99,7 +99,7 @@ public class BlockChute extends BlockBCTile_Neptune<TileChute> implements IBlock
     // Calen: not found a similar method like getActualState of 1.12.2
     @Override
     public BlockState getActualState(BlockState state, LevelAccessor world, BlockPos pos, BlockEntity tile) {
-        for (Direction side : Direction.VALUES) {
+        for (Direction side : Direction.values()) {
             state = state.setValue(CONNECTED_MAP.get(side), side != state.getValue(getFacingProperty())
                     && TileChute.hasInventoryAtPosition(world, pos.relative(side), side));
         }

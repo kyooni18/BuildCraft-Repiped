@@ -55,6 +55,10 @@ public class AverageDouble implements INBTSerializable<CompoundTag> {
     }
 
     @Override
+    public CompoundTag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
+        return serializeNBT();
+    }
+
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putInt("pos", pos);
@@ -66,6 +70,10 @@ public class AverageDouble implements INBTSerializable<CompoundTag> {
     }
 
     @Override
+    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, CompoundTag nbt) {
+        deserializeNBT(nbt);
+    }
+
     public void deserializeNBT(CompoundTag nbt) {
         precise = MathUtil.clamp(nbt.getInt("precise"), 1, Short.MAX_VALUE);
         pos = MathUtil.clamp(nbt.getInt("pos"), 0, precise);

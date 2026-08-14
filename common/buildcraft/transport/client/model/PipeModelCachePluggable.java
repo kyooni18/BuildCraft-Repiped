@@ -55,7 +55,7 @@ public class PipeModelCachePluggable {
         // public PluggableKey(BlockRenderLayer layer, IPipeHolder holder)
         public PluggableKey(RenderType layer, IPipeHolder holder) {
             ImmutableSet.Builder<PluggableModelKey> builder = ImmutableSet.builder();
-            for (Direction side : Direction.VALUES) {
+            for (Direction side : Direction.values()) {
                 PipePluggable pluggable = holder.getPluggable(side);
                 if (pluggable == null) continue;
                 PluggableModelKey key = pluggable.getModelRenderKey(layer);

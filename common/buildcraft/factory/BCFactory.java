@@ -75,13 +75,18 @@ public class BCFactory {
         BCFactoryProxy.getProxy().fmlPostInit();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void clientInit(FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(BCFactoryBlocks.tank.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BCFactoryBlocks.distiller.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BCFactoryBlocks.heatExchange.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BCFactoryBlocks.chute.get(), RenderType.cutout());
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static final class ClientEvents {
+        private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void clientInit(FMLClientSetupEvent event) {
+            ItemBlockRenderTypes.setRenderLayer(BCFactoryBlocks.tank.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BCFactoryBlocks.distiller.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BCFactoryBlocks.heatExchange.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BCFactoryBlocks.chute.get(), RenderType.cutout());
+        }
     }
 
     @SubscribeEvent

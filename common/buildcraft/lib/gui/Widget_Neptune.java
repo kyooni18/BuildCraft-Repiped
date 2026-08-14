@@ -7,13 +7,13 @@
 package buildcraft.lib.gui;
 
 import buildcraft.api.net.IMessage;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.IPayloadReceiver;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.io.IOException;
 
@@ -35,18 +35,18 @@ public abstract class Widget_Neptune<C extends ContainerBC_Neptune> implements I
         container.sendWidgetData(this, writer);
     }
 
-    public IMessage handleWidgetDataServer(NetworkEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataServer(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
         return null;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public IMessage handleWidgetDataClient(NetworkEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataClient(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
         return null;
     }
 
     @Override
-    public IMessage receivePayload(NetworkEvent.Context ctx, PacketBufferBC buffer) throws IOException {
-        if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+    public IMessage receivePayload(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+        if (MessageUtil.isClientbound(ctx)) {
             return handleWidgetDataClient(ctx, buffer);
         } else {
             return handleWidgetDataServer(ctx, buffer);

@@ -51,7 +51,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable, IBCTileMenuProvider {
-    private static final ResourceLocation ADVANCEMENT_DID_INSERT = new ResourceLocation("buildcraftfactory:retired_hopper");
+    private static final ResourceLocation ADVANCEMENT_DID_INSERT = ResourceLocation.parse("buildcraftfactory:retired_hopper");
 
     private static final int PICKUP_MAX = 3;
 
@@ -91,7 +91,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable,
 
     private void putInNearInventories(Direction currentSide) {
         boolean[] didWork = { false };
-        List<Direction> sides = new ArrayList<>(Arrays.asList(Direction.VALUES));
+        List<Direction> sides = new ArrayList<>(Arrays.asList(Direction.values()));
         Collections.shuffle(sides, new Random());
         sides.removeIf(Predicate.isEqual(currentSide));
         Stream.<Pair<Direction, ICapabilityProvider>>concat(
@@ -150,18 +150,18 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable,
 
     @Override
 //    public void readFromNBT(CompoundTag nbt)
-    public void load(CompoundTag nbt) {
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.readFromNBT(nbt);
-        super.load(nbt);
+        super.loadAdditional(nbt, provider);
         progress = nbt.getInt("progress");
         battery.deserializeNBT(nbt.getCompound("battery"));
     }
 
     @Override
 //    public CompoundTag writeToNBT(CompoundTag nbt)
-    public void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.writeToNBT(nbt);
-        super.saveAdditional(nbt);
+        super.saveAdditional(nbt, provider);
         nbt.putInt("progress", progress);
         nbt.put("battery", battery.serializeNBT());
 //        return nbt;

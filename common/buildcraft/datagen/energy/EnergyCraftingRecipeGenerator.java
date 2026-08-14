@@ -1,28 +1,32 @@
 package buildcraft.datagen.energy;
 
+import buildcraft.datagen.base.BCCompatRecipeProvider;
+
 import buildcraft.energy.BCEnergy;
 import buildcraft.energy.BCEnergyBlocks;
 import buildcraft.energy.BCEnergyFluids;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.oredictionarytag.OreDictionaryTags;
 import buildcraft.transport.BCTransportItems;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class EnergyCraftingRecipeGenerator extends RecipeProvider {
+public class EnergyCraftingRecipeGenerator extends BCCompatRecipeProvider {
     private static final String MOD_ID = BCEnergy.MODID;
 
-    public EnergyCraftingRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+    public EnergyCraftingRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         // engineIron
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, BCEnergyBlocks.engineIron.get())
                 .pattern("www")
@@ -77,10 +81,5 @@ public class EnergyCraftingRecipeGenerator extends RecipeProvider {
                 .unlockedBy("has_item", has(BCFactoryBlocks.distiller.get()))
                 .group(MOD_ID)
                 .save(consumer, MOD_ID + ":residue_to_pipe_sealant");
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Energy Crafting Recipe Generator";
     }
 }

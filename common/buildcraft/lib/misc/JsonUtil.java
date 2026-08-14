@@ -6,6 +6,7 @@
 
 package buildcraft.lib.misc;
 
+import com.mojang.serialization.JsonOps;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.recipes.IngredientStack;
 import buildcraft.lib.expression.GenericExpressionCompiler;
@@ -46,7 +47,7 @@ public class JsonUtil {
     {
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String name = json.getAsString();
-            ResourceLocation fluidName = new ResourceLocation(name); // Calen
+            ResourceLocation fluidName = ResourceLocation.parse(name); // Calen
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName); // Calen
             if (fluid == null) {
                 throw failAndListFluids(name);
@@ -57,7 +58,7 @@ public class JsonUtil {
             JsonObject obj = json.getAsJsonObject();
 //            String id = JsonUtils.getString(obj, "id");
             String id = GsonHelper.getAsString(obj, "id");
-            ResourceLocation fluidName = new ResourceLocation(id);
+            ResourceLocation fluidName = ResourceLocation.parse(id);
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
             if (fluid == null) {
                 throw failAndListFluids(id);
@@ -88,7 +89,7 @@ public class JsonUtil {
     {
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String name = json.getAsString();
-            ResourceLocation id = new ResourceLocation(name);
+            ResourceLocation id = ResourceLocation.parse(name);
             if (!ForgeRegistries.ITEMS.containsKey(id)) {
                 throw new JsonSyntaxException("Unknown item '" + name + "'");
             } else {
@@ -98,7 +99,7 @@ public class JsonUtil {
             JsonObject obj = json.getAsJsonObject();
 //            String id = JsonUtils.getString(obj, "id");
             String id = GsonHelper.getAsString(obj, "id");
-            ResourceLocation loc = new ResourceLocation(id);
+            ResourceLocation loc = ResourceLocation.parse(id);
             if (!ForgeRegistries.ITEMS.containsKey(loc)) {
                 throw new JsonSyntaxException("Unknown item '" + id + "'");
             }
@@ -259,7 +260,7 @@ public class JsonUtil {
         }
         String domain = str.substring(0, index);
         String path = str.substring(index + 1);
-        return new ResourceLocation(domain, path);
+        return ResourceLocation.fromNamespaceAndPath(domain, path);
     }
 
     public static int getInt(JsonObject obj, String string) {
@@ -613,7 +614,7 @@ public class JsonUtil {
 
     public static FluidStack deSerializeFluidStack(JsonObject json) {
         String fluidId = GsonHelper.getAsString(json, "fluid");
-        Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluidId));
+        Fluid fluid = ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(fluidId));
         int amount = GsonHelper.getAsInt(json, "amount");
         return new FluidStack(fluid, amount);
     }
@@ -624,15 +625,15 @@ public class JsonUtil {
         if (stack.getCount() > 1) {
             json.addProperty("count", stack.getCount());
         }
-        if (stack.hasTag()) {
-            json.addProperty("nbt", stack.getTag().toString());
+        if (StackUtil.hasItemData(stack)) {
+            json.addProperty("nbt", StackUtil.getItemData(stack).toString());
         }
         return json;
     }
 
     public static ItemStack deSerializeItemStack(JsonObject json) {
         String itemId = GsonHelper.getAsString(json, "item");
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemId));
+        Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(itemId));
         int count = 1;
         if (json.has("count")) {
             count = GsonHelper.getAsInt(json, "count");
@@ -640,20 +641,20 @@ public class JsonUtil {
         CompoundTag nbt = JsonUtils.readNBT(json, "nbt");
         ItemStack ret = new ItemStack(item, count);
         if (nbt != null) {
-            ret.setTag(nbt);
+            StackUtil.setItemData(ret, nbt);
         }
         return ret;
     }
 
     public static JsonElement serializeIngredientStack(IngredientStack stack) {
         JsonObject json = new JsonObject();
-        json.add("ingredient", stack.ingredient.toJson());
+        json.add("ingredient", Ingredient.CODEC.encodeStart(JsonOps.INSTANCE, stack.ingredient).getOrThrow());
         json.addProperty("count", stack.count);
         return json;
     }
 
     public static IngredientStack deSerializeIngredientStack(JsonObject json) {
-        Ingredient ingredient = Ingredient.fromJson(json.get("ingredient"));
+        Ingredient ingredient = Ingredient.CODEC.parse(JsonOps.INSTANCE, json.get("ingredient")).getOrThrow();
         int count = GsonHelper.getAsInt(json, "count");
         return new IngredientStack(ingredient, count);
     }

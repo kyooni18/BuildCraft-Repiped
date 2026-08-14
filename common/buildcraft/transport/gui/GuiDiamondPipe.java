@@ -20,8 +20,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.items.IItemHandler;
 
 public class GuiDiamondPipe extends GuiBC8<ContainerDiamondPipe> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/filter.png");
-    private static final ResourceLocation TEXTURE_CB = new ResourceLocation("buildcrafttransport:textures/gui/filter_cb.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.parse("buildcrafttransport:textures/gui/filter.png");
+    private static final ResourceLocation TEXTURE_CB = ResourceLocation.parse("buildcrafttransport:textures/gui/filter_cb.png");
     private static final int SIZE_X = 175, SIZE_Y = 225;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_GUI_CB = new GuiIcon(TEXTURE_CB, 0, 0, SIZE_X, SIZE_Y);

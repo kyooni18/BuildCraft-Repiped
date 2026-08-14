@@ -42,34 +42,34 @@ public class AddonDefaultRenderer<T extends Addon> implements IFastAddonRenderer
         Matrix4f posePose = pose.pose();
         Matrix3f normal = pose.normal();
         TextureAtlasSprite s = this.s.resolve().get();
-        builder.vertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.minZ).color(204, 204, 204, 255).uv(s.getU0(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.minZ).color(204, 204, 204, 255).uv(s.getU0(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.minZ).color(204, 204, 204, 255).uv(s.getU1(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.minZ).color(204, 204, 204, 255).uv(s.getU1(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.minZ).setColor(204, 204, 204, 255).setUv(s.getU0(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.minZ).setColor(204, 204, 204, 255).setUv(s.getU0(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.minZ).setColor(204, 204, 204, 255).setUv(s.getU1(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.minZ).setColor(204, 204, 204, 255).setUv(s.getU1(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
 
-        builder.vertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.maxZ).color(204, 204, 204, 255).uv(s.getU0(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.maxZ).color(204, 204, 204, 255).uv(s.getU0(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ).color(204, 204, 204, 255).uv(s.getU1(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.maxZ).color(204, 204, 204, 255).uv(s.getU1(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.maxZ).setColor(204, 204, 204, 255).setUv(s.getU0(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.maxZ).setColor(204, 204, 204, 255).setUv(s.getU0(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ).setColor(204, 204, 204, 255).setUv(s.getU1(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.maxZ).setColor(204, 204, 204, 255).setUv(s.getU1(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
 
-        builder.vertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.minZ).color(127, 127, 127, 255).uv(s.getU0(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.minZ).color(127, 127, 127, 255).uv(s.getU0(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.maxZ).color(127, 127, 127, 255).uv(s.getU1(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.maxZ).color(127, 127, 127, 255).uv(s.getU1(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.minZ).setColor(127, 127, 127, 255).setUv(s.getU0(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.minZ).setColor(127, 127, 127, 255).setUv(s.getU0(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.maxZ).setColor(127, 127, 127, 255).setUv(s.getU1(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.maxZ).setColor(127, 127, 127, 255).setUv(s.getU1(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
 
-        builder.vertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.maxZ).color(255, 255, 255, 255).uv(s.getU0(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ).color(255, 255, 255, 255).uv(s.getU0(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.minZ).color(255, 255, 255, 255).uv(s.getU1(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.minZ).color(255, 255, 255, 255).uv(s.getU1(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.maxZ).setColor(255, 255, 255, 255).setUv(s.getU0(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ).setColor(255, 255, 255, 255).setUv(s.getU0(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.minZ).setColor(255, 255, 255, 255).setUv(s.getU1(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.minZ).setColor(255, 255, 255, 255).setUv(s.getU1(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
 
-        builder.vertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.maxZ).color(153, 153, 153, 255).uv(s.getU0(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.maxZ).color(153, 153, 153, 255).uv(s.getU0(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.minZ).color(153, 153, 153, 255).uv(s.getU1(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.minZ).color(153, 153, 153, 255).uv(s.getU1(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.maxZ).setColor(153, 153, 153, 255).setUv(s.getU0(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.maxZ).setColor(153, 153, 153, 255).setUv(s.getU0(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.maxY, (float) bb.minZ).setColor(153, 153, 153, 255).setUv(s.getU1(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.minX, (float) bb.minY, (float) bb.minZ).setColor(153, 153, 153, 255).setUv(s.getU1(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
 
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.minZ).color(153, 153, 153, 255).uv(s.getU0(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.minZ).color(153, 153, 153, 255).uv(s.getU0(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ).color(153, 153, 153, 255).uv(s.getU1(), s.getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
-        builder.vertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.maxZ).color(153, 153, 153, 255).uv(s.getU1(), s.getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(240, 0).normal(normal, 1, 1, 1).endVertex();
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.minZ).setColor(153, 153, 153, 255).setUv(s.getU0(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.minZ).setColor(153, 153, 153, 255).setUv(s.getU0(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ).setColor(153, 153, 153, 255).setUv(s.getU1(), s.getV1()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
+        builder.addVertex(posePose, (float) bb.maxX, (float) bb.minY, (float) bb.maxZ).setColor(153, 153, 153, 255).setUv(s.getU1(), s.getV0()).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(240, 0).setNormal(1, 1, 1);
     }
 }

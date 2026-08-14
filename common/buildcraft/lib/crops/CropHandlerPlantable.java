@@ -67,7 +67,7 @@ public enum CropHandlerPlantable implements ICropHandler {
 //        if (block instanceof BlockFlower || block instanceof BlockTallGrass || block instanceof BlockMelon || block instanceof BlockMushroom || block instanceof BlockDoublePlant
         if (block instanceof FlowerBlock
                 || block instanceof TallGrassBlock
-                || block instanceof MelonBlock
+                || block == Blocks.MELON
                 || block instanceof MushroomBlock
                 || block instanceof DoublePlantBlock
                 || block == Blocks.PUMPKIN) {

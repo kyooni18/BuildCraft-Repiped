@@ -30,7 +30,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -72,7 +72,7 @@ public final class Pipe implements IPipe, IDebuggable {
         this.flow = definition.flowType.loader.loadFlow(this, nbt.getCompound("flow"));
 
         int connectionData = nbt.getInt("con");
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             int data = (connectionData >>> (face.ordinal() * 2)) & 0b11;
             // The only important aspect of this is the pipe type
             // as the texture index is just used at the client (which is updated in the first tick)
@@ -96,7 +96,7 @@ public final class Pipe implements IPipe, IDebuggable {
         nbt.put("flow", flow.writeToNbt());
 
         int connectionData = 0;
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             ConnectedType type = types.get(face);
             if (type != null) {
                 int data = type == ConnectedType.PIPE ? 0b01 : 0b10;
@@ -109,7 +109,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     // network
 
-    public Pipe(IPipeHolder holder, PacketBufferBC buffer, NetworkEvent.Context ctx) throws IOException {
+    public Pipe(IPipeHolder holder, PacketBufferBC buffer, CustomPayloadEvent.Context ctx) throws IOException {
         this.holder = holder;
         try {
             this.definition = PipeRegistry.INSTANCE.loadDefinition(buffer.readUtf(256));
@@ -131,7 +131,7 @@ public final class Pipe implements IPipe, IDebuggable {
     public void writePayload(PacketBufferBC buffer, Dist side) {
         if (side == Dist.DEDICATED_SERVER) {
             buffer.writeByte(colour == null ? 0 : colour.getId() + 1);
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 Float con = connected.get(face);
                 if (con != null) {
                     buffer.writeBoolean(true);
@@ -147,7 +147,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @OnlyIn(Dist.CLIENT)
 //    public void readPayload(PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             connected.clear();
             types.clear();
@@ -155,7 +155,7 @@ public final class Pipe implements IPipe, IDebuggable {
             int nColour = buffer.readUnsignedByte();
             colour = nColour == 0 ? null : DyeColor.byId(nColour - 1);
 
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 if (buffer.readBoolean()) {
                     float dist = buffer.readFloat();
 
@@ -271,7 +271,7 @@ public final class Pipe implements IPipe, IDebuggable {
         connected.clear();
         types.clear();
 
-        for (Direction facing : Direction.VALUES) {
+        for (Direction facing : Direction.values()) {
             PipePluggable plug = getHolder().getPluggable(facing);
             if (plug != null && plug.isBlocking()) {
                 continue;
@@ -314,7 +314,7 @@ public final class Pipe implements IPipe, IDebuggable {
             }
         }
         if (!old.equals(connected)) {
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 boolean o = old.containsKey(face);
                 boolean n = connected.containsKey(face);
                 if (o != n) {
@@ -368,7 +368,7 @@ public final class Pipe implements IPipe, IDebuggable {
     public PipeModelKey getModel() {
         PipeFaceTex[] sides = new PipeFaceTex[6];
         float[] mc = new float[6];
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             int i = face.ordinal();
             sides[i] = behaviour.getTextureData(face);
             mc[i] = getConnectedDist(face);
@@ -445,7 +445,7 @@ public final class Pipe implements IPipe, IDebuggable {
 //            left.add("Flow = " + flow.getClass());
             left.add(Component.literal("Flow = " + flow.getClass()));
         }
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
 //            right.add(face + " = " + types.get(face) + ", " + getConnectedDist(face));
             right.add(Component.literal(face + " = " + types.get(face) + ", " + getConnectedDist(face)));
         }

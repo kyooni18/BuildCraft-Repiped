@@ -4,6 +4,7 @@ import buildcraft.energy.BCEnergyConfig;
 import buildcraft.energy.BCEnergyFluids;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.registry.TagManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.registries.RegistryObject;
@@ -110,7 +111,7 @@ public class ChristmasHandler {
                 String namespace = bucketRegRL.getNamespace();
                 String normalPath = bucketRegRL.getPath();
                 String christmasPath = normalPath + "_christmas";
-                ResourceLocation christmasModelRL = new ResourceLocation(namespace, "item/" + christmasPath);
+                ModelResourceLocation christmasModelRL = ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(namespace, christmasPath));
 //                ForgeModelBakery.addSpecialModel(christmasModelRL);
                 event.register(christmasModelRL);
             }
@@ -124,8 +125,8 @@ public class ChristmasHandler {
                 String namespace = normalBucketRegRL.getNamespace();
                 String normalPath = normalBucketRegRL.getPath();
                 String christmasPath = normalPath + "_christmas";
-                ResourceLocation normalModelRL = new ResourceLocation(namespace, "item/" + normalPath);
-                ResourceLocation christmasModelRL = new ResourceLocation(namespace, "item/" + christmasPath);
+                ModelResourceLocation normalModelRL = ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(namespace, normalPath));
+                ModelResourceLocation christmasModelRL = ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(namespace, christmasPath));
                 event.getModels().replace(normalModelRL, event.getModels().get(christmasModelRL));
             }
         }

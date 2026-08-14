@@ -24,8 +24,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.biome.Biome;
@@ -39,6 +41,7 @@ import net.minecraft.world.level.entity.*;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEvent.Context;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.phys.Vec3;
@@ -93,7 +96,7 @@ public class FakeWorld extends IFakeWorld {
                 LEVEL_DATA,
                 ResourceKey.create(
                         Registries.DIMENSION,
-                        new ResourceLocation(BCBuilders.MODID, "fake")
+                        ResourceLocation.fromNamespaceAndPath(BCBuilders.MODID, "fake")
                 ),
                 Minecraft.getInstance().level.registryAccess(),
                 Minecraft.getInstance().level.registryAccess().registryOrThrow(Registries.DIMENSION_TYPE).getHolderOrThrow(DIMENSION_TYPE_KEY),
@@ -181,13 +184,16 @@ public class FakeWorld extends IFakeWorld {
 
     }
 
-    @Override
     public void gameEvent(GameEvent p_220404_, Vec3 p_220405_, Context p_220406_) {
 
     }
 
-    @Override
     public void gameEvent(@Nullable Entity p_151549_, GameEvent p_151550_, BlockPos p_151551_) {
+
+    }
+
+    @Override
+    public void gameEvent(Holder<GameEvent> event, Vec3 pos, Context context) {
 
     }
 
@@ -251,18 +257,18 @@ public class FakeWorld extends IFakeWorld {
 
     @Nullable
     @Override
-    public MapItemSavedData getMapData(String p_46650_) {
+    public MapItemSavedData getMapData(MapId p_46650_) {
         return null;
     }
 
     @Override
-    public void setMapData(String p_151533_, MapItemSavedData p_151534_) {
+    public void setMapData(MapId p_151533_, MapItemSavedData p_151534_) {
 
     }
 
     @Override
-    public int getFreeMapId() {
-        return 0;
+    public MapId getFreeMapId() {
+        return new MapId(0);
     }
 
     @Override
@@ -278,6 +284,16 @@ public class FakeWorld extends IFakeWorld {
     @Override
     public RecipeManager getRecipeManager() {
         return null;
+    }
+
+    @Override
+    public TickRateManager tickRateManager() {
+        return Minecraft.getInstance().level.tickRateManager();
+    }
+
+    @Override
+    public PotionBrewing potionBrewing() {
+        return Minecraft.getInstance().level.potionBrewing();
     }
 
     @Override

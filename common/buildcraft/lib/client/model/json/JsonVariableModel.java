@@ -112,7 +112,7 @@ public class JsonVariableModel extends JsonVariableObject {
             // Calen 1.20.1: if the json file end with .json, the file will be loaded by mc and cause an exception
 //            parentName += ".json";
             parentName += ".jsonbc";
-            ResourceLocation from = new ResourceLocation(parentName);
+            ResourceLocation from = ResourceLocation.parse(parentName);
             JsonVariableModel parent;
             try {
                 parent = deserialize(from, fnCtx, ctx);
@@ -192,7 +192,7 @@ public class JsonVariableModel extends JsonVariableObject {
             // Calen 1.20.1: if the json file end with .json, the file will be loaded by mc and cause an exception
 //            parentName += ".json";
             parentName += ".jsonbc";
-            ResourceLocation from = new ResourceLocation(parentName);
+            ResourceLocation from = ResourceLocation.parse(parentName);
             JsonVariableModel parent;
             try {
                 parent = datagenDeserialize(from, fnCtx, ctx, fileHelper);
@@ -273,7 +273,7 @@ public class JsonVariableModel extends JsonVariableObject {
                 // its somewhere else in the map so we don't need to register it twice
                 continue;
             }
-            ResourceLocation textureLoc = new ResourceLocation(location);
+            ResourceLocation textureLoc = ResourceLocation.parse(location);
             toRegisterSprites.add(textureLoc);
             // Allow transitive deps
             ReloadSource srcSprite = new ReloadSource(SpriteUtil.transformLocation(textureLoc), SourceType.SPRITE);
@@ -319,9 +319,9 @@ public class JsonVariableModel extends JsonVariableObject {
         }
         lookup = texture.location;
 //        sprite = Minecraft.getInstance().getTextureManager().getAtlasSprite(lookup);
-//        sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation(lookup));
+//        sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(ResourceLocation.parse(lookup));
         String _lookup = lookup;
-        sprite = new LazyLoadedValue(() -> Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation(_lookup)));
+        sprite = new LazyLoadedValue(() -> Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(ResourceLocation.parse(_lookup)));
         TexturedFace face = new TexturedFace();
         face.sprite = sprite;
         face.faceData = texture.faceData;

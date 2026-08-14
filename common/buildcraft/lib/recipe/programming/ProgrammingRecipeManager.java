@@ -50,7 +50,7 @@ public enum ProgrammingRecipeManager implements IProgrammingRecipeManager {
         // return Collections.unmodifiableCollection(recipes.values());
         Collection<IProgrammingRecipe> ret = Lists.newArrayList();
         ret.addAll(recipes.values());
-        world.getRecipeManager().byType(IProgrammingRecipe.TYPE).values().stream().filter(c -> c instanceof IProgrammingRecipe).forEach(c -> ret.add((IProgrammingRecipe) c));
+        world.getRecipeManager().getAllRecipesFor(IProgrammingRecipe.TYPE).forEach(c -> ret.add(c.value()));
         return ret;
     }
 

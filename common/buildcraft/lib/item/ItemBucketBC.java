@@ -26,7 +26,6 @@ public class ItemBucketBC extends BucketItem {
         return Component.translatable("item.buildcraft.bucket_filled", getFluid().getFluidType().getDescription().getString());
     }
 
-    @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new FluidBucketWrapper(stack);
     }

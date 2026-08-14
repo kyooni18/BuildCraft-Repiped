@@ -49,7 +49,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
                 return Lists.newArrayList();
             }
 //            recipes = ForgeRegistries.RECIPES;
-            recipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
+            recipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING).stream().map(holder -> holder.value()).toList();
         }
 
         List<GuidePartFactory> list = new ArrayList<>();
@@ -79,7 +79,8 @@ public enum GuideCraftingRecipes implements IStackRecipes {
             if (Minecraft.getInstance().level == null) {
                 return;
             }
-            for (CraftingRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
+            for (var recipeHolder : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
+            CraftingRecipe recipe = recipeHolder.value();
                 generateInputIndex0(recipe);
             }
         }
@@ -154,7 +155,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
                 return Lists.newArrayList();
             }
 //            recipes = ForgeRegistries.RECIPES;
-            recipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
+            recipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING).stream().map(holder -> holder.value()).toList();
         }
 
         List<GuidePartFactory> list = new ArrayList<>();
@@ -177,8 +178,8 @@ public enum GuideCraftingRecipes implements IStackRecipes {
                 return;
             }
 //            for (Recipe recipe : ForgeRegistries.RECIPES)
-            for (Recipe<?> recipe : Minecraft.getInstance().level.getRecipeManager().getRecipes()) {
-                generateOutputIndex0(recipe);
+            for (var recipeHolder : Minecraft.getInstance().level.getRecipeManager().getRecipes()) {
+                generateOutputIndex0(recipeHolder.value());
             }
         }
     }

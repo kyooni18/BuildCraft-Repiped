@@ -126,7 +126,7 @@ public final class ListHandler {
             if (data != null && data.contains("st")) {
                 ListTag l = data.getList("st", 10);
                 for (int i = 0; i < l.size(); i++) {
-                    line.stacks.set(i, ItemStack.of(l.getCompound(i)));
+                    line.stacks.set(i, buildcraft.lib.misc.StackUtil.loadStack(l.getCompound(i)));
                 }
 
                 line.precise = data.getBoolean("Fp");
@@ -143,7 +143,7 @@ public final class ListHandler {
             for (ItemStack stack1 : stacks) {
                 CompoundTag stack = new CompoundTag();
                 if (stack1 != null) {
-                    stack1.save(stack);
+                    stack = StackUtil.saveStack(stack1);
                 }
                 stackList.add(stack);
             }
@@ -220,7 +220,7 @@ public final class ListHandler {
     }
 
     public static boolean hasItems(@Nonnull ItemStack stack) {
-        if (!stack.hasTag()) return false;
+        if (!StackUtil.hasItemData(stack)) return false;
         for (Line l : getLines(stack)) {
             if (l.hasItems()) return true;
         }
@@ -228,7 +228,7 @@ public final class ListHandler {
     }
 
     public static boolean isDefault(@Nonnull ItemStack stack) {
-        if (!stack.hasTag()) return true;
+        if (!StackUtil.hasItemData(stack)) return true;
         for (Line l : getLines(stack)) {
             if (!l.isDefault()) return false;
         }
@@ -271,14 +271,16 @@ public final class ListHandler {
                 lineList.add(saving.toNBT());
             }
             data.put("lines", lineList);
-        } else if (stackList.hasTag()) {
+        } else if (StackUtil.hasItemData(stackList)) {
             CompoundTag data = NBTUtilBC.getItemData(stackList);
             // No non-default lines, we can remove the old NBT data
             data.remove("written");
             data.remove("lines");
             if (data.isEmpty()) {
                 // We can safely remove the
-                stackList.setTag(null);
+                StackUtil.setItemData(stackList, null);
+            } else {
+                StackUtil.setItemData(stackList, data);
             }
         }
     }

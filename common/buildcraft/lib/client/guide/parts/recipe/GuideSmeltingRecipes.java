@@ -33,7 +33,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
 //        Map<ItemStack, ItemStack> recipes;
         List<SmeltingRecipe> recipes;
 //        Map<ItemStack, ItemStack> old = FurnaceRecipes.instance().getSmeltingList();
-        List<SmeltingRecipe> old = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.SMELTING);
+        List<SmeltingRecipe> old = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.SMELTING).stream().map(holder -> holder.value()).toList();
 //        recipes = new TreeMap<>(Comparator.comparing(ItemStack::getDisplayName));
 //        recipes = new ArrayList<>();
 //        recipes.putAll(old);
@@ -82,7 +82,8 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
             return list;
         }
 //        for (Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet())
-        for (SmeltingRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.SMELTING)) {
+        for (var recipeHolder : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.SMELTING)) {
+            SmeltingRecipe recipe = recipeHolder.value();
 //            ItemStack input = StackUtil.asNonNull(entry.getKey());
             NonNullList<Ingredient> input = recipe.getIngredients();
 //            ItemStack output = StackUtil.asNonNull(entry.getValue());

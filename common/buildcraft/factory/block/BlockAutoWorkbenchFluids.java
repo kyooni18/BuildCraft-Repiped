@@ -35,7 +35,7 @@ public class BlockAutoWorkbenchFluids extends BlockBCTile_Neptune<TileAutoWorkbe
 
     @Override
 //    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!world.isClientSide) {
             // TODO Calen tile impl MenuProvider
 //            BCFactoryGuis.AUTO_WORKBENCH_FLUIDS.openGUI(player, pos);
@@ -44,6 +44,6 @@ public class BlockAutoWorkbenchFluids extends BlockBCTile_Neptune<TileAutoWorkbe
             }
         }
 //        return true;
-        return InteractionResult.SUCCESS;
+        return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
     }
 }

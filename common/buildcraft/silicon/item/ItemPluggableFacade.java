@@ -168,7 +168,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     @OnlyIn(Dist.CLIENT)
     @Override
 //    public void addInformation(ItemStack stack, Level world, List<String> tooltip, ITooltipFlag flag)
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         FacadeInstance states = getStates(stack);
         if (states.type == FacadeType.Phased) {
 //            String stateString = LocaleUtil.localize("item.FacadePhased.state");

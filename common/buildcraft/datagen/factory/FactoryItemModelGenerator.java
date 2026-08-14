@@ -32,15 +32,15 @@ public class FactoryItemModelGenerator extends BCBaseItemModelGenerator {
 
         // Block Items
         // miningWell
-        withExistingParent(BCFactoryBlocks.miningWell.get().getRegistryName().toString(), new ResourceLocation("buildcraftfactory:block/mining_well"));
+        withExistingParent(BCFactoryBlocks.miningWell.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftfactory:block/mining_well"));
         // floodGate
-        withExistingParent(BCFactoryBlocks.floodGate.get().getRegistryName().toString(), new ResourceLocation("buildcraftfactory:block/flood_gate/true_true_true_true_true"));
+        withExistingParent(BCFactoryBlocks.floodGate.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftfactory:block/flood_gate/true_true_true_true_true"));
         // pump
-        withExistingParent(BCFactoryBlocks.pump.get().getRegistryName().toString(), new ResourceLocation("buildcraftfactory:block/pump"));
+        withExistingParent(BCFactoryBlocks.pump.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftfactory:block/pump"));
         // autoWorkbenchItems
-        withExistingParent(BCFactoryBlocks.autoWorkbenchItems.get().getRegistryName().toString(), new ResourceLocation("buildcraftfactory:block/autoworkbench_item"));
+        withExistingParent(BCFactoryBlocks.autoWorkbenchItems.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftfactory:block/autoworkbench_item"));
         // tank
-        withExistingParent(BCFactoryBlocks.tank.get().getRegistryName().toString(), new ResourceLocation("buildcraftfactory:block/tank"))
+        withExistingParent(BCFactoryBlocks.tank.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftfactory:block/tank"))
                 .transforms()
                 .transform(ItemDisplayContext.GUI)
                 .rotation(30, 225, 0)
@@ -138,7 +138,7 @@ public class FactoryItemModelGenerator extends BCBaseItemModelGenerator {
         ;
 
         // chute
-        withExistingParent(BCFactoryBlocks.chute.get().getRegistryName().toString(), new ResourceLocation("buildcraftfactory:block/chute"))
+        withExistingParent(BCFactoryBlocks.chute.get().getRegistryName().toString(), ResourceLocation.parse("buildcraftfactory:block/chute"))
                 .transforms()
                 .transform(ItemDisplayContext.GUI)
                 .rotation(30, 225, 0)

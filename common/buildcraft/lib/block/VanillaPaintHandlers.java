@@ -98,7 +98,7 @@ public class VanillaPaintHandlers {
         Arrays.stream(DyeColor.values()).toList().forEach(
                 c ->
                 {
-                    ResourceLocation blockName = new ResourceLocation(namespace, c.getSerializedName() + pathSuffix);
+                    ResourceLocation blockName = ResourceLocation.fromNamespaceAndPath(namespace, c.getSerializedName() + pathSuffix);
                     Block block = ForgeRegistries.BLOCKS.getValue(blockName);
                     if (block == null || block == Blocks.AIR)
                         throw new IllegalStateException("Unknown block: " + blockName.toString());

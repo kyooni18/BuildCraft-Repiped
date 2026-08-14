@@ -14,8 +14,6 @@ import buildcraft.lib.misc.MessageUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkDirection;
-
 import java.io.IOException;
 
 public class MessageContainer implements IMessage {
@@ -63,11 +61,11 @@ public class MessageContainer implements IMessage {
             int id = message.windowId;
             Player player = BCLibProxy.getProxy().getPlayerForContext(ctx);
             if (player != null && player.containerMenu instanceof ContainerBC_Neptune<?> container && player.containerMenu.containerId == id) {
-                container.readMessage(message.msgId, message.payload, ctx.getDirection(), ctx);
+                container.readMessage(message.msgId, message.payload, MessageUtil.getNetworkDirection(ctx), ctx);
 
                 // error checking
                 String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
-                MessageUtil.ensureEmpty(message.payload, ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT, extra);
+                MessageUtil.ensureEmpty(message.payload, MessageUtil.isClientbound(ctx), extra);
             }
             return null;
         } catch (IOException e) {

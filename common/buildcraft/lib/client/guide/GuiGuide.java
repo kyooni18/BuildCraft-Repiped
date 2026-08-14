@@ -49,22 +49,22 @@ import java.util.Optional;
 
 //public class GuiGuide extends GuiScreen
 public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
-    public static final ResourceLocation ICONS_1 = Gui.GUI_ICONS_LOCATION;
-    public static final ResourceLocation ICONS_2 = new ResourceLocation("buildcraftlib:textures/gui/guide/icons.png");
-    public static final ResourceLocation COVER = new ResourceLocation("buildcraftlib:textures/gui/guide/cover.png");
+    public static final ResourceLocation ICONS_1 = ResourceLocation.withDefaultNamespace("textures/gui/icons.png");
+    public static final ResourceLocation ICONS_2 = ResourceLocation.parse("buildcraftlib:textures/gui/guide/icons.png");
+    public static final ResourceLocation COVER = ResourceLocation.parse("buildcraftlib:textures/gui/guide/cover.png");
     public static final ResourceLocation LEFT_PAGE =
-            new ResourceLocation("buildcraftlib:textures/gui/guide/left_page.png");
+            ResourceLocation.parse("buildcraftlib:textures/gui/guide/left_page.png");
     public static final ResourceLocation RIGHT_PAGE =
-            new ResourceLocation("buildcraftlib:textures/gui/guide/right_page.png");
+            ResourceLocation.parse("buildcraftlib:textures/gui/guide/right_page.png");
     public static final ResourceLocation LEFT_PAGE_BACK =
-            new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_back.png");
+            ResourceLocation.parse("buildcraftlib:textures/gui/guide/left_page_back.png");
     public static final ResourceLocation RIGHT_PAGE_BACK =
-            new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_back.png");
+            ResourceLocation.parse("buildcraftlib:textures/gui/guide/right_page_back.png");
     public static final ResourceLocation LEFT_PAGE_FIRST =
-            new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_first.png");
+            ResourceLocation.parse("buildcraftlib:textures/gui/guide/left_page_first.png");
     public static final ResourceLocation RIGHT_PAGE_LAST =
-            new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_last.png");
-    public static final ResourceLocation NOTE = new ResourceLocation("buildcraftlib:textures/gui/guide/note.png");
+            ResourceLocation.parse("buildcraftlib:textures/gui/guide/right_page_last.png");
+    public static final ResourceLocation NOTE = ResourceLocation.parse("buildcraftlib:textures/gui/guide/note.png");
 
     public static final GuiIcon BOOK_COVER = new GuiIcon(COVER, 0, 0, 202, 248);
     public static final GuiIcon BOOK_BINDING = new GuiIcon(COVER, 204, 0, 11, 248);
@@ -293,7 +293,7 @@ public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
     @Override
 //    public void drawScreen(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        lastPartialTicks = partialTicks = minecraft.getFrameTime();
+        lastPartialTicks = partialTicks;
         minX = (this.width - PAGE_LEFT.width * 2) / 2;
         minY = (this.height - BOOK_COVER.height) / 2;
         mouse.setMousePosition(mouseX, mouseY);

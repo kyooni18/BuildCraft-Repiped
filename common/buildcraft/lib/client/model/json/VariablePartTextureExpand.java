@@ -61,16 +61,15 @@ public class VariablePartTextureExpand extends JsonVariableModelPart {
 
             VariablePartCuboidBase.VariableFaceData data = faceUv.evaluate(spriteLookup);
             // TODO: Use the UV data! (only take part of the texture)
-//            ItemLayerModel model = new ItemLayerModel(ImmutableList.of(new ResourceLocation(".")));
+//            ItemLayerModel model = new ItemLayerModel(ImmutableList.of(ResourceLocation.parse(".")));
             ItemLayerModel model = Loader.INSTANCE.read(new JsonObject(), null);
 //            BakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.ITEM, (loc) -> data.sprite);
             BakedModel baked = model.bake(
-                    StandaloneGeometryBakingContext.create(new ResourceLocation("")),
+                    StandaloneGeometryBakingContext.create(ResourceLocation.parse("")),
                     null,
                     (loc) -> data.sprite.get(),
                     BlockModelRotation.X0_Y0,
-                    ItemOverrides.EMPTY,
-                    null
+                    ItemOverrides.EMPTY
             );
             List<BakedQuad> quads = baked.getQuads(null, null, RandomSource.create(0));
             for (BakedQuad q : quads) {

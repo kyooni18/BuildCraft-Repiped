@@ -24,11 +24,11 @@ public class ReloadSource {
     }
 
     public ReloadSource(String loc, SourceType type) {
-        this(new ResourceLocation(loc), type);
+        this(ResourceLocation.parse(loc), type);
     }
 
     public ReloadSource(String domain, String path, SourceType type) {
-        this(new ResourceLocation(domain, path), type);
+        this(ResourceLocation.fromNamespaceAndPath(domain, path), type);
     }
 
     @Override

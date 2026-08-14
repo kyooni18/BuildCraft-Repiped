@@ -9,10 +9,10 @@ package buildcraft.lib.recipe.refinery;
 import buildcraft.api.recipes.IRefineryRecipeManager;
 import buildcraft.lib.misc.StackUtil;
 import com.google.common.collect.Lists;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -87,7 +87,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
             Collection<R> ret = Lists.newArrayList();
             ret.addAll(unregisteredRecipes);
 //            ret.addAll(world.getRecipeManager().byType(type).values().stream().map(r -> (R) r).toList());
-            world.getRecipeManager().byType(type).values().forEach(r -> ret.add((R) r));
+            world.getRecipeManager().getAllRecipesFor(type).forEach(r -> ret.add(r.value()));
 //            Collection<? extends Recipe> recipes = world.getRecipeManager().byType(type).values();
 //            for(Recipe r : recipes) {
 //                ret.add((R) r);
@@ -102,7 +102,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
             Collection<R> ret = Lists.newArrayList();
             ret.addAll(unregisteredRecipes);
 //            ret.addAll(world.getRecipeManager().byType(type).values().stream().map(r -> (R) r).toList());
-            world.getRecipeManager().byType(type).values().forEach(r -> ret.add((R) r));
+            world.getRecipeManager().getAllRecipesFor(type).forEach(r -> ret.add(r.value()));
 //            Collection<? extends Recipe> recipes = world.getRecipeManager().byType(type).values();
 //            for(Recipe r : recipes) {
 //                ret.add((R) r);
@@ -182,12 +182,12 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
         }
 
         @Override
-        public boolean matches(Container inv, Level world) {
+        public boolean matches(RecipeInput inv, Level world) {
             return false;
         }
 
         @Override
-        public ItemStack assemble(Container inv, RegistryAccess registryAccess) {
+        public ItemStack assemble(RecipeInput inv, HolderLookup.Provider provider) {
             return StackUtil.EMPTY;
         }
 
@@ -197,7 +197,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
         }
 
         @Override
-        public ItemStack getResultItem(RegistryAccess registryAccess) {
+        public ItemStack getResultItem(HolderLookup.Provider provider) {
             return StackUtil.EMPTY;
         }
 

@@ -7,22 +7,24 @@ import buildcraft.lib.recipe.assembly.AssemblyRecipeBuilder;
 import buildcraft.transport.BCTransport;
 import buildcraft.transport.BCTransportItems;
 import com.google.common.collect.ImmutableSet;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeProvider;
+import buildcraft.lib.recipe.FinishedRecipe;
+import buildcraft.datagen.base.BCCompatRecipeProvider;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.Tags;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class TransportAssemblyRecipeGenerator extends RecipeProvider {
-    public TransportAssemblyRecipeGenerator(PackOutput packOutput) {
-        super(packOutput);
+public class TransportAssemblyRecipeGenerator extends BCCompatRecipeProvider {
+    public TransportAssemblyRecipeGenerator(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(packOutput, registries);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(BCRecipeOutput consumer) {
         if (BCTransportItems.wire != null) {
             for (DyeColor color : ColourUtil.COLOURS) {
 //                String name = String.format("wire-%s", color.getUnlocalizedName());
@@ -35,10 +37,5 @@ public class TransportAssemblyRecipeGenerator extends RecipeProvider {
                 AssemblyRecipeBuilder.basic(10_000 * MjAPI.MJ, input, wireStack).save(consumer, BCTransport.MODID, name);
             }
         }
-    }
-
-    @Override
-    public String getName() {
-        return "BuildCraft Transport Assembly Recipe Generator";
     }
 }

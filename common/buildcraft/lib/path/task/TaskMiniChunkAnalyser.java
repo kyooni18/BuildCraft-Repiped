@@ -53,7 +53,7 @@ public class TaskMiniChunkAnalyser implements Callable<AnalysedChunk> {
                 graph.blockCount++;
                 graph.totalExpense += expense.expense;
                 chunk.graphs[x_][y_][z_] = graph;
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     BlockPos offset = toTest.relative(face);
                     if (!isValid(offset)) continue;
                     if (closedSet.contains(offset)) continue;

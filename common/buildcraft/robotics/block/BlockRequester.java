@@ -13,7 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -35,9 +35,9 @@ public class BlockRequester extends BlockBCTile_Neptune<TileRequester> implement
 
     @Override
 //    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player entityplayer, InteractionHand hand, BlockHitResult hitResult) {
+    protected ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player entityplayer, InteractionHand hand, BlockHitResult hitResult) {
 //        if (super.onBlockActivated(world, pos, state, entityplayer, face, hitX, hitY, hitZ))
-        InteractionResult su = super.use(state, world, pos, entityplayer, hand, hitResult);
+        ItemInteractionResult su = super.useItemOn(stack, state, world, pos, entityplayer, hand, hitResult);
         if (su.consumesAction()) {
             return su;
         }
@@ -50,7 +50,7 @@ public class BlockRequester extends BlockBCTile_Neptune<TileRequester> implement
             }
         }
 
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.sidedSuccess(world.isClientSide);
     }
 
     @Override

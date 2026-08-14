@@ -140,10 +140,15 @@ public class BCRobotics {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(BCRoboticsParticleTypes.robot.get(), EntityRobotEnergyParticle.Factory::new);
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static final class ClientEvents {
+        private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
+            event.registerSpriteSet(BCRoboticsParticleTypes.robot.get(), EntityRobotEnergyParticle.Factory::new);
+        }
     }
 
     // Calen: for thread safety

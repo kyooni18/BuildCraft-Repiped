@@ -60,12 +60,12 @@ public class BlockFiller extends BlockBCTile_Neptune<TileFiller> implements IBlo
 
     @Override
 //    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileFiller filler) {
             if (!filler.hasBox()) {
 //                return false;
-                return InteractionResult.FAIL;
+                return net.minecraft.world.ItemInteractionResult.FAIL;
             }
             if (!world.isClientSide) {
 //            BCBuildersGuis.FILLER.openGUI(player, pos);
@@ -73,7 +73,7 @@ public class BlockFiller extends BlockBCTile_Neptune<TileFiller> implements IBlo
             }
         }
 //        return true;
-        return InteractionResult.SUCCESS;
+        return net.minecraft.world.ItemInteractionResult.sidedSuccess(world.isClientSide);
     }
 
     @Override

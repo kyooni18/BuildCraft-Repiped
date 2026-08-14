@@ -10,10 +10,10 @@ import buildcraft.api.core.BCLog;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
 import org.jetbrains.annotations.NotNull;
@@ -48,14 +48,14 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
 
     @Override
 //    public float getInterpolatedU(double u)
-    public float getU(double u) {
+    public float getU(float u) {
 //        return super.getInterpolatedU(u / 2 + 4);
         return super.getU(u / 2 + 4);
     }
 
     @Override
 //    public float getInterpolatedV(double v)
-    public float getV(double v) {
+    public float getV(float v) {
 //        return super.getInterpolatedV(v / 2 + 4);
         return super.getV(v / 2 + 4);
     }
@@ -106,12 +106,12 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
                     nativeImage.setPixelRGBA(x, y, data1Frame[x * width + y]);
                 }
             }
-            return new SpriteContents(frozenLocation, new FrameSize(width, height), nativeImage, AnimationMetadataSection.EMPTY, new ForgeTextureMetadata(new FrozenSpriteLoader(srcRegistryName)));
+            return new SpriteContents(frozenLocation, new FrameSize(width, height), nativeImage, ResourceMetadata.EMPTY, new ForgeTextureMetadata(new FrozenSpriteLoader(srcRegistryName)));
         } else {
             // Urm... idk
 //            BCLog.logger.warn("[lib.fluid] Failed to create a frozen sprite of " + src.getIconName() + " as the source sprite didn't have any frames!");
             BCLog.logger.warn("[lib.fluid] Failed to create a frozen sprite of " + src.contents().name() + " as the source sprite didn't have any frames!");
-            return new SpriteContents(frozenLocation, new FrameSize(0, 0), new NativeImage(0, 0, false), AnimationMetadataSection.EMPTY);
+            return new SpriteContents(frozenLocation, new FrameSize(0, 0), new NativeImage(0, 0, false), ResourceMetadata.EMPTY);
         }
     }
 
@@ -123,7 +123,7 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
         }
 
         @Override
-        public SpriteContents loadContents(ResourceLocation name, Resource resource, FrameSize frameSize, NativeImage image, AnimationMetadataSection animationMeta, ForgeTextureMetadata forgeMeta) {
+        public SpriteContents loadContents(ResourceLocation name, Resource resource, FrameSize frameSize, NativeImage image, ResourceMetadata metadata, ForgeTextureMetadata forgeMeta) {
             BCLog.logger.warn("[lib.fluid] Should not call this method of FrozenSpriteLoader!");
             return null;
         }

@@ -21,8 +21,7 @@ public class DelegateFontRenderer extends Font {
         // TODO Calen creat Font Intance? where is fontset???  When soved, GuidePageContents#<init>:new ConfigurableFontRenderer(Minecraft.getInstance().font).disableShadow();
 //        super(
 //                Minecraft.getInstance().options,
-//                new ResourceLocation("textures/font/ascii.png"),
-//                Minecraft.getInstance().textureManager,
+//                ResourceLocation.parse("textures/font/ascii.png"), //                Minecraft.getInstance().textureManager,
 //                delegate.getUnicodeFlag()
 //        );
         // 参考 FontManager#public Font createFont()
@@ -36,12 +35,12 @@ public class DelegateFontRenderer extends Font {
                         Field f_textureManager = FontManager.class.getDeclaredField("textureManager");
                         f_textureManager.setAccessible(true);
                         TextureManager mcFontManagerTextureManager = (TextureManager) f_textureManager.get(mcFontManager);
-                        FontSet fontset = new FontSet(mcFontManagerTextureManager, new ResourceLocation("textures/font/ascii.png"));
+                        FontSet fontset = new FontSet(mcFontManagerTextureManager, ResourceLocation.parse("textures/font/ascii.png"));
                         Field f_fontSets = FontManager.class.getDeclaredField("fontSets");
                         f_fontSets.setAccessible(true);
                         Map<ResourceLocation, FontSet> mcFontManager_fontSets = (Map) f_fontSets.get(mcFontManager);
                         mcFontManager_fontSets.put(p_95014_, fontset);
-//                new FontSet(Minecraft.getInstance().textureManager,new ResourceLocation("textures/font/ascii.png"))
+//                new FontSet(Minecraft.getInstance().textureManager,ResourceLocation.parse("textures/font/ascii.png"))
                         return fontset;
                     } catch (Exception e) {
                         e.printStackTrace();

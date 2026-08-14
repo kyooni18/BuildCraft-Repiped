@@ -58,14 +58,20 @@ import java.util.function.Consumer;
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
-    public static final String VERSION = "$version";
-    public static final String MC_VERSION = "${mcversion}";
+    /** Runtime mod version from the jar manifest; the placeholder is retained for dev class directories. */
+    public static final String VERSION = getImplementationVersion();
+    public static final String MC_VERSION = "1.21.1";
     public static final String GIT_BRANCH = "${git_branch}";
     public static final String GIT_COMMIT_HASH = "${git_commit_hash}";
     public static final String GIT_COMMIT_MSG = "${git_commit_msg}";
     public static final String GIT_COMMIT_AUTHOR = "${git_commit_author}";
 
     public static final boolean DEV = VERSION.startsWith("$") || Boolean.getBoolean("buildcraft.dev");
+
+    private static String getImplementationVersion() {
+        String version = BCLib.class.getPackage().getImplementationVersion();
+        return version == null || version.isBlank() ? "$version" : version;
+    }
 
     // @Instance(MODID)
     public static BCLib INSTANCE;

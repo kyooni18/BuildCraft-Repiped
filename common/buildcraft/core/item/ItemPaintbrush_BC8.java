@@ -28,7 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
@@ -111,19 +110,16 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
 //        return SpecialColourFontRenderer.INSTANCE;
 //    }
 
-    @Override
     public int getDamage(ItemStack stack) {
         Brush brush = new Brush(stack);
         return MAX_USES - brush.usesLeft;
 //        return super.getDamage(stack);
     }
 
-    @Override
     public void setDamage(ItemStack stack, int damage) {
         // Explicitly disallow this- some core use cases mistake this for metadata and fail
     }
 
-    @Override
     public boolean isDamaged(ItemStack stack) {
 //        Brush brush = new Brush(stack);
 //        return brush.colour != null && brush.usesLeft < MAX_USES;
@@ -144,15 +140,14 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
 //    }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, world, tooltip, flag);
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
         if (this.colour != null) {
             Brush brush = new Brush(stack);
             tooltip.add(Component.literal(brush.usesLeft + " / " + MAX_USES));
         }
     }
 
-    @Override
     public int getMaxDamage(ItemStack stack) {
         return MAX_USES;
     }
@@ -177,7 +172,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
             DyeColor meta = ((ItemPaintbrush_BC8) stack.getItem()).colour;
             if (meta != null) {
                 colour = meta;
-                CompoundTag nbt = stack.getTag();
+                CompoundTag nbt = StackUtil.getItemData(stack);
                 if (nbt == null) {
                     usesLeft = MAX_USES;
                 } else {
@@ -201,12 +196,13 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
                 stack = new ItemStack(ItemPaintbrush_BC8.this, 1);
             }
             if (usesLeft != MAX_USES && colour != null) {
-                CompoundTag nbt = stack.getTag();
+                CompoundTag nbt = StackUtil.getItemData(stack);
                 if (nbt == null) {
                     nbt = new CompoundTag();
-                    stack.setTag(nbt);
+                    StackUtil.setItemData(stack, nbt);
                 }
                 nbt.putByte(DAMAGE, (byte) (MAX_USES - usesLeft));
+                StackUtil.setItemData(stack, nbt);
             } else if (usesLeft == 0) {
                 stack = new ItemStack(BCCoreItems.colourBrushMap.get(null).get());
             }

@@ -15,8 +15,10 @@ import buildcraft.lib.net.MessageManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -187,7 +189,7 @@ public class WorldSavedDataWireSystems extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         ListTag entriesList = new ListTag();
         wireSystems.forEach((wireSystem, powered) ->
         {
@@ -219,12 +221,17 @@ public class WorldSavedDataWireSystems extends SavedData {
         ServerLevel serverLevel = (ServerLevel) world;
         DimensionDataStorage storage = serverLevel.getDataStorage();
 //        WorldSavedDataWireSystems instance = (WorldSavedDataWireSystems) storage.getOrLoadData(WorldSavedDataWireSystems.class, DATA_NAME);
-        WorldSavedDataWireSystems instance = storage.get((nbt) ->
-        {
-            WorldSavedDataWireSystems ret = new WorldSavedDataWireSystems();
-            ret.readFromNBT(nbt);
-            return ret;
-        }, DATA_NAME);
+        SavedData.Factory<WorldSavedDataWireSystems> factory = new SavedData.Factory<>(
+                WorldSavedDataWireSystems::new,
+                (nbt, provider) ->
+                {
+                    WorldSavedDataWireSystems ret = new WorldSavedDataWireSystems();
+                    ret.readFromNBT(nbt);
+                    return ret;
+                },
+                DataFixTypes.LEVEL
+        );
+        WorldSavedDataWireSystems instance = storage.get(factory, DATA_NAME);
         if (instance == null) {
             instance = new WorldSavedDataWireSystems();
             storage.set(DATA_NAME, instance);

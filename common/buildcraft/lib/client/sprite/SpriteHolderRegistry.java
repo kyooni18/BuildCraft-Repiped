@@ -56,14 +56,14 @@ public class SpriteHolderRegistry {
     }
 
     public static SpriteHolder getHolder(String location) {
-        return getHolder(new ResourceLocation(location));
+        return getHolder(ResourceLocation.parse(location));
     }
 
     // public static void onTextureStitchPre(TextureAtlas map)
 //    public static void onTextureStitchPre(TextureStitchEvent.Pre event)
     public static void onTextureStitchPre() {
         // Calen: for the ForgeModelBakery.White.instance() texture missing in 1.18.2
-//        event.addSprite(new ResourceLocation("minecraft", "white"));
+//        event.addSprite(ResourceLocation.fromNamespaceAndPath("minecraft", "white"));
 
         for (SpriteHolder holder : HOLDER_MAP.values()) {
 //            holder.onTextureStitchPre(map);
@@ -74,7 +74,7 @@ public class SpriteHolderRegistry {
     // Calen 1.20.1
     public static void onDatagenTextureRegister(Consumer<ResourceLocation> consumer, ExistingFileHelper fileHelper) {
         // Calen: for the ForgeModelBakery.White.instance() texture missing in 1.18.2
-        consumer.accept(new ResourceLocation("minecraft", "white"));
+        consumer.accept(ResourceLocation.fromNamespaceAndPath("minecraft", "white"));
 
         for (SpriteHolder holder : HOLDER_MAP.values()) {
 //            holder.onTextureStitchPre(map);
@@ -91,10 +91,12 @@ public class SpriteHolderRegistry {
 //        GlStateManager.bindTexture(map.getGlTextureId());
         GL11.glBindTexture(3553, map.getId());
 
-//        for (int l = 0; l < 4; l++)
-        for (int l = 0; l <= map.mipLevel; l++) {
+        for (int l = 0; ; l++) {
             int width = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, l, GL11.GL_TEXTURE_WIDTH);
             int height = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, l, GL11.GL_TEXTURE_HEIGHT);
+            if (width <= 0 || height <= 0) {
+                break;
+            }
 
             GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, 1);
             GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);

@@ -1,5 +1,6 @@
 package buildcraft.lib.client.guide.loader;
 
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
@@ -498,7 +499,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         }
         final PageLink link;
         if (type == null) {
-            ResourceLocation location = new ResourceLocation(to);
+            ResourceLocation location = ResourceLocation.parse(to);
             PageEntry<?> entry = GuidePageRegistry.INSTANCE.getReloadableEntryMap().get(location);
             if (entry == null) {
                 BCLog.logger.warn("[lib.guide.loader.xml] Found a link tag to an unknown page! " + tag);
@@ -739,7 +740,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         }
         ItemStack stack = null;
 //        Item item = Item.byId(Integer.parseInt(id.trim()));
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(id.trim()));
+        Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(id.trim()));
         if (item != null) {
             stack = new ItemStack(item);
         } else {
@@ -773,8 +774,8 @@ public enum XmlPageLoader implements IPageLoaderText {
 
         if (nbt != null) {
             try {
-//                stack.setTag(JsonToNBT.getTagFromJson(nbt));
-                stack.setTag(TagParser.parseTag(nbt));
+//                StackUtil.setItemData(stack, JsonToNBT.getTagFromJson(nbt));
+                StackUtil.setItemData(stack, TagParser.parseTag(nbt));
             }
 //            catch (NBTException e)
             catch (CommandSyntaxException e) {

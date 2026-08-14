@@ -40,6 +40,7 @@ import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.joml.Matrix4f;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -64,7 +65,7 @@ public class RenderTickListener {
                 { { 0.5F, 0.9F, 0.5F }, { 0.5F, 1.2F, 0.2F } }, // Forth arrow part (-Z)
         };
 
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             Matrix4f matrix = MatrixUtil.rotateTowardsFace(Direction.UP, face);
             Vec3[][] arr = new Vec3[5][2];
             for (int i = 0; i < 5; i++) {
@@ -102,13 +103,18 @@ public class RenderTickListener {
             }
             String headerFirst = DIFF_HEADER_FORMATTING + "SERVER:";
             String headerSecond = DIFF_HEADER_FORMATTING + "CLIENT:";
-            appendDiff(event.getLeft(), ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
-            appendDiff(event.getRight(), ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
-//            debuggable.getClientDebugInfo(event.getLeft(), event.getRight(), mc.objectMouseOver.sideHit);
-            if (mc.hitResult instanceof BlockHitResult blockHitResult) {
-                debuggable.getClientDebugInfo(event.getLeft(), event.getRight(), blockHitResult.getDirection());
+            if (event.getSide() == CustomizeGuiOverlayEvent.DebugText.Side.Left) {
+                appendDiff(event.getText(), ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
             } else {
-                debuggable.getClientDebugInfo(event.getLeft(), event.getRight(), null);
+                appendDiff(event.getText(), ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
+            }
+//            debuggable.getClientDebugInfo(event.getLeft(), event.getRight(), mc.objectMouseOver.sideHit);
+            List<String> overlayLeft = event.getSide() == CustomizeGuiOverlayEvent.DebugText.Side.Left ? event.getText() : new ArrayList<>();
+            List<String> overlayRight = event.getSide() == CustomizeGuiOverlayEvent.DebugText.Side.Right ? event.getText() : new ArrayList<>();
+            if (mc.hitResult instanceof BlockHitResult blockHitResult) {
+                debuggable.getClientDebugInfo(overlayLeft, overlayRight, blockHitResult.getDirection());
+            } else {
+                debuggable.getClientDebugInfo(overlayLeft, overlayRight, null);
             }
         }
     }
@@ -151,7 +157,9 @@ public class RenderTickListener {
             return;
         }
         float partialTicks = event.getPartialTick();
-        renderHeldItemInWorld(partialTicks, event.getPoseStack(), event.getCamera());
+        PoseStack poseStack = new PoseStack();
+        poseStack.last().pose().set(new Matrix4f(event.getPoseStack()));
+        renderHeldItemInWorld(partialTicks, poseStack, event.getCamera());
     }
 
     private static void renderHeldItemInWorld(float partialTicks, PoseStack poseStack, Camera camera) {

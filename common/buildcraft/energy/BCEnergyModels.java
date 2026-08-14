@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -182,7 +183,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModels().put(
-                new ModelResourceLocation(BCEnergy.MODID, TagManager.getTag("block.mj_dynamo", TagManager.EnumTagType.REGISTRY_NAME), "inventory"),
+                new ModelResourceLocation(ResourceLocation.parse(TagManager.getTag("block.mj_dynamo", TagManager.EnumTagType.REGISTRY_NAME)), "inventory"),
                 new ModelItemSimple(
                         new LazyLoadedValue<>(
                                 () -> Arrays.stream(MJ_DYNAMO.getCutoutQuads())

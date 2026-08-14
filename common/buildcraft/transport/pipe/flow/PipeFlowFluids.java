@@ -589,7 +589,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         Set<Direction> realDirections = EnumSet.noneOf(Direction.class);
 
         // Move liquid from the center to the output sides
-        for (Direction direction : Direction.VALUES) {
+        for (Direction direction : Direction.values()) {
             Section section = sections.get(EnumPipePart.fromFacing(direction));
             if (!section.getCurrentDirection().canOutput()) {
                 continue;

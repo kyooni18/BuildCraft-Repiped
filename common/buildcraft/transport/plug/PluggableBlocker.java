@@ -26,7 +26,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class PluggableBlocker extends PipePluggable {
     private static final VoxelShape[] BOXES = new VoxelShape[6];
 
-    private static final ResourceLocation ADVANCEMENT_PLACE_PLUG = new ResourceLocation(
+    private static final ResourceLocation ADVANCEMENT_PLACE_PLUG = ResourceLocation.parse(
             "buildcrafttransport:plugging_the_gap"
     );
 

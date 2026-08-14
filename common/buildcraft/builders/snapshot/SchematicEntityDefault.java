@@ -14,6 +14,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.RotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
@@ -50,7 +51,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
                 RulesLoader.getRules(
 //                                EntityList.getKey(context.entity),
                                 EntityUtil.getRegistryName(context.entity.getType()),
-                                context.entity.serializeNBT()
+                                context.entity.serializeNBT(RegistryAccess.EMPTY)
                         )
                         .stream()
                         .anyMatch(rule -> rule.capture);
@@ -58,7 +59,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
 
     @Override
     public void init(SchematicEntityContext context) {
-        entityNbt = context.entity.serializeNBT();
+        entityNbt = context.entity.serializeNBT(RegistryAccess.EMPTY);
 //        pos = context.entity.getPositionVector().subtract(new Vec3(context.basePos));
         pos = context.entity.position().subtract(Vec3.atLowerCornerOf(context.basePos));
         if (context.entity instanceof HangingEntity) {
@@ -83,7 +84,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
     @Override
     public List<ItemStack> computeRequiredItems() {
         Set<JsonRule> rules = RulesLoader.getRules(
-                new ResourceLocation(entityNbt.getString("id")),
+                ResourceLocation.parse(entityNbt.getString("id")),
                 entityNbt
         );
         if (rules.isEmpty()) {
@@ -102,7 +103,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
     @Override
     public List<FluidStack> computeRequiredFluids() {
         Set<JsonRule> rules = RulesLoader.getRules(
-                new ResourceLocation(entityNbt.getString("id")),
+                ResourceLocation.parse(entityNbt.getString("id")),
                 entityNbt
         );
         return rules.stream()
@@ -129,7 +130,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
     @Override
     public Entity build(Level world, BlockPos basePos) {
         Set<JsonRule> rules = RulesLoader.getRules(
-                new ResourceLocation(entityNbt.getString("id")),
+                ResourceLocation.parse(entityNbt.getString("id")),
                 entityNbt
         );
         CompoundTag replaceNbt = rules.stream()
@@ -208,7 +209,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
     public void deserializeNBT(CompoundTag nbt) throws InvalidInputDataException {
         entityNbt = nbt.getCompound("entityNbt");
         pos = NBTUtilBC.readVec3d(nbt.get("pos"));
-        hangingPos = NbtUtils.readBlockPos(nbt.getCompound("hangingPos"));
+        hangingPos = NBTUtilBC.readBlockPos(nbt.getCompound("hangingPos"));
         hangingFacing = NBTUtilBC.readEnum(nbt.get("hangingFacing"), Direction.class);
         entityRotation = NBTUtilBC.readEnum(nbt.get("entityRotation"), Rotation.class);
     }

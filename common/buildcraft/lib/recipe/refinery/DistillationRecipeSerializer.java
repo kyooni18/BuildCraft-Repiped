@@ -2,30 +2,36 @@ package buildcraft.lib.recipe.refinery;
 
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 import buildcraft.lib.misc.JsonUtil;
+import buildcraft.lib.recipe.LegacyRecipeCodec;
 import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
-
 public class DistillationRecipeSerializer implements RecipeSerializer<IDistillationRecipe> {
-    public static final DistillationRecipeSerializer INSTANCE;
+    public static final DistillationRecipeSerializer INSTANCE = new DistillationRecipeSerializer();
+    private static final MapCodec<IDistillationRecipe> CODEC = LegacyRecipeCodec.mapCodec(
+            IDistillationRecipe.TYPE_ID, DistillationRecipeSerializer::fromJson, DistillationRecipeSerializer::toJson);
+    private static final StreamCodec<RegistryFriendlyByteBuf, IDistillationRecipe> STREAM_CODEC = LegacyRecipeCodec.streamCodec(CODEC);
 
-    static {
-        INSTANCE = new DistillationRecipeSerializer();
+    private static IDistillationRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+        long powerRequired = GsonHelper.getAsLong(json, "powerRequired");
+        FluidStack in = JsonUtil.deSerializeFluidStack(GsonHelper.getAsJsonObject(json, "in"));
+        FluidStack outGas = JsonUtil.deSerializeFluidStack(GsonHelper.getAsJsonObject(json, "outGas"));
+        FluidStack outLiquid = JsonUtil.deSerializeFluidStack(GsonHelper.getAsJsonObject(json, "outLiquid"));
+        return new RefineryRecipeRegistry.DistillationRecipe(recipeId, powerRequired, in, outGas, outLiquid);
     }
 
-    @Override
-    public IDistillationRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-        String type = GsonHelper.getAsString(json, "type");
-        long powerRequired = json.get("powerRequired").getAsLong();
-        FluidStack in = JsonUtil.deSerializeFluidStack(json.getAsJsonObject("in"));
-        FluidStack outGas = JsonUtil.deSerializeFluidStack(json.getAsJsonObject("outGas"));
-        FluidStack outLiquid = JsonUtil.deSerializeFluidStack(json.getAsJsonObject("outLiquid"));
-        return new RefineryRecipeRegistry.DistillationRecipe(recipeId, powerRequired, in, outGas, outLiquid);
+    private static void toJson(IDistillationRecipe recipe, JsonObject json) {
+        json.addProperty("id", recipe.getId().toString());
+        json.addProperty("powerRequired", recipe.powerRequired());
+        json.add("in", JsonUtil.serializeFluidStack(recipe.in()));
+        json.add("outGas", JsonUtil.serializeFluidStack(recipe.outGas()));
+        json.add("outLiquid", JsonUtil.serializeFluidStack(recipe.outLiquid()));
     }
 
     public static void toJson(DistillationRecipeBuilder builder, JsonObject json) {
@@ -36,21 +42,6 @@ public class DistillationRecipeSerializer implements RecipeSerializer<IDistillat
         json.add("outLiquid", JsonUtil.serializeFluidStack(builder.outLiquid));
     }
 
-    @Nullable
-    @Override
-    public IDistillationRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-        long powerRequired = buffer.readLong();
-        FluidStack in = buffer.readFluidStack();
-        FluidStack outGas = buffer.readFluidStack();
-        FluidStack outLiquid = buffer.readFluidStack();
-        return new RefineryRecipeRegistry.DistillationRecipe(recipeId, powerRequired, in, outGas, outLiquid);
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buffer, IDistillationRecipe recipe) {
-        buffer.writeLong(recipe.powerRequired());
-        buffer.writeFluidStack(recipe.in());
-        buffer.writeFluidStack(recipe.outGas());
-        buffer.writeFluidStack(recipe.outLiquid());
-    }
+    @Override public MapCodec<IDistillationRecipe> codec() { return CODEC; }
+    @Override public StreamCodec<RegistryFriendlyByteBuf, IDistillationRecipe> streamCodec() { return STREAM_CODEC; }
 }

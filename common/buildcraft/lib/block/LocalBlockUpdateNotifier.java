@@ -35,7 +35,7 @@ public class LocalBlockUpdateNotifier {
 //        world.addEventListener(worldEventListener);
     }
 
-    private static final List<GameEvent> listenedEvents = List.of(GameEvent.BLOCK_CHANGE, GameEvent.EXPLODE, GameEvent.BLOCK_PLACE, GameEvent.BLOCK_DESTROY);
+    private static final List<GameEvent> listenedEvents = List.of(GameEvent.BLOCK_CHANGE.value(), GameEvent.EXPLODE.value(), GameEvent.BLOCK_PLACE.value(), GameEvent.BLOCK_DESTROY.value());
 
     // Calen
     @SubscribeEvent

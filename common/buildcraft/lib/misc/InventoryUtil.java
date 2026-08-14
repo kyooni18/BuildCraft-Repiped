@@ -83,7 +83,7 @@ public class InventoryUtil {
             return StackUtil.EMPTY;
         }
         List<Direction> toTry = new ArrayList<>(6);
-        Collections.addAll(toTry, Direction.VALUES);
+        Collections.addAll(toTry, Direction.values());
         Collections.shuffle(toTry);
         for (Direction face : toTry) {
             BlockEntity tile = world.getBlockEntity(pos.relative(face));
@@ -105,7 +105,7 @@ public class InventoryUtil {
             return StackUtil.EMPTY;
         }
         List<Direction> toTry = new ArrayList<>(6);
-        Collections.addAll(toTry, Direction.VALUES);
+        Collections.addAll(toTry, Direction.values());
         Collections.shuffle(toTry);
         for (Direction face : toTry) {
             if (face == ignore) continue;

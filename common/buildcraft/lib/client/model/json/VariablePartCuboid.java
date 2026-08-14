@@ -38,7 +38,7 @@ public class VariablePartCuboid extends VariablePartCuboidBase {
             throw new JsonSyntaxException("Expected between 1 and 6 faces, got '" + elem + "'");
         }
         JsonObject jFaces = elem.getAsJsonObject();
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (jFaces.has(face.getName())) {
                 JsonElement jFace = jFaces.get(face.getName());
                 if (!jFace.isJsonObject()) {

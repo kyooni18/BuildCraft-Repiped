@@ -56,7 +56,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.FakePlayer;
+import buildcraft.api.core.FakePlayer;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
@@ -473,7 +473,9 @@ public final class BlockUtil {
 
             if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 4096) {
                 ((ServerPlayer) player).connection
-                        .send(new ClientboundExplodePacket(x, y, z, 3f, explosion.getToBlow(), null));
+                        .send(new ClientboundExplodePacket(x, y, z, 3f, explosion.getToBlow(), explosion.getHitPlayers().get(player),
+                                explosion.getBlockInteraction(), explosion.getSmallExplosionParticles(),
+                                explosion.getLargeExplosionParticles(), explosion.getExplosionSound()));
             }
         }
     }
@@ -677,7 +679,7 @@ public final class BlockUtil {
 
     // Calen
     public static Block getBlockFromRegistryName(String name) {
-        return getBlockFromRegistryName(new ResourceLocation(name));
+        return getBlockFromRegistryName(ResourceLocation.parse(name));
     }
 
     public static Block getBlockFromRegistryName(ResourceLocation name) {

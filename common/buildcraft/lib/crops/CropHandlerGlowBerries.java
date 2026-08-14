@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CaveVines;
 import net.minecraft.world.level.block.CaveVinesBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.FakePlayer;
+import buildcraft.api.core.FakePlayer;
 
 public enum CropHandlerGlowBerries implements ICropHandler {
     INSTANCE;
@@ -30,7 +30,7 @@ public enum CropHandlerGlowBerries implements ICropHandler {
     @Override
     public boolean canSustainPlant(Level world, ItemStack seed, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        return ((CaveVinesBlock) Blocks.CAVE_VINES).canSurvive(state, world, pos.relative(Direction.DOWN));
+        return Blocks.CAVE_VINES.defaultBlockState().canSurvive(world, pos.relative(Direction.DOWN));
     }
 
     @Override

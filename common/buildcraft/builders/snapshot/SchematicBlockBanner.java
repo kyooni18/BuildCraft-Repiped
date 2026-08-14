@@ -1,6 +1,7 @@
 package buildcraft.builders.snapshot;
 
 import buildcraft.api.schematics.SchematicBlockContext;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,7 +21,7 @@ public class SchematicBlockBanner extends SchematicBlockDefault {
         if (context.blockState.hasBlockEntity()) {
             BlockEntity tileEntity = context.world.getBlockEntity(context.pos);
             if (tileEntity instanceof BannerBlockEntity banner) {
-                tileNbt = banner.serializeNBT();
+                tileNbt = banner.saveWithFullMetadata(RegistryAccess.EMPTY);
                 // Calen
                 requiredItem = banner.getItem();
             }

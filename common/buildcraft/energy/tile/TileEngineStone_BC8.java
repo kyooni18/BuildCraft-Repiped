@@ -72,8 +72,8 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 implements IBCTileMe
 
     @Override
 //    public void readFromNBT(NBTTagCompound nbt)
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
         burnTime = nbt.getInt("burnTime");
         totalBurnTime = nbt.getInt("totalBurnTime");
         esum = nbt.getLong("esum");
@@ -81,8 +81,8 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 implements IBCTileMe
 
     @Override
 //    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
         nbt.putInt("burnTime", burnTime);
         nbt.putInt("totalBurnTime", totalBurnTime);
         nbt.putLong("esum", esum);

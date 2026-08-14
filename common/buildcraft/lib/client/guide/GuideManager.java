@@ -221,7 +221,7 @@ public enum GuideManager implements ResourceManagerReloadListener {
             String path = "compat/buildcraft/guide/" + lang + "/" + entryKey.getPath();
 
             for (Entry<String, IPageLoader> entry : PAGE_LOADERS.entrySet()) {
-                ResourceLocation fLoc = new ResourceLocation(domain, path + "." + entry.getKey());
+                ResourceLocation fLoc = ResourceLocation.fromNamespaceAndPath(domain, path + "." + entry.getKey());
 
                 try (IProfilerSection s = p.start("get_resource");
                      InputStream stream = resourceManager.getResource(

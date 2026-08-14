@@ -30,13 +30,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.util.FakePlayer;
+import buildcraft.api.core.FakePlayer;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.io.IOException;
 import java.util.*;
@@ -52,7 +52,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             Direction.WEST, Direction.EAST //
     };
 
-    private static final ResourceLocation ADVANCEMENT_FLOOD_SINGLE = new ResourceLocation(
+    private static final ResourceLocation ADVANCEMENT_FLOOD_SINGLE = ResourceLocation.parse(
             "buildcraftfactory:flooding_the_world"
     );
 
@@ -201,7 +201,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 //                        if (FluidUtil.tryPlaceFluid(fakePlayer, level, currentPos, tank, fluid))
                         if (FluidUtil.tryPlaceFluid(fakePlayer, level, InteractionHand.MAIN_HAND, currentPos, tank, fluid)) {
                             AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_FLOOD_SINGLE);
-                            for (Direction side : Direction.VALUES) {
+                            for (Direction side : Direction.values()) {
 //                                level.notifyNeighborsOfStateChange(currentPos.offset(side), BCFactoryBlocks.floodGate, false);
                                 level.updateNeighborsAt(currentPos.relative(side), BCFactoryBlocks.floodGate.get());
                             }
@@ -226,11 +226,11 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     @Override
 //    public CompoundTag writeToNBT(CompoundTag nbt)
-    public void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.writeToNBT(nbt);
-        super.saveAdditional(nbt);
+        super.saveAdditional(nbt, provider);
         byte b = 0;
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (openSides.contains(face)) {
                 b |= 1 << face.get3DDataValue();
             }
@@ -241,15 +241,15 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     @Override
 //    public void readFromNBT(CompoundTag nbt)
-    public void load(CompoundTag nbt) {
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
 //        super.readFromNBT(nbt);
-        super.load(nbt);
+        super.loadAdditional(nbt, provider);
         Tag open = nbt.get("openSides");
 //        if (open instanceof NBTPrimitive)
         if (open instanceof NumericTag) {
 //            byte sides = ((NBTPrimitive) open).getByte();
             byte sides = ((NumericTag) open).getAsByte();
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
 //                if (((sides >> face.getIndex()) & 1) == 1)
                 if (((sides >> face.get3DDataValue()) & 1) == 1) {
                     openSides.add(face);
@@ -261,7 +261,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             // Legacy: 7.99.7 and before
             byte[] bytes = ((ByteArrayTag) open).getAsByteArray();
             BitSet bitSet = BitSet.valueOf(bytes);
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
 //                if (bitSet.get(face.getIndex()))
                 if (bitSet.get(face.get3DDataValue())) {
                     openSides.add(face);
@@ -287,7 +287,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     @Override
 //    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {

@@ -127,7 +127,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
             Set<BlockPos> seenSet = new HashSet<>();
             List<BlockPos> changeable = new ArrayList<>();
             List<Direction> faces = new ArrayList<>();
-            Collections.addAll(faces, Direction.VALUES);
+            Collections.addAll(faces, Direction.values());
             Collections.shuffle(faces);
             seenSet.add(pos);
             for (Direction face : faces) {
@@ -179,7 +179,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
     }
 
     private static boolean notTouchingWater(Level world, BlockPos pos) {
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (isWater(world, pos.relative(face))) {
                 return false;
             }
@@ -218,7 +218,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
             return 0.0F;
         } else {
             int i = net.minecraftforge.common.ForgeHooks.isCorrectToolForDrops(state, player) ? 30 : 100;
-            return player.getDigSpeed(state, pos) / f / (float) i;
+            return player.getDestroySpeed(state, pos) / f / (float) i;
         }
     }
 

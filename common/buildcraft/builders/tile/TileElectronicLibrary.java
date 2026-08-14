@@ -27,6 +27,7 @@ import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
 import com.google.common.primitives.Bytes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -38,7 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -210,7 +211,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable, 
 
     @Override
 //    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -240,7 +241,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable, 
                                 MessageManager.sendToServer(createMessage(NET_UP, localBuffer ->
                                 {
 //                                    localBuffer.writeUniqueId(ctx.getClientHandler().getGameProfile().getId());
-                                    localBuffer.writeUUID(((ClientPacketListener) ctx.getNetworkManager().getPacketListener()).getLocalGameProfile().getId());
+                                    localBuffer.writeUUID(Minecraft.getInstance().player.getUUID());
                                     selected.writeToByteBuf(localBuffer);
                                     localBuffer.writeBoolean(last);
                                     localBuffer.writeByteArray(buf);

@@ -40,8 +40,8 @@ public class CoreBlockStateGenerator extends BCBaseBlockStateGenerator {
         builtinEntity(BCCoreBlocks.engineCreative.get(), "buildcraftcore:block/engine/creative/back");
 
         // spring
-        simpleBlock(BCCoreBlocks.springWater.get(), new ConfiguredModel(new ModelFile.ExistingModelFile(new ResourceLocation("minecraft:block/bedrock"), this.models().existingFileHelper)));
-        simpleBlock(BCCoreBlocks.springOil.get(), new ConfiguredModel(new ModelFile.ExistingModelFile(new ResourceLocation("minecraft:block/bedrock"), this.models().existingFileHelper)));
+        simpleBlock(BCCoreBlocks.springWater.get(), new ConfiguredModel(new ModelFile.ExistingModelFile(ResourceLocation.parse("minecraft:block/bedrock"), this.models().existingFileHelper)));
+        simpleBlock(BCCoreBlocks.springOil.get(), new ConfiguredModel(new ModelFile.ExistingModelFile(ResourceLocation.parse("minecraft:block/bedrock"), this.models().existingFileHelper)));
 
         // decorated
         BCCoreBlocks.decoratedMap.values().forEach(decorated ->

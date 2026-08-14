@@ -74,7 +74,7 @@ public class ElementTypeSprite extends ElementType {
         ISprite sprite = gui.properties.get(origin, ISprite.class);
 
         if (sprite == null) {
-            ResourceLocation loc = SpriteUtil.transformLocation(new ResourceLocation(origin));
+            ResourceLocation loc = SpriteUtil.transformLocation(ResourceLocation.parse(origin));
             sprite = new SpriteRaw(loc, 0, 0, 1, 1);
         }
 

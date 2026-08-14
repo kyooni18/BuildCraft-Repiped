@@ -1,7 +1,7 @@
 package buildcraft.lib.misc;
 
 import buildcraft.api.core.BCLog;
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.ServerAdvancementManager;
@@ -26,7 +26,7 @@ public class AdvancementUtil {
                 // Because this *can* happen
                 return;
             }
-            Advancement advancement = advancementManager.getAdvancement(advancementName);
+            AdvancementHolder advancement = advancementManager.get(advancementName);
             if (advancement != null) {
                 // never assume the advancement exists, we create them but they are removable by datapacks
                 PlayerAdvancements tracker = playerMP.getAdvancements();

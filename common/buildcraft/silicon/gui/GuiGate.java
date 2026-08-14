@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class GuiGate extends GuiBC8<ContainerGate> {
 
-    public static final ResourceLocation GUI_DEFINITION = new ResourceLocation("buildcraftsilicon:gui/gate.json");
+    public static final ResourceLocation GUI_DEFINITION = ResourceLocation.parse("buildcraftsilicon:gui/gate.json");
 
     public GuiGate(ContainerGate container, Inventory inventory, Component component) {
         super(container, GUI_DEFINITION, inventory, component);

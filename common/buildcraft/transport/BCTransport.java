@@ -102,14 +102,17 @@ public class BCTransport {
         BCTransportRegistries.init();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void clientSetup(FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(BCTransportBlocks.pipeHolder.get(), RenderType.translucent());
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static final class ClientEvents {
+        private ClientEvents() {
+        }
 
-        TransportItemModelPredicates.register(event);
-
-        MinecraftForge.EVENT_BUS.register(PipeTabButton.class);
+        @SubscribeEvent
+        public static void clientSetup(FMLClientSetupEvent event) {
+            ItemBlockRenderTypes.setRenderLayer(BCTransportBlocks.pipeHolder.get(), RenderType.translucent());
+            TransportItemModelPredicates.register(event);
+            MinecraftForge.EVENT_BUS.register(PipeTabButton.class);
+        }
     }
 
     @SubscribeEvent

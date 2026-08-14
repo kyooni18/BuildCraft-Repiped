@@ -84,7 +84,7 @@ public enum ClientSnapshots {
             return localWorld;
         });
 
-        float particleTicks = Minecraft.getInstance().getFrameTime();
+        float particleTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
         Minecraft minecraft = Minecraft.getInstance();
 
 //        GlStateManager.pushAttrib();
@@ -144,7 +144,7 @@ public enum ClientSnapshots {
         RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.ORTHOGRAPHIC_Z);
 
 //        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        PoseStack modelViewStack = new PoseStack();
 //        GlStateManager.loadIdentity();
         modelViewStack.pushPose();
         modelViewStack.setIdentity();

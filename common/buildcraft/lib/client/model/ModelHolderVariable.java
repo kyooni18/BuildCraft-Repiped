@@ -118,9 +118,9 @@ public class ModelHolderVariable extends ModelHolder {
             }
         } else {
 //            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
-//            sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation(lookup));
+//            sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(ResourceLocation.parse(lookup));
             String _lookup = lookup;
-            sprite = new LazyLoadedValue<>(() -> Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation(_lookup)));
+            sprite = new LazyLoadedValue<>(() -> Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(ResourceLocation.parse(_lookup)));
         }
         ModelUtil.TexturedFace face = new ModelUtil.TexturedFace();
         face.sprite = sprite;

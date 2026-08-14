@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class GuiChargingTable extends GuiBC8<ContainerChargingTable> {
 
-    public static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftsilicon:textures/gui/charging_table.png");
+    public static final ResourceLocation TEXTURE_BASE = ResourceLocation.parse("buildcraftsilicon:textures/gui/charging_table.png");
     private static final int SIZE_X = 176, SIZE_Y = 132;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 

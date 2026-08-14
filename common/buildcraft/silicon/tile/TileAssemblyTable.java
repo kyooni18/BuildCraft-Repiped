@@ -39,7 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCr
     );
     public SortedMap<AssemblyInstruction, EnumAssemblyRecipeState> recipesStates = new TreeMap<>();
 
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftsilicon:precision_crafting");
+    private static final ResourceLocation ADVANCEMENT = ResourceLocation.parse("buildcraftsilicon:precision_crafting");
 
     public TileAssemblyTable(BlockPos pos, BlockState blockState) {
         super(BCSiliconBlocks.assemblyTableTile.get(), pos, blockState);
@@ -202,14 +202,14 @@ public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCr
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
         ListTag recipesStatesTag = new ListTag();
         recipesStates.forEach((instruction, state) ->
         {
             CompoundTag entryTag = new CompoundTag();
             entryTag.putString("recipe", instruction.recipe.getId().toString());
-            entryTag.put("output", instruction.output.serializeNBT());
+            entryTag.put("output", StackUtil.saveStack(instruction.output));
             entryTag.putInt("state", state.ordinal());
             recipesStatesTag.add(entryTag);
         });
@@ -217,8 +217,8 @@ public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCr
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
         recipesStates.clear();
         ListTag recipesStatesTag = nbt.getList("recipes_states", Tag.TAG_COMPOUND);
         for (int i = 0; i < recipesStatesTag.size(); i++) {
@@ -227,12 +227,12 @@ public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCr
             String name = entryTag.getString("recipe");
             if (entryTag.contains("output")) {
                 // Calen: Here this.level is null. lookup recipes -> NPE
-//                AssemblyInstruction instruction = lookupRecipe(name, ItemStack.of(entryTag.getCompound("output")));
+//                AssemblyInstruction instruction = lookupRecipe(name, buildcraft.lib.misc.StackUtil.loadStack(entryTag.getCompound("output")));
 //                if (instruction != null)
 //                    recipesStates.put(instruction, EnumAssemblyRecipeState.values()[entryTag.getInt("state")]);
                 runWhenWorldNotNull(() ->
                         {
-                            AssemblyInstruction instruction = lookupRecipe(name, ItemStack.of(entryTag.getCompound("output")));
+                            AssemblyInstruction instruction = lookupRecipe(name, buildcraft.lib.misc.StackUtil.loadStack(entryTag.getCompound("output")));
                             if (instruction != null)
                                 recipesStates.put(instruction, EnumAssemblyRecipeState.values()[entryTag.getInt("state")]);
                         },
@@ -258,7 +258,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCr
 
     @Override
 //    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
 
         if (id == NET_GUI_DATA) {
@@ -301,8 +301,8 @@ public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCr
 
     @Nullable
     private AssemblyInstruction lookupRecipe(String name, ItemStack output) {
-//        AssemblyRecipe recipe = AssemblyRecipeRegistry.REGISTRY.get(new ResourceLocation(name));
-        Optional<IAssemblyRecipe> recipe = AssemblyRecipeRegistry.getAll(level).stream().filter(r -> r.getId().equals(new ResourceLocation(name))).findFirst();
+//        AssemblyRecipe recipe = AssemblyRecipeRegistry.REGISTRY.get(ResourceLocation.parse(name));
+        Optional<IAssemblyRecipe> recipe = AssemblyRecipeRegistry.getAll(level).stream().filter(r -> r.getId().equals(ResourceLocation.parse(name))).findFirst();
 //        return recipe != null ? new AssemblyInstruction(recipe, output) : null;
         return recipe.map(assemblyRecipe -> new AssemblyInstruction(assemblyRecipe, output)).orElse(null);
     }
@@ -318,7 +318,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCr
 
         @Override
         public int compareTo(AssemblyInstruction o) {
-            return recipe.compareTo(o.recipe) + output.serializeNBT().toString().compareTo(o.output.serializeNBT().toString());
+            return recipe.compareTo(o.recipe) + StackUtil.saveStack(output).toString().compareTo(StackUtil.saveStack(o.output).toString());
         }
 
         @Override

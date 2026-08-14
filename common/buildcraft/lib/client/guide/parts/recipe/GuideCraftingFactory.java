@@ -12,7 +12,6 @@ import buildcraft.lib.misc.data.NonNullMatrix;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -36,23 +35,20 @@ public class GuideCraftingFactory implements GuidePartFactory {
     public GuideCraftingFactory(Ingredient[][] input, ItemStack output) {
         this.input = new NonNullMatrix<>(input, Ingredient.EMPTY);
         this.output = StackUtil.asNonNull(output);
-        ListTag hashNbt = new ListTag();
+        int hashValue = 1;
         for (Ingredient ingredient : this.input) {
-            ListTag list = new ListTag();
-//            for (ItemStack stack : ingredient.getMatchingStacks())
             for (ItemStack stack : ingredient.getItems()) {
-//                list.appendTag(stack.serializeNBT());
-                list.add(stack.serializeNBT());
+                hashValue = 31 * hashValue + ItemStack.hashItemAndComponents(stack);
             }
-//            hashNbt.appendTag(list);
-            hashNbt.add(list);
+            hashValue = 31 * hashValue + 1;
         }
-        this.hash = hashNbt.hashCode();
+        this.hash = hashValue;
     }
 
     public static GuidePartFactory create(@Nonnull ItemStack stack) {
 //        for (IRecipe recipe : ForgeRegistries.RECIPES)
-        for (CraftingRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
+        for (var recipeHolder : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
+            CraftingRecipe recipe = recipeHolder.value();
 //            if (OreDictionary.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false))
             if (ItemStack.matches(stack, recipe.getResultItem(Minecraft.getInstance().level.registryAccess()))) {
                 GuidePartFactory val = getFactory(recipe);
@@ -108,7 +104,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         if (object instanceof String) {
 //            NonNullList<ItemStack> stacks = OreDictionary.getOres((String) object);
             NonNullList<ItemStack> stacks = NonNullList.create();
-            ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registries.ITEM, new ResourceLocation((String) object))).stream().forEach(i -> stacks.add(new ItemStack(i)));
+            ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registries.ITEM, ResourceLocation.parse((String) object))).stream().forEach(i -> stacks.add(new ItemStack(i)));
             // It will be sorted out below
             object = stacks;
         }
@@ -165,28 +161,14 @@ public class GuideCraftingFactory implements GuidePartFactory {
         // Shortcut out of this full itemstack comparison as its really expensive
         if (hash != other.hash) return false;
         if (input.getWidth() != other.input.getWidth() || input.getHeight() != other.input.getHeight()) return false;
-        ListTag nbtThis = new ListTag();
-        for (Ingredient ingredient : this.input) {
-            ListTag list = new ListTag();
-//            for (ItemStack stack : ingredient.getMatchingStacks())
-            for (ItemStack stack : ingredient.getItems()) {
-//                list.appendTag(stack.serializeNBT());
-                list.add(stack.serializeNBT());
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack[] a = input.get(i).getItems();
+            ItemStack[] b = other.input.get(i).getItems();
+            if (a.length != b.length) return false;
+            for (int j = 0; j < a.length; j++) {
+                if (!ItemStack.matches(a[j], b[j])) return false;
             }
-//            nbtThis.appendTag(list);
-            nbtThis.add(list);
         }
-        ListTag nbtThat = new ListTag();
-        for (Ingredient ingredient : other.input) {
-            ListTag list = new ListTag();
-//            for (ItemStack stack : ingredient.getMatchingStacks())
-            for (ItemStack stack : ingredient.getItems()) {
-//                list.appendTag(stack.serializeNBT());
-                list.add(stack.serializeNBT());
-            }
-//            nbtThat.appendTag(list);
-            nbtThat.add(list);
-        }
-        return nbtThis.equals(nbtThat);
+        return true;
     }
 }

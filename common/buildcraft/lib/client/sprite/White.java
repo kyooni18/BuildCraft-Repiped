@@ -6,7 +6,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 
 public class White {
-    public static final ResourceLocation LOCATION = new ResourceLocation("white");
+    public static final ResourceLocation LOCATION = ResourceLocation.parse("white");
     private static TextureAtlasSprite instance = null;
     @SuppressWarnings("deprecation")
     public static final TextureAtlasSprite instance()

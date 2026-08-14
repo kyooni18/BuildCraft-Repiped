@@ -63,7 +63,7 @@ public class MapWorld {
                     // f.close();
 
                     // CompoundTag nbt = NBTUtilBC.load(data);
-                    CompoundTag nbt = NbtIo.read(target);
+                    CompoundTag nbt = NbtIo.read(target.toPath());
                     if (nbt != null) {
                         region.readFromNBT(nbt);
                     }
@@ -111,7 +111,7 @@ public class MapWorld {
                 // FileOutputStream f = new FileOutputStream(file);
                 // f.write(data);
                 // f.close();
-                NbtIo.write(output, file);
+                NbtIo.write(output, file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -27,10 +27,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.FakePlayer;
+import buildcraft.api.core.FakePlayer;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,7 +63,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     @Override
 //    public void readPayload(PacketBuffer buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(FriendlyByteBuf buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+    public void readPayload(FriendlyByteBuf buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
         direction = MessageUtil.readEnumOrNull(buffer, Direction.class);
     }
@@ -99,7 +99,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     @PipeEventHandler
     public void addInternalActions(PipeEventStatement.AddActionInternal event) {
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (!pipe.isConnected(face)) {
                 PipePluggable plug = pipe.getHolder().getPluggable(face);
                 if (plug == null || !plug.isBlocking()) {
@@ -111,7 +111,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     @PipeEventHandler
     public void onActionActivate(PipeEventActionActivate event) {
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (event.action == BCTransportStatements.ACTION_PIPE_DIRECTION[face.ordinal()]) {
                 setDirection(face);
             }
@@ -152,7 +152,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         if (direction == null || pipe.isConnected(direction)) {
             int sides = 0;
             Direction dir = null;
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 if (pipe.isConnected(face)) {
                     sides++;
                     dir = face;

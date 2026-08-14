@@ -17,6 +17,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -66,16 +67,12 @@ public class LaserRenderer_BC8 {
 //        FORMAT_ALL.addElement(DefaultVertexFormats.TEX_2F);
 //        FORMAT_ALL.addElement(DefaultVertexFormats.TEX_2S);
 //        FORMAT_ALL.addElement(DefaultVertexFormats.COLOR_4UB);
-        FORMAT_ALL = new VertexFormat(ImmutableMap.of(
-                "POSITION_3F",
-                DefaultVertexFormat.ELEMENT_POSITION,
-                "COLOR_4UB",
-                DefaultVertexFormat.ELEMENT_COLOR,
-                "TEX_2F",
-                DefaultVertexFormat.ELEMENT_UV0,
-                "TEX_2S",
-                DefaultVertexFormat.ELEMENT_UV2
-        ));
+        FORMAT_ALL = VertexFormat.builder()
+                .add("Position", VertexFormatElement.POSITION)
+                .add("Color", VertexFormatElement.COLOR)
+                .add("UV0", VertexFormatElement.UV0)
+                .add("UV2", VertexFormatElement.UV2)
+                .build();
     }
 
     public static void clearModels() {

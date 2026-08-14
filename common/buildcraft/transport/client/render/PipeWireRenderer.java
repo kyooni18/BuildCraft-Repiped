@@ -83,7 +83,7 @@ public class PipeWireRenderer {
         uvs.maxU = (off + 1) / 16f;
         uvs.minV = 0;
         uvs.maxV = 1 / 16f;
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             quads[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);
         }
         return quads;
@@ -145,7 +145,7 @@ public class PipeWireRenderer {
         Vector3f centerFloat = VecUtil.convertFloat(center);
         Vector3f radiusFloat = VecUtil.convertFloat(radius);
 
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (face.getAxis() == between.mainAxis) {
                 continue;
             }
@@ -222,11 +222,10 @@ public class PipeWireRenderer {
         double u = sprite.getInterpU(vertex.tex_u);
         double v = sprite.getInterpV(vertex.tex_v + vOffset);
 //        bb.tex(u, v);
-        bb.uv((float) u, (float) v);
-        bb.overlayCoords(combinedOverlay);
-        bb.uv2(combinedLight);
-        bb.normal(pose.normal(), vertex.normal_x, vertex.normal_y, vertex.normal_z);
-        bb.endVertex();
+        bb.setUv((float) u, (float) v);
+        bb.setOverlay(combinedOverlay);
+        bb.setLight(combinedLight);
+        bb.setNormal(pose, vertex.normal_x, vertex.normal_y, vertex.normal_z);
     }
 
     // private static int compileQuads(MutableQuad[] quads, DyeColor colour, boolean isOn, PoseStack.Pose pose, VertexConsumer vb, int combinedLight, int combinedOverlay)

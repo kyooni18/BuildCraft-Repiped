@@ -74,7 +74,7 @@ public final class WireSystem {
         WireNode node = new WireNode(element.blockPos, element.wirePart);
 
         List<WireElement> list = new ArrayList<>();
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             WireNode oNode = node.offset(face);
             // equality check is fine here -- WireNode.offset returns the same blockpos (identity wise) if its the same
             if (oNode.pos == node.pos || canWireConnect(holder, face)) {
@@ -140,7 +140,7 @@ public final class WireSystem {
                             wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this && wireSystem.color == colorButFinal).forEach(wireSystems::removeWireSystem);
                             elementBuilder.add(element);
                             queue.addAll(getConnectedElementsOfElement(wireSystems.world, element));
-                            Arrays.stream(Direction.VALUES).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
+                            Arrays.stream(Direction.values()).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
                         }
                     } else if (element.type == WireElement.Type.EMITTER_SIDE) {
                         if (holder.getPluggable(element.emitterSide) instanceof IWireEmitter) {

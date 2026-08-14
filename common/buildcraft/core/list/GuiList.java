@@ -42,7 +42,7 @@ import java.util.function.DoubleSupplier;
 
 public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventListener {
     private static final ResourceLocation TEXTURE_BASE =
-            new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
+            ResourceLocation.parse("buildcraftcore:textures/gui/list_new.png");
     private static final int SIZE_X = 176, SIZE_Y = 191;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_HIGHLIGHT = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 16);
@@ -193,14 +193,14 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     @Override
     protected void drawForegroundLayer(GuiGraphics guiGraphics) {
 //        textField.drawTextBox();
-        textField.renderWidget(guiGraphics, 0, 0, Minecraft.getInstance().getFrameTime());
+        textField.renderWidget(guiGraphics, 0, 0, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
     }
 
     private boolean isCarryingNonEmptyList() {
 //        ItemStack stack = mc.player.inventory.getItemStack();
         ItemStack stack = minecraft.player.containerMenu.getCarried();
 //        return !stack.isEmpty() && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
-        return !stack.isEmpty() && stack.getItem() instanceof ItemList_BC8 && stack.getTag() != null;
+        return !stack.isEmpty() && stack.getItem() instanceof ItemList_BC8 && StackUtil.hasItemData(stack);
     }
 
     private boolean hasListEquipped() {

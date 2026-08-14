@@ -77,7 +77,7 @@ public class RenderMarkerVolume implements BlockEntityRenderer<TileMarkerVolume>
         BlockPos markerPos = marker.getBlockPos();
         poseStack.translate(-markerPos.getX(), -markerPos.getY(), -markerPos.getZ());
 
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (taken.contains(face.getAxis())) {
                 continue;
             }
