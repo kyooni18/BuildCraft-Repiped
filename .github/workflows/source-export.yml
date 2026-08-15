@@ -19,11 +19,11 @@ jobs:
           fetch-depth: 1
       - name: Package source
         run: |
-          tar --exclude=.git --exclude='*/.git' -czf ../BuildCraft-1.21.1-NeoForge-source.tar.gz .
+          tar --exclude=.git --exclude='*/.git' -czf "${RUNNER_TEMP}/BuildCraft-1.21.1-NeoForge-source.tar.gz" .
       - name: Upload source artifact
         uses: actions/upload-artifact@v4
         with:
           name: BuildCraft-1.21.1-NeoForge-source
-          path: ../BuildCraft-1.21.1-NeoForge-source.tar.gz
+          path: ${{ runner.temp }}/BuildCraft-1.21.1-NeoForge-source.tar.gz
           if-no-files-found: error
           retention-days: 1
