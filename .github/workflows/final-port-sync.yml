@@ -4,25 +4,14 @@ on:
   push:
     branches:
       - 1.21.1-NeoForge
+    paths:
+      - .github/workflows/final-port-sync.yml
 
 permissions:
   contents: write
 
 jobs:
-  export-base:
+  idle:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Export exact branch snapshot
-        run: |
-          tar --exclude=.git -czf "${RUNNER_TEMP}/BuildCraft-final-sync-base.tar.gz" .
-      - name: Upload base snapshot
-        uses: actions/upload-artifact@v4
-        with:
-          name: BuildCraft-final-sync-base
-          path: ${{ runner.temp }}/BuildCraft-final-sync-base.tar.gz
-          if-no-files-found: error
-          retention-days: 1
+      - run: echo "Payload staging mode"
