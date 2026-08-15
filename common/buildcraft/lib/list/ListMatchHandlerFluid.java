@@ -13,12 +13,12 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
             FluidStack fTarget = FluidUtil.getFluidContained(target).orElse(StackUtil.EMPTY_FLUID);
 //            if (fStack != null && fTarget != null)
             if (!fStack.isEmpty() && !fTarget.isEmpty()) {
-                return fStack.isFluidEqual(fTarget);
+                return FluidStack.isSameFluidSameComponents(fStack, fTarget);
             }
         }
         return false;

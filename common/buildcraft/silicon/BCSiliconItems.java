@@ -15,7 +15,7 @@ import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.item.*;
 import buildcraft.silicon.plug.PluggablePulsar;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.HashMap;
 import java.util.Map;

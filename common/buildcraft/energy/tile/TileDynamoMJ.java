@@ -40,14 +40,14 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.capability.ForgeCapabilities;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -128,7 +128,7 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -458,7 +458,7 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
     @Deprecated
     public IEnergyStorage getReceiverToPower(BlockEntity tile, Direction side) {
         if (tile == null) return null;
-        IEnergyStorage rec = tile.getCapability(ForgeCapabilities.ENERGY, side.getOpposite()).orElse(null);
+        IEnergyStorage rec = buildcraft.lib.misc.CapUtil.getCapability(tile, ForgeCapabilities.ENERGY, side.getOpposite()).orElse(null);
         if (rec != null && rec.canReceive()) {
             return rec;
         } else {
@@ -497,7 +497,7 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
             return null;
         }
 
-        IEnergyStorage recv = next.getCapability(ForgeCapabilities.ENERGY, side.getOpposite()).orElse(null);
+        IEnergyStorage recv = buildcraft.lib.misc.CapUtil.getCapability(next, ForgeCapabilities.ENERGY, side.getOpposite()).orElse(null);
         if (recv != null && recv.canReceive()) {
             return recv;
         } else {

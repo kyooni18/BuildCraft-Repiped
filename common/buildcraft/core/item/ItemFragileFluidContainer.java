@@ -1,5 +1,6 @@
 package buildcraft.core.item;
 
+import buildcraft.lib.fluid.FluidStackUtil;
 import buildcraft.api.items.IItemFluidShard;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.BCFluidAttributes;
@@ -16,14 +17,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.capability.ForgeCapabilities;
+import buildcraft.api.compat.capability.ICapabilityProvider;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -60,8 +61,8 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         if (fluid == null) {
 //            localized = "ERROR! NULL FLUID!";
             localized = Component.literal("ERROR! NULL FLUID!");
-        } else if (fluid.getRawFluid() instanceof BCFluid bcFluid) {
-//            BCFluid bcFluid = (BCFluid) fluid.getRawFluid();
+        } else if (fluid.getFluid() instanceof BCFluid bcFluid) {
+//            BCFluid bcFluid = (BCFluid) fluid.getFluid();
             if (((BCFluidAttributes) bcFluid.getFluidType()).isHeatable()) {
                 // Add the heatable bit to the end of the name
 //                localized = bcFluid.getBareLocalizedName(fluid);
@@ -88,7 +89,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         super.appendHoverText(stack, context, tooltip, flagIn);
         CompoundTag fluidTag = StackUtil.getItemDataElement(stack, "fluid");
         if (fluidTag != null) {
-            FluidStack fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
+            FluidStack fluid = FluidStackUtil.load(fluidTag);
             if (fluid != null && fluid.getAmount() > 0) {
 //                tooltip.add(LocaleUtil.localizeFluidStaticAmount(fluid.amount, MAX_FLUID_HELD));
                 tooltip.add(LocaleUtil.localizeFluidStaticAmountComponent(fluid.getAmount(), MAX_FLUID_HELD));
@@ -114,14 +115,14 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         }
         if (amount > 0) {
             ItemStack stack = new ItemStack(this);
-            setFluid(stack, new FluidStack(fluid, amount));
+            setFluid(stack, fluid.copyWithAmount(amount));
             toDrop.add(stack);
         }
     }
 
     static void setFluid(ItemStack container, FluidStack fluid) {
         CompoundTag nbt = NBTUtilBC.getItemData(container);
-        nbt.put("fluid", fluid.writeToNBT(new CompoundTag()));
+        nbt.put("fluid", FluidStackUtil.save(fluid));
         StackUtil.setItemData(container, nbt);
     }
 
@@ -134,7 +135,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         if (fluidNbt == null) {
             return null;
         }
-        return FluidStack.loadFluidStackFromNBT(fluidNbt);
+        return FluidStackUtil.load(fluidNbt);
     }
 
     public class FragileFluidHandler implements IFluidHandlerItem, ICapabilityProvider {
@@ -202,7 +203,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
             if (fluid == null || resource == null) {
                 return StackUtil.EMPTY_FLUID;
             }
-            if (!fluid.isFluidEqual(resource)) {
+            if (!FluidStack.isSameFluidSameComponents(fluid, resource)) {
                 return StackUtil.EMPTY_FLUID;
             }
             return drain(resource.getAmount(), doDrain);
@@ -216,7 +217,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
                 return StackUtil.EMPTY_FLUID;
             }
             int toDrain = Math.min(maxDrain, fluid.getAmount());
-            FluidStack f = new FluidStack(fluid, toDrain);
+            FluidStack f = fluid.copyWithAmount(toDrain);
             if (doDrain.execute()) {
                 fluid.setAmount(fluid.getAmount() - toDrain);
                 if (fluid.getAmount() <= 0) {

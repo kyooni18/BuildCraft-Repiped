@@ -11,13 +11,13 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.LogicalSide;
 
 import java.io.File;
 import java.util.Date;
@@ -79,9 +79,9 @@ public class MapManager implements Runnable {
     }
 
     @SubscribeEvent
-    public void tickDelayedWorlds(TickEvent.LevelTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && event.side == LogicalSide.SERVER) {
-            MapWorld w = worldMap.get(event.level);
+    public void tickDelayedWorlds(LevelTickEvent.Post event) {
+        if (!event.getLevel().isClientSide) {
+            MapWorld w = worldMap.get(event.getLevel());
             if (w != null) {
                 w.tick();
             }

@@ -43,7 +43,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -94,7 +93,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable,
         List<Direction> sides = new ArrayList<>(Arrays.asList(Direction.values()));
         Collections.shuffle(sides, new Random());
         sides.removeIf(Predicate.isEqual(currentSide));
-        Stream.<Pair<Direction, ICapabilityProvider>>concat(
+        Stream.<Pair<Direction, Object>>concat(
                         sides.stream()
                                 .map(side -> Pair.of(side, level.getBlockEntity(worldPosition.relative(side)))),
                         sides.stream()

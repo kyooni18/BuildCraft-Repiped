@@ -15,8 +15,8 @@ import buildcraft.robotics.boards.*;
 import buildcraft.robotics.pipe.DockingStationPipe;
 import buildcraft.robotics.zone.MessageZoneMapRequest;
 import buildcraft.robotics.zone.MessageZoneMapResponse;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLLoader;
 
 //public abstract class BCRoboticsProxy implements IGuiHandler
 public abstract class BCRoboticsProxy {

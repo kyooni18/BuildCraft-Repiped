@@ -1,14 +1,17 @@
 package buildcraft.lib.fluid;
 
 import buildcraft.lib.item.ItemBucketBC;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
+
+import java.util.function.Supplier;
 
 public class BCFluidRegistryContainer {
     private RegistryObject<BCFluid.Source> still;
     private RegistryObject<BCFluid.Flowing> flowing;
     private RegistryObject<BCFluidBlock> block;
     private RegistryObject<ItemBucketBC> bucket;
-    private BCFluidAttributes fluidType;
+    private Supplier<BCFluidAttributes> fluidType;
+    private boolean lighterThanAir;
 
 
     public BCFluid.Source getStill() {
@@ -28,7 +31,11 @@ public class BCFluidRegistryContainer {
     }
 
     public BCFluidAttributes getFluidType() {
-        return fluidType;
+        return fluidType.get();
+    }
+
+    public boolean isLighterThanAir() {
+        return lighterThanAir;
     }
 
 
@@ -48,7 +55,11 @@ public class BCFluidRegistryContainer {
         this.bucket = bucket;
     }
 
-    public void setFluidType(BCFluidAttributes fluidType) {
+    public void setFluidType(Supplier<BCFluidAttributes> fluidType) {
         this.fluidType = fluidType;
+    }
+
+    public void setLighterThanAir(boolean lighterThanAir) {
+        this.lighterThanAir = lighterThanAir;
     }
 }

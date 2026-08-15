@@ -17,7 +17,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -46,7 +46,7 @@ public class CoreCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern("oio")
                 .pattern(" o ")
                 .define('i', Ingredient.of(OreDictionaryTags.GEAR_WOOD))
-                .define('o', Ingredient.of(Tags.Items.COBBLESTONE))
+                .define('o', Ingredient.of(Tags.Items.COBBLESTONES))
                 .unlockedBy("has_item", has(OreDictionaryTags.GEAR_WOOD))
                 .group(MOD_ID)
                 .save(consumer);
@@ -124,7 +124,7 @@ public class CoreCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern(" g ")
                 .pattern("GpG")
                 .define('w', Ingredient.of(ItemTags.PLANKS))
-                .define('g', Ingredient.of(Tags.Items.GLASS_COLORLESS))
+                .define('g', Ingredient.of(Tags.Items.GLASS_BLOCKS_COLORLESS))
                 .define('G', Ingredient.of(OreDictionaryTags.GEAR_WOOD))
                 .define('p', Ingredient.of(Blocks.PISTON))
                 .unlockedBy("has_item", has(Items.PISTON))
@@ -146,7 +146,7 @@ public class CoreCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern(" iw")
                 .pattern(" gi")
                 .pattern("s  ")
-                .define('i', Ingredient.of(Tags.Items.STRING))
+                .define('i', Ingredient.of(Tags.Items.STRINGS))
                 .define('s', Ingredient.of(Tags.Items.RODS_WOODEN))
                 .define('g', Ingredient.of(OreDictionaryTags.GEAR_WOOD))
                 .define('w', Ingredient.of(ItemTags.WOOL))

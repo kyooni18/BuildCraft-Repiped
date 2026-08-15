@@ -8,9 +8,9 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
 
 import java.util.*;
 
@@ -76,18 +76,18 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
         IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(BCLib.MODID).get()).getEventBus();
         try {
             isReloading = true;
-            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.BeforeClear(this, set));
+            // NeoForge.EVENT_BUS.post(new EventBuildCraftReload.BeforeClear(this, set));
             modEventBus.post(new EventBuildCraftReload.BeforeClear(this, set));
             set.forEach(registry -> registry.getReloadableEntryMap().clear());
 
-            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PreLoad(this, set));
+            // NeoForge.EVENT_BUS.post(new EventBuildCraftReload.PreLoad(this, set));
             modEventBus.post(new EventBuildCraftReload.PreLoad(this, set));
 
             GsonBuilder builder = new GsonBuilder();
             // register our own types here, so that others can replace them
             JsonUtil.registerTypeAdaptors(builder);
 
-            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PopulateGson(this, set, builder));
+            // NeoForge.EVENT_BUS.post(new EventBuildCraftReload.PopulateGson(this, set, builder));
             modEventBus.post(new EventBuildCraftReload.PopulateGson(this, set, builder));
             Gson gson = builder.create();
 
@@ -97,13 +97,13 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
                 }
             }
 
-            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PostLoad(this, set));
+            // NeoForge.EVENT_BUS.post(new EventBuildCraftReload.PostLoad(this, set));
             modEventBus.post(new EventBuildCraftReload.PostLoad(this, set));
         } finally {
             reloadCount++;
             isReloading = false;
         }
-        // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.FinishLoad(this, set));
+        // NeoForge.EVENT_BUS.post(new EventBuildCraftReload.FinishLoad(this, set));
         modEventBus.post(new EventBuildCraftReload.FinishLoad(this, set));
     }
 

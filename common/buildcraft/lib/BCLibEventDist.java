@@ -28,16 +28,17 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.RecipesUpdatedEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ public enum BCLibEventDist {
         }
     }
 
-    // Calen: When the event is posted, MinecraftForge.EVENT_BUS will be shut down.
+    // Calen: When the event is posted, NeoForge.EVENT_BUS will be shut down.
     // If we unlock the event bus, some subscribers will be called wrongly.
     // Moved to BCLibEventDistModBus.
 //    @SubscribeEvent
@@ -95,25 +96,26 @@ public enum BCLibEventDist {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (player == null) return;
-        float partialTicks = event.getPartialTick();
+        float partialTicks = event.getPartialTick().getGameTimeDeltaPartialTick(false);
 
-        PoseStack poseStack = new PoseStack();
-        poseStack.mulPose(event.getPoseStack());
-        DetachedRenderer.INSTANCE.renderWorldLastEvent(player, partialTicks, poseStack, event.getCamera());
-    }
-
-    @SubscribeEvent
-    public void serverTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            BCAdvDebugging.INSTANCE.onServerPostTick();
-            MessageUtil.postServerTick();
+        PoseStack poseStack = event.getPoseStack();
+        poseStack.pushPose();
+        try {
+            DetachedRenderer.INSTANCE.renderWorldLastEvent(player, partialTicks, poseStack, event.getCamera());
+        } finally {
+            poseStack.popPose();
         }
     }
 
     @SubscribeEvent
+    public void serverTick(ServerTickEvent.Post event) {
+            BCAdvDebugging.INSTANCE.onServerPostTick();
+            MessageUtil.postServerTick();
+    }
+
+    @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void clientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
+    public void clientTick(ClientTickEvent.Post event) {
             BuildCraftObjectCaches.onClientTick();
             MessageUtil.postClientTick();
             Minecraft mc = Minecraft.getInstance();
@@ -134,7 +136,6 @@ public enum BCLibEventDist {
                     }
                 }
             }
-        }
     }
 
     // Calen: from BCLib

@@ -9,9 +9,8 @@ package buildcraft.lib.client.model;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.ModLoadingStage;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.fml.ModLoadingContext;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -59,7 +58,7 @@ public class ModelHolderRegistry {
             holder.onModelBake();
         }
 //        if (DEBUG && Loader.instance().isInState(LoaderState.AVAILABLE))
-        if (DEBUG && ModLoadingContext.get().getActiveContainer().getCurrentState() == ModLoadingStage.COMPLETE) {
+        if (DEBUG) {
             BCLog.logger.info("[lib.model.holder] List of registered Models:");
             List<ModelHolder> holders = new ArrayList<>();
             holders.addAll(HOLDERS);

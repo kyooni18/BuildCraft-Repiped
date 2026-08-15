@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
 import buildcraft.api.registry.EventBuildCraftReload;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.model.ModelHolderRegistry;
@@ -15,13 +17,13 @@ import buildcraft.lib.misc.data.ModelVariableData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
 
 import java.util.function.Consumer;
 
@@ -29,11 +31,16 @@ public enum BCLibEventDistModBus {
     INSTANCE;
 
     @SubscribeEvent
+    public void registerMenuScreens(RegisterMenuScreensEvent event) {
+        BCLibMenuTypes.registerScreens(event);
+    }
+
+    @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
 //    public void modelBake(ModelBakeEvent event)
     public void modelBake(ModelEvent.BakingCompleted event) {
 //        SpriteHolderRegistry.exportTextureMap();
-        SpriteHolderRegistry.exportTextureMap((TextureAtlas) Minecraft.getInstance().textureManager.getTexture(TextureAtlas.LOCATION_BLOCKS));
+        SpriteHolderRegistry.exportTextureMap((TextureAtlas) Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS));
         SpriteHolderRegistry.exportTextureMap(FluidRenderer.FROZEN_ATLAS);
         LaserRenderer_BC8.clearModels();
         ModelHolderRegistry.onModelBake();
@@ -68,7 +75,7 @@ public enum BCLibEventDistModBus {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void textureStitchPost(TextureStitchEvent.Post event) {
+    public void textureStitchPost(TextureAtlasStitchedEvent event) {
 //        // Calen: from subscriber of TextureStitchEvent.Pre
 //        FluidRenderer.onTextureStitchPre();
 //        ReloadManager.INSTANCE.preReloadResources();

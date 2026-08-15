@@ -13,7 +13,7 @@ import buildcraft.transport.block.BlockPipeHolder;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 public class BCTransportBlocks {
     private static final RegistrationHelper HELPER = new RegistrationHelper(BCTransport.MODID);

@@ -6,16 +6,12 @@
 
 package buildcraft.energy;
 
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 public class BCEnergySprites {
     public static void fmlPreInit() {
-        // 1.18.2: following events are IModBusEvent
-//        MinecraftForge.EVENT_BUS.register(BCEnergySprites.class);
-        IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(BCEnergy.MODID).get()).getEventBus();
-        modEventBus.register(BCEnergySprites.class);
+        // No active event handlers remain in this class on 1.21.1.
+        // Keeping this method preserves the client proxy initialization call without
+        // registering an empty listener class, which NeoForge rejects.
     }
 
 //    @SubscribeEvent

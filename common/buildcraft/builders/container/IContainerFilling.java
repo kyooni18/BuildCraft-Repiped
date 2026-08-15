@@ -14,8 +14,8 @@ import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.FullStatement;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
@@ -65,7 +65,7 @@ public interface IContainerFilling {
     }
 
     // default void readMessage(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    default void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    default void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         if (side == NetworkDirection.PLAY_TO_SERVER) {
             if (id == ContainerBC_Neptune.NET_DATA) {
                 if (isLocked()) {

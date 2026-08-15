@@ -21,39 +21,35 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.IPlantable;
+import net.neoforged.neoforge.common.SpecialPlantable;
 
 public enum CropHandlerPlantable implements ICropHandler {
     INSTANCE;
 
     @Override
     public boolean isSeed(ItemStack stack) {
-        if (stack.getItem() instanceof IPlantable) {
+        if (stack.getItem() instanceof SpecialPlantable) {
             return true;
         }
-
-        if (stack.getItem() instanceof BlockItem) {
-            Block block = ((BlockItem) stack.getItem()).getBlock();
-//            if (block instanceof IPlantable && block != Blocks.REED)
-            if (block instanceof IPlantable && block != Blocks.SUGAR_CANE) {
-                return true;
-            }
+        if (stack.getItem() instanceof BlockItem blockItem) {
+            Block block = blockItem.getBlock();
+            return block != Blocks.SUGAR_CANE && block instanceof BushBlock;
         }
-
         return false;
     }
 
     @Override
     public boolean canSustainPlant(Level world, ItemStack seed, BlockPos pos) {
-        BlockState state = world.getBlockState(pos);
-        if (seed.getItem() instanceof IPlantable) {
-            Block block = state.getBlock();
-            return block.canSustainPlant(state, world, pos, Direction.UP, (IPlantable) seed.getItem()) && world.isEmptyBlock(pos.above());
-        } else {
-            Block block = state.getBlock();
-            IPlantable plantable = (IPlantable) ((BlockItem) seed.getItem()).getBlock();
-            return block.canSustainPlant(state, world, pos, Direction.UP, plantable) && block != ((BlockItem) seed.getItem()).getBlock() && world.isEmptyBlock(pos.above());
+        BlockPos plantPos = pos.above();
+        if (!world.isEmptyBlock(plantPos)) return false;
+        if (seed.getItem() instanceof SpecialPlantable special) {
+            return special.canPlacePlantAtPosition(seed, world, plantPos, Direction.DOWN);
         }
+        if (seed.getItem() instanceof BlockItem blockItem) {
+            BlockState plantState = blockItem.getBlock().defaultBlockState();
+            return plantState.canSurvive(world, plantPos) && world.getBlockState(pos).getBlock() != blockItem.getBlock();
+        }
+        return false;
     }
 
     @Override
@@ -82,7 +78,7 @@ public enum CropHandlerPlantable implements ICropHandler {
         else if (block instanceof NetherWartBlock) {
 //            return state.getValue(BlockNetherWart.AGE) == 3;
             return state.getValue(NetherWartBlock.AGE) == 3;
-        } else if (block instanceof IPlantable) {
+        } else if (block instanceof BushBlock) {
             if (blockAccess.getBlockState(pos.below()).getBlock() == block) {
                 return true;
             }

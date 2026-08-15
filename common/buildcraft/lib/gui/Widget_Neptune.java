@@ -11,9 +11,9 @@ import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.IPayloadReceiver;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 
@@ -35,17 +35,17 @@ public abstract class Widget_Neptune<C extends ContainerBC_Neptune> implements I
         container.sendWidgetData(this, writer);
     }
 
-    public IMessage handleWidgetDataServer(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         return null;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public IMessage handleWidgetDataClient(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataClient(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         return null;
     }
 
     @Override
-    public IMessage receivePayload(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage receivePayload(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         if (MessageUtil.isClientbound(ctx)) {
             return handleWidgetDataClient(ctx, buffer);
         } else {

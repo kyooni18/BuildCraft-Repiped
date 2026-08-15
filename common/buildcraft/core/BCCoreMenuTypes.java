@@ -1,26 +1,28 @@
 package buildcraft.core;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.RegisterEvent;
+
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
 public class BCCoreMenuTypes {
-    public static final MenuType<ContainerList> LIST = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerList> LIST = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 return new ContainerList(BCCoreMenuTypes.LIST, windowId, inv.player);
             }
     );
 
-    public static void registerAll() {
-        ForgeRegistries.MENU_TYPES.register("list", LIST);
+    public static void registerAll(RegisterEvent event) {
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcraftcore", "list"), () -> LIST);
+    }
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            MenuScreens.register(LIST, GuiList::new);
-        }
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(LIST, GuiList::new);
     }
 }

@@ -5,10 +5,10 @@
 package buildcraft.lib.net;
 
 import buildcraft.api.net.IMessage;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 
 public interface IPayloadReceiver {
-    IMessage receivePayload(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException;
+    IMessage receivePayload(MessageContext ctx, PacketBufferBC buffer) throws IOException;
 }

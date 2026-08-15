@@ -14,8 +14,8 @@ import buildcraft.transport.client.render.PipeWireRenderer;
 import buildcraft.transport.net.MessageMultiPipeItem;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLLoader;
 
 //public abstract class BCTransportProxy implements IGuiHandler
 public abstract class BCTransportProxy {

@@ -6,8 +6,8 @@ import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.registry.TagManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.time.Month;
 import java.time.MonthDay;

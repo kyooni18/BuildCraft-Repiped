@@ -18,8 +18,8 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
@@ -52,7 +52,7 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
     @Override
     public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer container, IStatementParameter[] parameters) {
-        IHasWork hasWork = tile.getCapability(TilesAPI.CAP_HAS_WORK, side.getOpposite()).orElse(null);
+        IHasWork hasWork = buildcraft.lib.misc.CapUtil.getCapability(tile, TilesAPI.CAP_HAS_WORK, side.getOpposite()).orElse(null);
         if (hasWork == null) {
             return false;
         }

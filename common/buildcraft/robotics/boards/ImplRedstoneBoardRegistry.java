@@ -11,7 +11,7 @@ import buildcraft.robotics.BCRoboticsConfig;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;

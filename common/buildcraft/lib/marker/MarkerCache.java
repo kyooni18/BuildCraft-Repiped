@@ -10,9 +10,8 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.ModLoadingStage;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class MarkerCache<S extends MarkerSubCache<?>> {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markers");
     public static final List<MarkerCache<?>> CACHES = new ArrayList<>();
+    private static boolean frozen;
 
     public final String name;
 
@@ -34,7 +34,7 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
 
     public static void registerCache(MarkerCache<?> cache) {
 //        if (Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION))
-        if (ModLoadingContext.get().getActiveContainer().getCurrentState().ordinal() >= ModLoadingStage.COMPLETE.ordinal()) {
+        if (frozen) {
             throw new IllegalStateException("Registered too late!");
         }
         ModContainer mod = ModLoadingContext.get().getActiveContainer();
@@ -48,6 +48,7 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
     }
 
     public static void postInit() {
+        frozen = true;
         if (DEBUG) {
             BCLog.logger.info("[lib.markers] Sorted list of cache types:");
             for (int i = 0; i < CACHES.size(); i++) {

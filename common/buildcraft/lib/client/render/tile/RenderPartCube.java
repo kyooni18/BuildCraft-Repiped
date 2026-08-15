@@ -11,8 +11,8 @@ import buildcraft.lib.client.sprite.White;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Vector3f;
 
 /** A variable sized element (like LED) that can render somewhere in a TESR. Passing a resolver instance will let you
@@ -33,11 +33,11 @@ public class RenderPartCube {
     }
 
     public void setWhiteTex() {
-        // Calen: at TextureStitchEvent.Post ForgeModelBakery.White.instance() cannot be called
+        // Calen: at TextureAtlasStitchedEvent ForgeModelBakery.White.instance() cannot be called
         // RuntimeException: getAtlasTexture called too early! (ModelManager.java:99)
         TextureAtlasSprite sprite = White.instance();
         // Reset the vertex so that edits don't spill out to other tiles.
-        center.texf(sprite.getU(8), sprite.getV(8));
+        center.texf(sprite.getU(0.5F), sprite.getV(0.5F));
     }
 
     /** Renders an element, without changing the vertex. However this does ignore the "normal" and "texture" components

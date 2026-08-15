@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
@@ -15,11 +16,14 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import net.neoforged.neoforge.common.conditions.WithConditions;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -46,11 +50,19 @@ public abstract class BCCompatRecipeProvider extends RecipeProvider {
             }
 
             @Override
-            public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable ResourceLocation advancementId, @Nullable JsonElement advancement) {
+            public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                 checkDuplicate(id);
-                futures.add(DataProvider.saveStable(cache, registries, Recipe.CODEC, recipe, recipePathProvider.json(id)));
-                if (advancement != null && advancementId != null) {
-                    futures.add(DataProvider.saveStable(cache, advancement, advancementPathProvider.json(advancementId)));
+                futures.add(DataProvider.saveStable(
+                        cache, registries, Recipe.CONDITIONAL_CODEC,
+                        Optional.of(new WithConditions<>(recipe, conditions)),
+                        recipePathProvider.json(id)
+                ));
+                if (advancement != null) {
+                    futures.add(DataProvider.saveStable(
+                            cache, registries, Advancement.CONDITIONAL_CODEC,
+                            Optional.of(new WithConditions<>(advancement.value(), conditions)),
+                            advancementPathProvider.json(advancement.id())
+                    ));
                 }
             }
 
@@ -82,10 +94,6 @@ public abstract class BCCompatRecipeProvider extends RecipeProvider {
                 return Advancement.Builder.recipeAdvancement().parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
             }
 
-            @Override
-            public HolderLookup.Provider registry() {
-                return registries;
-            }
         };
 
         buildRecipes(output);

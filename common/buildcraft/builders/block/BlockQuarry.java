@@ -75,7 +75,7 @@ public class BlockQuarry extends BlockBCTile_Neptune<TileQuarry> implements IBlo
         }
         BlockEntity tile = world.getBlockEntity(pos.relative(facing));
 //        return tile != null && tile.hasCapability(CapUtil.CAP_ITEMS, facing.getOpposite());
-        return tile != null && tile.getCapability(CapUtil.CAP_ITEMS, facing.getOpposite()).isPresent();
+        return tile != null && buildcraft.lib.misc.CapUtil.getCapability(tile, CapUtil.CAP_ITEMS, facing.getOpposite()).isPresent();
     }
 
     @Override

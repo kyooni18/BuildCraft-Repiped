@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.IForgeShearable;
+import net.neoforged.neoforge.common.IShearable;
 
 import java.util.List;
 
@@ -41,9 +41,9 @@ public enum StripesHandlerShears implements IStripesHandlerItem {
         Block block = state.getBlock();
 
 //        if (block instanceof IShearable shearableBlock)
-        if (block instanceof IForgeShearable shearableBlock) {
-            if (shearableBlock.isShearable(stack, world, pos)) {
-                List<ItemStack> drops = shearableBlock.onSheared(null, stack, world, pos, 0);
+        if (block instanceof IShearable shearableBlock) {
+            if (shearableBlock.isShearable(player, stack, world, pos)) {
+                List<ItemStack> drops = shearableBlock.onSheared(player, stack, world, pos);
 //                if (stack.attemptDamageItem(1, player.getRNG(), player instanceof ServerPlayer ? (ServerPlayer) player : null))
                 if (player instanceof ServerPlayer serverPlayer && world instanceof net.minecraft.server.level.ServerLevel serverLevel) {
                     stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> stack.shrink(1));

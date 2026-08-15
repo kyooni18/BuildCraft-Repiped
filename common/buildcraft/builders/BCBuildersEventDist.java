@@ -8,6 +8,11 @@ package buildcraft.builders;
 
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.builders.client.ClientArchitectTables;
+import buildcraft.builders.client.render.RenderQuarry;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.phys.Vec3;
 import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.builders.snapshot.Blueprint;
 import buildcraft.builders.snapshot.ClientSnapshots;
@@ -20,11 +25,13 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -86,6 +93,47 @@ public enum BCBuildersEventDist {
 //            }
 //        }
 //    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public synchronized void renderQuarries(RenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+            return;
+        }
+
+        Minecraft mc = Minecraft.getInstance();
+        Level level = mc.level;
+        if (level == null) {
+            return;
+        }
+        Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(level);
+        if (quarries == null || quarries.isEmpty()) {
+            return;
+        }
+
+        float partialTicks = event.getPartialTick().getGameTimeDeltaPartialTick(false);
+        Vec3 cameraPos = event.getCamera().getPosition();
+        PoseStack poseStack = event.getPoseStack();
+        MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        var laserBuffer = buffers.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
+
+        poseStack.pushPose();
+        try {
+            Iterator<WeakReference<TileQuarry>> iter = quarries.iterator();
+            while (iter.hasNext()) {
+                WeakReference<TileQuarry> ref = iter.next();
+                TileQuarry quarry = ref.get();
+                if (quarry == null || quarry.isRemoved()) {
+                    iter.remove();
+                    continue;
+                }
+                RenderQuarry.renderWorld(quarry, partialTicks, poseStack, laserBuffer, cameraPos);
+            }
+        } finally {
+            poseStack.popPose();
+            buffers.endBatch(LaserRenderer_BC8.getDynamicRenderType());
+        }
+    }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
@@ -178,7 +226,7 @@ public enum BCBuildersEventDist {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public void onTickEvent$RenderTickEvent(TickEvent.RenderTickEvent event) {
+    public void onTickEvent$RenderTickEvent(RenderFrameEvent.Pre event) {
         if (snapshotRenderTask != null) {
             snapshotRenderTask.run();
             snapshotRenderTask = null;
@@ -187,9 +235,9 @@ public enum BCBuildersEventDist {
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public void onTickClientTick(TickEvent.ClientTickEvent event) {
+    public void onTickClientTick(ClientTickEvent.Post event) {
 //        if (event.phase == TickEvent.Phase.END && !Minecraft.getMinecraft().isGamePaused())
-        if (event.phase == TickEvent.Phase.END && !Minecraft.getInstance().isPaused()) {
+        if (!Minecraft.getInstance().isPaused()) {
             ClientArchitectTables.tick();
         }
     }

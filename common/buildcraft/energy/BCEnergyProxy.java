@@ -7,7 +7,7 @@
 package buildcraft.energy;
 
 import buildcraft.energy.event.ChristmasHandler;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLLoader;
 
 //public abstract class BCEnergyProxy implements IGuiHandler
 public abstract class BCEnergyProxy {

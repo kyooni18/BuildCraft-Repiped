@@ -28,7 +28,7 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -67,7 +67,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     }
 
     @Override
-    public void onTextureStitchPost(TextureStitchEvent.Post event) {
+    public void onTextureStitchPost(TextureAtlasStitchedEvent event) {
         if (!event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
             return;
         }

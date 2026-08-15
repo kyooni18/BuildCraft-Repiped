@@ -1,5 +1,7 @@
 package buildcraft.factory;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
 import buildcraft.core.BCCore;
 import buildcraft.factory.loot.LootConditionSpreading;
 import buildcraft.lib.BCLibRegistries;
@@ -15,17 +17,17 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Consumer;
 
@@ -38,7 +40,7 @@ import java.util.function.Consumer;
 //)
 //@formatter:on
 @Mod(BCFactory.MODID)
-@Mod.EventBusSubscriber(modid = BCFactory.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = BCFactory.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class BCFactory {
     public static final String MODID = "buildcraftfactory";
 
@@ -59,7 +61,7 @@ public class BCFactory {
         BCFactoryItems.fmlPreInit();
 
 //        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCFactoryProxy.getProxy());
-        MinecraftForge.EVENT_BUS.register(BCFactoryEventDist.INSTANCE);
+        NeoForge.EVENT_BUS.register(BCFactoryEventDist.INSTANCE);
 
         BCFactoryProxy.getProxy().fmlPreInit();
     }
@@ -75,9 +77,14 @@ public class BCFactory {
         BCFactoryProxy.getProxy().fmlPostInit();
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static final class ClientEvents {
         private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            BCFactoryMenuTypes.registerScreens(event);
         }
 
         @SubscribeEvent
@@ -92,15 +99,17 @@ public class BCFactory {
     @SubscribeEvent
     public static void onRegisterEvent(RegisterEvent event) {
         ResourceKey<? extends Registry<?>> registry = event.getRegistryKey();
+        event.register(Registries.RECIPE_SERIALIZER, HeatableRecipe.TYPE_ID, () -> HeatExchangeRecipeSerializer.HEATABLE);
+        event.register(Registries.RECIPE_SERIALIZER, CoolableRecipe.TYPE_ID, () -> HeatExchangeRecipeSerializer.COOLABLE);
+        event.register(Registries.RECIPE_SERIALIZER, DistillationRecipe.TYPE_ID, () -> DistillationRecipeSerializer.INSTANCE);
+        BCFactoryMenuTypes.registerAll(event);
         if (registry == Registries.BLOCK) {
-            ForgeRegistries.RECIPE_SERIALIZERS.register(HeatableRecipe.TYPE_ID, HeatExchangeRecipeSerializer.HEATABLE);
-            ForgeRegistries.RECIPE_SERIALIZERS.register(CoolableRecipe.TYPE_ID, HeatExchangeRecipeSerializer.COOLABLE);
-            ForgeRegistries.RECIPE_SERIALIZERS.register(DistillationRecipe.TYPE_ID, DistillationRecipeSerializer.INSTANCE);
+
+
 
             LootConditionSpreading.reg();
 
             // GUI
-            BCFactoryMenuTypes.registerAll();
         }
     }
 

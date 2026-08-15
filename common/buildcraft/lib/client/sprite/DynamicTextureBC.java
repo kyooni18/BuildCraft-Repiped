@@ -20,9 +20,9 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ForgeRenderTypes;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.NeoForgeRenderTypes;
 
 /** See {@link MapRenderer.MapInstance} */
 @OnlyIn(Dist.CLIENT)
@@ -46,7 +46,7 @@ public class DynamicTextureBC {
 //        colorMap = dynamicTexture.getTextureData();
 
         // Calen 1.20.1
-        ResourceLocation resourcelocation = Minecraft.getInstance().textureManager.register("zone_planner/" + id, this.dynamicTexture);
+        ResourceLocation resourcelocation = Minecraft.getInstance().getTextureManager().register("zone_planner/" + id, this.dynamicTexture);
         this.renderType = createRenderType(resourcelocation);
     }
 
@@ -133,7 +133,7 @@ public class DynamicTextureBC {
         RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
                 .setShaderState(RenderStateShard.RENDERTYPE_TEXT_SHADER)
                 .setCullState(RenderStateShard.NO_CULL)
-                .setTextureState(new RenderUtil.BCCustomizableTextureState(locationIn, () -> ForgeRenderTypes.enableTextTextureLinearFiltering, () -> false))
+                .setTextureState(new RenderUtil.BCCustomizableTextureState(locationIn, () -> NeoForgeRenderTypes.enableTextTextureLinearFiltering, () -> false))
                 .setLightmapState(RenderStateShard.LIGHTMAP)
                 .createCompositeState(false);
         return RenderType.create("buildcraft_zone_planner", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, RenderType.TRANSIENT_BUFFER_SIZE, false, true, rendertype$state);

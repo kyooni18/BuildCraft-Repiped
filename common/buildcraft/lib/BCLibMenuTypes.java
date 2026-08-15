@@ -1,15 +1,17 @@
 package buildcraft.lib;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.RegisterEvent;
+
 import buildcraft.lib.container.ContainerGuide;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
 public class BCLibMenuTypes {
-    public static final MenuType<ContainerGuide> GUIDE = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerGuide> GUIDE = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.getMainHandItem().getItem() == BCLibItems.guide.get() || inv.player.getOffhandItem().getItem() == BCLibItems.guide.get()) {
                     return new ContainerGuide(BCLibMenuTypes.GUIDE, windowId);
@@ -19,12 +21,8 @@ public class BCLibMenuTypes {
             }
     );
 
-    public static void registerAll() {
-        ForgeRegistries.MENU_TYPES.register("guide", GUIDE);
-
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            MenuScreens.register(GUIDE, BCLibScreenConstructors.GUIDE);
-        }
+    public static void registerAll(RegisterEvent event) {
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcraftlib", "guide"), () -> GUIDE);
 //        MenuScreens.register(
 //                GUIDE,
 //                (container, inv, title) ->
@@ -54,5 +52,9 @@ public class BCLibMenuTypes {
 //                    }
 //                }
 //        );
+    }
+
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(GUIDE, BCLibScreenConstructors.GUIDE);
     }
 }

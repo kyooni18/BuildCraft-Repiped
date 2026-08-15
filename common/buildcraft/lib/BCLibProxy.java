@@ -32,10 +32,10 @@ import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLPaths;
+import buildcraft.api.net.MessageContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +87,7 @@ public abstract class BCLibProxy {
         return null;
     }
 
-    public Player getPlayerForContext(CustomPayloadEvent.Context ctx) {
+    public Player getPlayerForContext(MessageContext ctx) {
         return ctx.getSender();
     }
 
@@ -193,7 +193,7 @@ public abstract class BCLibProxy {
         }
 
         @Override
-        public Player getPlayerForContext(CustomPayloadEvent.Context ctx) {
+        public Player getPlayerForContext(MessageContext ctx) {
             if (ctx.isServerSide()) {
                 return super.getPlayerForContext(ctx);
             }

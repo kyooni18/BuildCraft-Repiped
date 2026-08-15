@@ -9,7 +9,7 @@ package buildcraft.lib.misc.data;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 public class AverageDouble implements INBTSerializable<CompoundTag> {
     private double[] data;

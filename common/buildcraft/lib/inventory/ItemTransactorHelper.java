@@ -24,25 +24,25 @@ import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
+import buildcraft.api.compat.capability.ICapabilityProvider;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
 public class ItemTransactorHelper {
     @Nonnull
-    public static IItemTransactor getTransactor(ICapabilityProvider provider, Direction face) {
+    public static IItemTransactor getTransactor(Object provider, Direction face) {
         if (provider == null) {
             return NoSpaceTransactor.INSTANCE;
         }
 
-        LazyOptional<IItemTransactor> trans = provider.getCapability(CapUtil.CAP_ITEM_TRANSACTOR, face);
+        LazyOptional<IItemTransactor> trans = CapUtil.getCapability(provider, CapUtil.CAP_ITEM_TRANSACTOR, face);
         if (trans.isPresent()) {
             return trans.resolve().get();
         }
 
-        IItemHandler handler = provider.getCapability(CapUtil.CAP_ITEMS, face).orElse(null);
+        IItemHandler handler = CapUtil.getCapability(provider, CapUtil.CAP_ITEMS, face).orElse(null);
         if (handler == null) {
 //            if (provider instanceof ISidedInventory)
             if (provider instanceof WorldlyContainer) {
@@ -83,11 +83,11 @@ public class ItemTransactorHelper {
     }
 
     @Nonnull
-    public static IInjectable getInjectable(ICapabilityProvider provider, Direction face) {
+    public static IInjectable getInjectable(Object provider, Direction face) {
         if (provider == null) {
             return NoSpaceInjectable.INSTANCE;
         }
-        LazyOptional<IInjectable> injectable = provider.getCapability(PipeApi.CAP_INJECTABLE, face);
+        LazyOptional<IInjectable> injectable = CapUtil.getCapability(provider, PipeApi.CAP_INJECTABLE, face);
         if (!injectable.isPresent()) {
             return NoSpaceInjectable.INSTANCE;
         }

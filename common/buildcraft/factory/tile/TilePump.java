@@ -36,12 +36,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.EmptyFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -368,13 +368,13 @@ public class TilePump extends TileMiner {
                 progress = 0;
                 isInfiniteWaterSource &= !BCCoreConfig.pumpsConsumeWater;
                 if (isInfiniteWaterSource) {
-//                    isInfiniteWaterSource = FluidUtilBC.areFluidsEqual(drain.getRawFluid(), Fluids.WATER);
-                    isInfiniteWaterSource = FluidUtilBC.areFluidsEqualIgnoringStillOrFlow(drain.getRawFluid(), Fluids.WATER);
+//                    isInfiniteWaterSource = FluidUtilBC.areFluidsEqual(drain.getFluid(), Fluids.WATER);
+                    isInfiniteWaterSource = FluidUtilBC.areFluidsEqualIgnoringStillOrFlow(drain.getFluid(), Fluids.WATER);
                 }
                 AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_DRAIN_ANY);
                 if (!isInfiniteWaterSource) {
                     BlockUtil.drainBlock(level, currentPos, FluidAction.EXECUTE);
-                    if (isOil(drain.getRawFluid())) {
+                    if (isOil(drain.getFluid())) {
                         AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_DRAIN_OIL);
                         if (oilSpringPos != null) {
                             BlockEntity tile = level.getBlockEntity(oilSpringPos);
@@ -457,7 +457,7 @@ public class TilePump extends TileMiner {
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {

@@ -15,10 +15,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 import java.util.*;
@@ -231,7 +231,7 @@ public class WireManager implements IWireManager {
 
     @OnlyIn(Dist.CLIENT)
 //    public void readPayload(PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             parts.clear();
             int count = buffer.readInt();

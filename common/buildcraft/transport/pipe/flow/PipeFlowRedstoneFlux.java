@@ -23,12 +23,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.network.NetworkDirection;
+import net.neoforged.api.distmarker.Dist;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.capability.ForgeCapabilities;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import buildcraft.api.net.NetworkDirection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -113,7 +113,7 @@ public class PipeFlowRedstoneFlux extends PipeFlow implements IFlowRedstoneFlux,
 
     @Override
     public boolean canConnect(Direction face, BlockEntity oTile) {
-        return oTile.getCapability(ForgeCapabilities.ENERGY, face.getOpposite()).isPresent();
+        return buildcraft.lib.misc.CapUtil.getCapability(oTile, ForgeCapabilities.ENERGY, face.getOpposite()).isPresent();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class PipeFlowRedstoneFlux extends PipeFlow implements IFlowRedstoneFlux,
         if (tile == null) {
             return 0;
         }
-        IEnergyStorage storage = tile.getCapability(ForgeCapabilities.ENERGY, from.getOpposite()).orElse(null);
+        IEnergyStorage storage = buildcraft.lib.misc.CapUtil.getCapability(tile, ForgeCapabilities.ENERGY, from.getOpposite()).orElse(null);
         if (storage == null) {
             return 0;
         }

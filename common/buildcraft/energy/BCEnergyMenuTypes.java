@@ -1,5 +1,11 @@
 package buildcraft.energy;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.RegisterEvent;
+
 import buildcraft.energy.client.gui.GuiDynamoMJ;
 import buildcraft.energy.client.gui.GuiEngineIron_BC8;
 import buildcraft.energy.client.gui.GuiEngineRF;
@@ -13,15 +19,11 @@ import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineRF;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 import buildcraft.lib.misc.MessageUtil;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
 public class BCEnergyMenuTypes {
-    public static final MenuType<ContainerEngineIron_BC8> ENGINE_IRON = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerEngineIron_BC8> ENGINE_IRON = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TileEngineIron_BC8 tile) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -31,7 +33,7 @@ public class BCEnergyMenuTypes {
                 }
             }
     );
-    public static final MenuType<ContainerEngineStone_BC8> ENGINE_STONE = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerEngineStone_BC8> ENGINE_STONE = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TileEngineStone_BC8 tile) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -41,7 +43,7 @@ public class BCEnergyMenuTypes {
                 }
             }
     );
-    public static final MenuType<ContainerEngineRF> ENGINE_RF = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerEngineRF> ENGINE_RF = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TileEngineRF tile) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -51,7 +53,7 @@ public class BCEnergyMenuTypes {
                 }
             }
     );
-    public static final MenuType<ContainerDynamoMJ> DYNAMO_MJ = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerDynamoMJ> DYNAMO_MJ = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TileDynamoMJ tile) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -62,17 +64,17 @@ public class BCEnergyMenuTypes {
             }
     );
 
-    public static void registerAll() {
-        ForgeRegistries.MENU_TYPES.register("engine_iron", ENGINE_IRON);
-        ForgeRegistries.MENU_TYPES.register("engine_stone", ENGINE_STONE);
-        ForgeRegistries.MENU_TYPES.register("engine_rf", ENGINE_RF);
-        ForgeRegistries.MENU_TYPES.register("dynamo_mj", DYNAMO_MJ);
+    public static void registerAll(RegisterEvent event) {
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcraftenergy", "engine_iron"), () -> ENGINE_IRON);
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcraftenergy", "engine_stone"), () -> ENGINE_STONE);
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcraftenergy", "engine_rf"), () -> ENGINE_RF);
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcraftenergy", "dynamo_mj"), () -> DYNAMO_MJ);
+    }
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            MenuScreens.register(ENGINE_IRON, GuiEngineIron_BC8::new);
-            MenuScreens.register(ENGINE_STONE, GuiEngineStone_BC8::new);
-            MenuScreens.register(ENGINE_RF, GuiEngineRF::new);
-            MenuScreens.register(DYNAMO_MJ, GuiDynamoMJ::new);
-        }
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(ENGINE_IRON, GuiEngineIron_BC8::new);
+        event.register(ENGINE_STONE, GuiEngineStone_BC8::new);
+        event.register(ENGINE_RF, GuiEngineRF::new);
+        event.register(DYNAMO_MJ, GuiDynamoMJ::new);
     }
 }

@@ -14,11 +14,11 @@ import buildcraft.lib.misc.CapUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.Locale;
 
@@ -57,7 +57,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
     @Override
     public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
-        IFluidHandler handler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
+        IFluidHandler handler = buildcraft.lib.misc.CapUtil.getCapability(tile, CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
 
         if (handler != null) {
             FluidStack searchedFluid = null;
@@ -87,8 +87,8 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 //                        if (c == null) continue;
 //                        FluidStack fluid = c.getContents();
                         FluidStack fluid = handler.getFluidInTank(i);
-//                        if (fluid != null && fluid.getAmount() > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(fluid)))
-                        if ((!fluid.isEmpty()) && (searchedFluid == null || searchedFluid.isFluidEqual(fluid))) {
+//                        if (fluid != null && fluid.getAmount() > 0 && (searchedFluid == null || FluidStack.isSameFluidSameComponents(searchedFluid, fluid)))
+                        if ((!fluid.isEmpty()) && (searchedFluid == null || FluidStack.isSameFluidSameComponents(searchedFluid, fluid))) {
                             return true;
                         }
                     }

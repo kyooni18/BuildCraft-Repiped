@@ -29,7 +29,7 @@ public class BCEnergyWorldGen {
 //            IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 //            modEventBus.addGenericListener(StructureFeature.class, OilStructureRegistry::register);
 //            if (BCEnergyConfig.enableOilOceanBiome || BCEnergyConfig.enableOilDesertBiome) {
-//                MinecraftForge.EVENT_BUS.register(new BiomeInitializer());
+//                NeoForge.EVENT_BUS.register(new BiomeInitializer());
 //                BCLog.logger.info("[energy.oilgen] Registered the oil biome initiializer");
 //            } else {
 //                BCLog.logger.info("[energy.oilgen] Not registering the oil biome initiializer, as it has been disabled by the config file.");

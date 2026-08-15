@@ -39,7 +39,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.List;
 
@@ -243,7 +243,7 @@ public class ItemRobot extends ItemBC_Neptune implements IMjContainerItem {
                     EntityRobot robot = ((ItemRobot) currentItem.getItem()).createRobot(currentItem, world);
 
                     RobotEvent.Place robotEvent = new RobotEvent.Place(robot, player);
-                    MinecraftForge.EVENT_BUS.post(robotEvent);
+                    NeoForge.EVENT_BUS.post(robotEvent);
                     if (robotEvent.isCanceled()) {
                         // return true;
                         return InteractionResult.SUCCESS;

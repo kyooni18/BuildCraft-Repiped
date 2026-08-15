@@ -1,17 +1,16 @@
 package buildcraft.test;
 
-import cpw.mods.modlauncher.api.IModuleLayerManager;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.LoadingModList;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.LoadingModList;
 import org.junit.BeforeClass;
 
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 public class VanillaSetupBaseTester {
     @BeforeClass
@@ -36,17 +35,15 @@ public class VanillaSetupBaseTester {
      */
     private static void setupEmptyForgeModList() {
         try {
-            LoadingModList loadingModList = LoadingModList.of(List.of(), List.of(), null);
-            loadingModList.setBrokenFiles(List.of());
+            LoadingModList loadingModList = LoadingModList.of(List.of(), List.of(), List.of(), List.of(), Map.of());
 
             Field loadingModListField = FMLLoader.class.getDeclaredField("loadingModList");
             loadingModListField.setAccessible(true);
             loadingModListField.set(null, loadingModList);
 
-            IModuleLayerManager moduleLayerManager = layer -> Optional.of(ModuleLayer.boot());
-            Field moduleLayerManagerField = FMLLoader.class.getDeclaredField("moduleLayerManager");
-            moduleLayerManagerField.setAccessible(true);
-            moduleLayerManagerField.set(null, moduleLayerManager);
+            Field gameLayerField = FMLLoader.class.getDeclaredField("gameLayer");
+            gameLayerField.setAccessible(true);
+            gameLayerField.set(null, ModuleLayer.boot());
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("Failed to initialize Forge's empty test loading state", e);
         }

@@ -48,8 +48,8 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.client.ClientHooks;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.Date;
 import java.util.Map;
@@ -361,7 +361,7 @@ public class RenderRobot extends EntityRenderer<EntityRobot> {
             poseStack.translate(0.0F, -0.25F, 0.0F);
             poseStack.rotateAround(Axis.ZP.rotationDegrees(180F), 0, 0, 1);
 
-            Model armorModel = ForgeHooksClient.getArmorModel(entity, wearable, EquipmentSlot.HEAD, null);
+            Model armorModel = ClientHooks.getArmorModel(entity, wearable, EquipmentSlot.HEAD, null);
             poseStack.pushPose();
             poseStack.rotateAround(Axis.YP.rotationDegrees(-90.0F), 0, 1, 0);
 
@@ -371,8 +371,8 @@ public class RenderRobot extends EntityRenderer<EntityRobot> {
             ArmorMaterial material = armorItem.getMaterial().value();
             for (ArmorMaterial.Layer layer : material.layers()) {
                 int layerColor = layer.dyeable() ? dyedColor : -1;
-                ResourceLocation armorTexture = ForgeHooksClient.getArmorTexture(
-                        entity, wearable, EquipmentSlot.HEAD, layer, false);
+                ResourceLocation armorTexture = ClientHooks.getArmorTexture(
+                        entity, wearable, layer, false, EquipmentSlot.HEAD);
                 if (armorModel != null) {
                     renderModel(poseStack, bufferSource, packedLight, armorModel, layerColor, armorTexture);
                 } else {

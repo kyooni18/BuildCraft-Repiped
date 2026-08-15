@@ -25,9 +25,9 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -187,7 +187,7 @@ public class RenderHeatExchange implements BlockEntityRenderer<TileHeatExchange>
         if (fluid == null || fluid.amount <= 0) {
             return;
         }
-        int blockLight = fluid.fluid.getRawFluid().getFluidType().getLightLevel(fluid.fluid) & 0xF;
+        int blockLight = fluid.fluid.getFluid().getFluidType().getLightLevel(fluid.fluid) & 0xF;
         combinedLight |= blockLight << 4;
         FluidRenderer.vertex.lighti(combinedLight);
         FluidRenderer.vertex.overlay(combinedOverlay);
@@ -250,7 +250,7 @@ public class RenderHeatExchange implements BlockEntityRenderer<TileHeatExchange>
                 sides[face.ordinal()] = false;
             }
             // Calen FIX: without the light, the flow of amount 0 will be dark, the water outside of lava will be light, which appears in 1.12.2, that seems wrong
-            int blockLight = fluid.getRawFluid().getFluidType().getLightLevel(fluid) & 0xF;
+            int blockLight = fluid.getFluid().getFluidType().getLightLevel(fluid) & 0xF;
             combinedLight |= blockLight << 4;
             FluidRenderer.vertex.lighti(combinedLight);
             FluidRenderer.vertex.overlay(combinedOverlay);
@@ -263,4 +263,9 @@ public class RenderHeatExchange implements BlockEntityRenderer<TileHeatExchange>
     public boolean shouldRenderOffScreen(TileHeatExchange tile) {
         return tile.isStart();
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileHeatExchange tile) {
+        return tile.getRenderBoundingBox();
+    }
+
 }

@@ -27,7 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.List;

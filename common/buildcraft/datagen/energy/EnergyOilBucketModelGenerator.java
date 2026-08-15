@@ -7,9 +7,9 @@ import buildcraft.energy.event.ChristmasHandler;
 import buildcraft.lib.fluid.BCFluid;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import buildcraft.lib.registry.RegistryObject;
 
 import javax.annotation.Nonnull;
 

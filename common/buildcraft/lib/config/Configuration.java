@@ -5,7 +5,7 @@ import buildcraft.api.core.BCLog;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

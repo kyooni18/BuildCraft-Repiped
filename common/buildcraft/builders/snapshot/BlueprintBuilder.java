@@ -6,6 +6,7 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.fluid.FluidStackUtil;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.schematics.SchematicEntityContext;
@@ -17,9 +18,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -135,7 +136,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                                             // noinspection ConstantConditions
                                                             stackData.put(
                                                                     FLUID_STACK_KEY,
-                                                                    fluidStack.writeToNBT(new CompoundTag())
+                                                                    FluidStackUtil.save(fluidStack)
                                                             );
                                                             StackUtil.setItemData(stack, stackData);
                                                             return stack;
@@ -199,7 +200,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 .map(stack -> Pair.of(stack.getCount(), StackUtil.getItemData(stack).getCompound(FLUID_STACK_KEY)))
                 .map(countNbt ->
                 {
-                    FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(countNbt.getRight());
+                    FluidStack fluidStack = FluidStackUtil.load(countNbt.getRight());
                     if (fluidStack != null) {
                         fluidStack.setAmount(fluidStack.getAmount() * countNbt.getLeft());
                     }

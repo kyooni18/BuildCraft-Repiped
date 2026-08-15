@@ -1,4 +1,6 @@
 /*
+
+import net.neoforged.fml.common.EventBusSubscriber;
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
@@ -6,12 +8,12 @@
 
 package buildcraft.transport;
 
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 // 1.18.2: use datagen!
 @Deprecated(forRemoval = true)
-//@Mod.EventBusSubscriber(modid = BCTransport.MODID)
+//@EventBusSubscriber(modid = BCTransport.MODID)
 public class BCTransportRecipes {
 //    @GameRegistry.ObjectHolder("buildcraftsilicon:assembly_table")
 //    private static final Block SILICON_TABLE_ASSEMBLY = null;

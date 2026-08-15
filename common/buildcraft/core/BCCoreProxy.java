@@ -15,9 +15,9 @@ import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.net.MessageManager;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.fml.loading.FMLLoader;
 
 import java.util.List;
 
@@ -88,7 +88,7 @@ public abstract class BCCoreProxy {
             BCCoreSprites.fmlPreInit();
             BCCoreModels.fmlPreInit();
             DetachedRenderer.INSTANCE.addRenderer(DetachedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeBoxes.INSTANCE);
-            MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
+            NeoForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
             MessageManager.setHandler(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Dist.CLIENT);
         }
 
@@ -96,7 +96,7 @@ public abstract class BCCoreProxy {
         public void fmlInit() {
             super.fmlInit();
 //            BCCoreModels.fmlInit(); // 1.18.2: TESR reg use forge event
-            MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
+            NeoForge.EVENT_BUS.register(RenderTickListener.class);
         }
 
         @Override

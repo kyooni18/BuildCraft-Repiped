@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -141,7 +141,7 @@ public enum CoolantRegistry implements ICoolantManager {
 
         @Override
         public boolean matchesFluid(FluidStack stack) {
-            return fluid.isFluidEqual(stack);
+            return FluidStack.isSameFluidSameComponents(fluid, stack);
         }
 
         @Override
@@ -202,7 +202,7 @@ public enum CoolantRegistry implements ICoolantManager {
                 return null;
             }
             int liquidAmount = (int) (stack.getCount() * fluid.getAmount() * multiplier / solid.getCount());
-            return new FluidStack(fluid.getRawFluid(), liquidAmount);
+            return new FluidStack(fluid.getFluid(), liquidAmount);
         }
 
         @Override

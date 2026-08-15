@@ -41,15 +41,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -234,7 +234,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
 
     @Override
 //    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_ID_CHANGE_SECTION, buffer, side, ctx);
@@ -286,14 +286,13 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         }
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public AABB getRenderBoundingBox() {
         if (section instanceof ExchangeSectionStart) {
             // Temp
             return BoundingBoxUtil.makeAround(VecUtil.convertCenter(getBlockPos()), 10);
         }
-        return super.getRenderBoundingBox();
+        return new AABB(getBlockPos());
     }
 
     @NotNull
@@ -533,7 +532,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         }
 
         // void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-        public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+        public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
             if (side == NetworkDirection.PLAY_TO_CLIENT) {
                 if (id == NET_ID_CHANGE_SECTION) {
                     readPayload(NET_ID_TANK_IN, buffer, side, ctx);
@@ -630,7 +629,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
 
         @Override
 //        void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-        public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+        public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
             super.readPayload(id, buffer, side, ctx);
             if (side == NetworkDirection.PLAY_TO_CLIENT) {
                 if (id == NET_ID_CHANGE_SECTION) {
@@ -798,7 +797,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                 }
                 Vec3 from = VecUtil.convertCenter(getTile().getBlockPos());
                 FluidStack c_in_f = end.smoothedTankInput.getFluidForRender();
-                if (c_in_f != null && c_in_f.getRawFluid() == Fluids.LAVA) {
+                if (c_in_f != null && c_in_f.getFluid() == Fluids.LAVA) {
                     Direction facing = getTile().getFacing();
                     if (facing != null) {
                         spewForth(from, facing.getClockWise(), ParticleTypes.LARGE_SMOKE);
@@ -807,7 +806,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
 
                 FluidStack h_in_f = smoothedTankInput.getFluidForRender();
                 from = VecUtil.convertCenter(end.getTile().getBlockPos());
-                if (h_in_f != null && h_in_f.getRawFluid() == Fluids.WATER) {
+                if (h_in_f != null && h_in_f.getFluid() == Fluids.WATER) {
                     Direction dir = Direction.UP;
                     spewForth(from, dir, ParticleTypes.CLOUD);
                 }
@@ -859,7 +858,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
 //                return null;
                 return StackUtil.EMPTY_FLUID;
             }
-            return new FluidStack(fluid, mult);
+            return fluid.copyWithAmount(mult);
         }
 
         private static int drainableAmount(Tank t, FluidStack fluid) {
@@ -874,7 +873,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             }
             int a = t.fillInternal(fluid, IFluidHandler.FluidAction.EXECUTE);
             if (a != fluid.getAmount()) {
-                String err = "Buggy transition! Failed to fill " + fluid.getRawFluid();
+                String err = "Buggy transition! Failed to fill " + fluid.getFluid();
                 throw new IllegalStateException(err + " x " + fluid.getAmount() + " into " + t);
             }
         }
@@ -883,7 +882,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
 //            FluidStack f2 = t.drainInternal(fluid, true);
             FluidStack f2 = t.drainInternal(fluid, IFluidHandler.FluidAction.EXECUTE);
             if (f2.isEmpty() || f2.getAmount() != fluid.getAmount()) {
-                String err = "Buggy transition! Failed to drain " + fluid.getRawFluid();
+                String err = "Buggy transition! Failed to drain " + fluid.getFluid();
                 throw new IllegalStateException(err + " x " + fluid.getAmount() + " from " + t);
             }
         }
@@ -898,7 +897,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             if (neighbour == null) {
                 return null;
             }
-            return neighbour.getCapability(CapUtil.CAP_FLUIDS, facing.getCounterClockWise()).orElse(null);
+            return buildcraft.lib.misc.CapUtil.getCapability(neighbour, CapUtil.CAP_FLUIDS, facing.getCounterClockWise()).orElse(null);
         }
 
         @Override
@@ -960,7 +959,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             if (neighbour == null) {
                 return null;
             }
-            return neighbour.getCapability(CapUtil.CAP_FLUIDS, Direction.DOWN).orElse(null);
+            return buildcraft.lib.misc.CapUtil.getCapability(neighbour, CapUtil.CAP_FLUIDS, Direction.DOWN).orElse(null);
         }
     }
 

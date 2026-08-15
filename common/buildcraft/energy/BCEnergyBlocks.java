@@ -20,7 +20,7 @@ import buildcraft.lib.registry.RegistrationHelper;
 import buildcraft.lib.registry.TagManager;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 public class BCEnergyBlocks {
     public static final RegistrationHelper HELPER = new RegistrationHelper(BCEnergy.MODID);

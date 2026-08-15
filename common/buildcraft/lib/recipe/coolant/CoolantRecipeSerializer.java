@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class CoolantRecipeSerializer implements RecipeSerializer<ICoolant> {
     public static final CoolantRecipeSerializer INSTANCE = new CoolantRecipeSerializer();

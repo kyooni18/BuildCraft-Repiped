@@ -111,7 +111,7 @@ public class OilGenerator {
             return GenType.NONE;
         }
 
-        if (biome.containsTag(BiomeTags.IS_END) && (Math.abs(x) < 1200 || Math.abs(z) < 1200)) {
+        if (biome.is(BiomeTags.IS_END) && (Math.abs(x) < 1200 || Math.abs(z) < 1200)) {
             if (DEBUG_OILGEN_BASIC & log) {
                 BCLog.logger.info(
                         "[energy.oilgen] Not generating oil in chunk " + cx + ", " + cz

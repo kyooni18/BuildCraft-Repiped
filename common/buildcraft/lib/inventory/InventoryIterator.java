@@ -8,7 +8,7 @@ import buildcraft.api.core.IInvSlot;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 public final class InventoryIterator {
 

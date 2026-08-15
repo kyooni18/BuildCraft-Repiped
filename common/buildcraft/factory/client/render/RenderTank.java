@@ -21,9 +21,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderTank implements BlockEntityRenderer<TileTank> {
@@ -68,7 +68,7 @@ public class RenderTank implements BlockEntityRenderer<TileTank> {
         Vec3 min = connectedDown ? MIN_CONNECTED : MIN;
         Vec3 max = connectedUp ? MAX_CONNECTED : MAX;
         FluidStack fluid = forRender.fluid;
-        int blocklight = fluid.getRawFluid().getFluidType().getLightLevel(fluid);
+        int blocklight = fluid.getFluid().getFluidType().getLightLevel(fluid);
 //        int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), blocklight);
         combinedLight = RenderUtil.combineWithFluidLight(combinedLight, (byte) blocklight);
 
@@ -115,10 +115,10 @@ public class RenderTank implements BlockEntityRenderer<TileTank> {
             if (fluid == null || forRender.amount <= 0) {
                 return false;
             } else if (thisTank.getFluidForRender(partialTicks) == null
-                    || !fluid.isFluidEqual(thisTank.getFluidForRender(partialTicks).fluid)) {
+                    || !FluidStack.isSameFluidSameComponents(fluid, thisTank.getFluidForRender(partialTicks).fluid)) {
                 return false;
             }
-            if (fluid.getRawFluid().getFluidType().isLighterThanAir()) {
+            if (fluid.getFluid().getFluidType().isLighterThanAir()) {
                 face = face.getOpposite();
             }
             return forRender.amount >= oTank.tank.getCapacity() || face == Direction.UP;

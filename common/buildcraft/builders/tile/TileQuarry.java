@@ -60,10 +60,10 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -864,7 +864,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -952,7 +952,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     @Nonnull
-    @Override
     @OnlyIn(Dist.CLIENT)
     public AABB getRenderBoundingBox() {
         return BoundingBoxUtil.makeFrom(worldPosition, miningBox);

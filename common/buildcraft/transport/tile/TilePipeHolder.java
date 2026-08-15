@@ -47,12 +47,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.LazyOptional;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -371,7 +371,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
 
     @Override
 //    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -495,7 +495,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
         if (neighbour == null) {
             return null;
         }
-        return neighbour.getCapability(PipeApi.CAP_PIPE, side.getOpposite()).orElse(null);
+        return buildcraft.lib.misc.CapUtil.getCapability(neighbour, PipeApi.CAP_PIPE, side.getOpposite()).orElse(null);
     }
 
     @Override
@@ -513,7 +513,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
         if (pipe.isConnected(side)) {
             BlockEntity neighbour = getNeighbourTile(side);
             if (neighbour != null) {
-                return neighbour.getCapability(capability, side.getOpposite()).orElse(null);
+                return buildcraft.lib.misc.CapUtil.getCapability(neighbour, capability, side.getOpposite()).orElse(null);
             }
         }
         return null;

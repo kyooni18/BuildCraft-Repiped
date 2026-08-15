@@ -31,8 +31,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderQuarry implements BlockEntityRenderer<TileQuarry> {
@@ -78,66 +78,52 @@ public class RenderQuarry implements BlockEntityRenderer<TileQuarry> {
     }
 
     @Override
-//    public void render(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
-    public void render(TileQuarry tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
-        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
-        if (state.getBlock() != BCBuildersBlocks.quarry.get()) {
+    public void render(
+            TileQuarry tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
+            int combinedLight, int combinedOverlay
+    ) {
+        // Intentionally empty. The quarry gantry, drill and mining beam use absolute world
+        // coordinates and span many blocks, so rendering them from the block entity's local
+        // PoseStack makes them camera/block-origin dependent in 1.21.1. They are rendered from
+        // RenderLevelStageEvent by BCBuildersEventDist instead.
+    }
+
+    public static void renderWorld(
+            TileQuarry tile, float partialTicks, PoseStack poseStack, VertexConsumer laserBuffer, Vec3 cameraPos
+    ) {
+        if (tile.getLevel() == null) {
             return;
         }
+        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
+        if (state.getBlock() != BCBuildersBlocks.quarry.get() || !tile.frameBox.isInitialized()) {
+            return;
+        }
+
         ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
         profiler.push("bc");
         profiler.push("quarry");
-        profiler.push("setup");
-
-//        SpriteUtil.bindBlockTextureMap();
-////        RenderHelper.disableStandardItemLighting();
-////        GlStateManager.enableBlend();
-//        RenderUtil.enableBlend();
-////        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-////        if (Minecraft.isAmbientOcclusionEnabled())
-//        if (Minecraft.useAmbientOcclusion()) {
-////            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-//            RenderSystem.setShader(GameRenderer::getRendertypeEntitySmoothCutoutShader);
-//        } else {
-////            GlStateManager.shadeModel(GL11.GL_FLAT);
-//            RenderSystem.setShader(GameRenderer::getBlockShader);
-//        }
-
-//        GlStateManager.pushMatrix();
-        poseStack.pushPose();
-//        GlStateManager.translate(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
-        poseStack.translate(-tile.getBlockPos().getX(), -tile.getBlockPos().getY(), -tile.getBlockPos().getZ());
-
-        final BlockPos min = tile.frameBox.min();
-        final BlockPos max = tile.frameBox.max();
-
-
-        profiler.pop();
-        if (tile.frameBox.isInitialized()) {
+        try {
+            final BlockPos min = tile.frameBox.min();
+            final BlockPos max = tile.frameBox.max();
             double yOffset = 1 + 4 / 16D;
 
-            profiler.push("laser");
-            if (tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskBreakBlock taskBreakBlock) {
+            if (tile.currentTask instanceof TileQuarry.TaskBreakBlock taskBreakBlock) {
                 BlockPos pos = taskBreakBlock.breakPos;
-
                 if (tile.drillPos == null) {
                     if (taskBreakBlock.clientPower != 0) {
-                        // Don't render a laser before we have any power
                         Vec3 from = VecUtil.convertCenter(tile.getBlockPos());
                         Vec3 to = VecUtil.convertCenter(pos);
-                        LaserData_BC8 laser = new LaserData_BC8(LASER, from, to, 1 / 16.0);
-//                        LaserRenderer_BC8.renderLaserStatic(laser);
-                        LaserRenderer_BC8.renderLaserStatic(laser, poseStack.last());
+                        LaserRenderer_BC8.renderLaserWorld(
+                                new LaserData_BC8(LASER, from, to, 1 / 16.0),
+                                poseStack.last(), laserBuffer, cameraPos
+                        );
                     }
                 } else {
                     long power = (long) (
-                            taskBreakBlock.prevClientPower +
-                                    (taskBreakBlock.clientPower - taskBreakBlock.prevClientPower) * (double) partialTicks
+                            taskBreakBlock.prevClientPower
+                                    + (taskBreakBlock.clientPower - taskBreakBlock.prevClientPower) * (double) partialTicks
                     );
-//                    AxisAlignedBB aabb = tile.getLevel().getBlockState(pos).getBoundingBox(tile.getLevel(), pos);
-                    VoxelShape shape = tile.getLevel().getBlockState(pos).getCollisionShape(tile.getLevel(), pos); // Calen: if shape is empty, .bounds() will cause UnsupportedOperationException (ArrayVoxelShape:28)
+                    VoxelShape shape = tile.getLevel().getBlockState(pos).getCollisionShape(tile.getLevel(), pos);
                     AABB aabb = shape.isEmpty() ? new AABB(0, 0, 0, 0, 0, 0) : shape.bounds();
                     double value = (double) power / taskBreakBlock.getTarget();
                     if (value < 0.9) {
@@ -151,157 +137,63 @@ public class RenderQuarry implements BlockEntityRenderer<TileQuarry> {
                 }
             }
 
-            profiler.popPush("frame");
             if (tile.clientDrillPos != null && tile.prevClientDrillPos != null) {
-                Vec3 interpolatedPos = tile.prevClientDrillPos.add(tile.clientDrillPos.subtract(tile.prevClientDrillPos).scale(partialTicks));
+                Vec3 interpolatedPos = tile.prevClientDrillPos.add(
+                        tile.clientDrillPos.subtract(tile.prevClientDrillPos).scale(partialTicks)
+                );
+                double frameY = max.getY() + 0.5;
 
-                LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
-                                new Vec3(interpolatedPos.x + 0.5, max.getY() + 0.5, interpolatedPos.z),//
-                                new Vec3(interpolatedPos.x + 0.5, max.getY() + 0.5, max.getZ() + 12 / 16D),//
-//                                1 / 16D, true, true, 0),
-                                1 / 16D, true, 0),
-                        poseStack.last()
-                );
-                LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
-                                new Vec3(interpolatedPos.x + 0.5, max.getY() + 0.5, interpolatedPos.z),//
-                                new Vec3(interpolatedPos.x + 0.5, max.getY() + 0.5, min.getZ() + 4 / 16D),//
-//                                1 / 16D, true, true, 0),
-                                1 / 16D, true, 0),
-                        poseStack.last()
-                );
-                LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
-                                new Vec3(interpolatedPos.x, max.getY() + 0.5, interpolatedPos.z + 0.5),//
-                                new Vec3(max.getX() + 12 / 16D, max.getY() + 0.5, interpolatedPos.z + 0.5),//
-//                                1 / 16D, true, true, 0),
-                                1 / 16D, true, 0),
-                        poseStack.last()
-                );
-                LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
-                                new Vec3(interpolatedPos.x, max.getY() + 0.5, interpolatedPos.z + 0.5),//
-                                new Vec3(min.getX() + 4 / 16D, max.getY() + 0.5, interpolatedPos.z + 0.5),//
-//                                1 / 16D, true, true, 0),
-                                1 / 16D, true, 0),
-                        poseStack.last()
-                );
-                LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME_BOTTOM,//
-                                new Vec3(interpolatedPos.x + 0.5, interpolatedPos.y + 1 + 4 / 16D, interpolatedPos.z + 0.5),//
-                                new Vec3(interpolatedPos.x + 0.5, max.getY() + 0.5, interpolatedPos.z + 0.5),//
-//                                1 / 16D, true, true, 0),
-                                1 / 16D, true, 0),
-                        poseStack.last()
-                );
-                LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(DRILL,//
-                                new Vec3(interpolatedPos.x + 0.5, interpolatedPos.y + 1 + yOffset, interpolatedPos.z + 0.5),//
-                                new Vec3(interpolatedPos.x + 0.5, interpolatedPos.y + yOffset, interpolatedPos.z + 0.5),//
-//                                1 / 16D, true, true, 0),
-                                1 / 16D, true, 0),
-                        poseStack.last()
-                );
+                renderWorldLaser(poseStack, laserBuffer, cameraPos, new LaserData_BC8(
+                        FRAME,
+                        new Vec3(interpolatedPos.x + 0.5, frameY, interpolatedPos.z),
+                        new Vec3(interpolatedPos.x + 0.5, frameY, max.getZ() + 12 / 16D),
+                        1 / 16D, true, 0
+                ));
+                renderWorldLaser(poseStack, laserBuffer, cameraPos, new LaserData_BC8(
+                        FRAME,
+                        new Vec3(interpolatedPos.x + 0.5, frameY, interpolatedPos.z),
+                        new Vec3(interpolatedPos.x + 0.5, frameY, min.getZ() + 4 / 16D),
+                        1 / 16D, true, 0
+                ));
+                renderWorldLaser(poseStack, laserBuffer, cameraPos, new LaserData_BC8(
+                        FRAME,
+                        new Vec3(interpolatedPos.x, frameY, interpolatedPos.z + 0.5),
+                        new Vec3(max.getX() + 12 / 16D, frameY, interpolatedPos.z + 0.5),
+                        1 / 16D, true, 0
+                ));
+                renderWorldLaser(poseStack, laserBuffer, cameraPos, new LaserData_BC8(
+                        FRAME,
+                        new Vec3(interpolatedPos.x, frameY, interpolatedPos.z + 0.5),
+                        new Vec3(min.getX() + 4 / 16D, frameY, interpolatedPos.z + 0.5),
+                        1 / 16D, true, 0
+                ));
+                renderWorldLaser(poseStack, laserBuffer, cameraPos, new LaserData_BC8(
+                        FRAME_BOTTOM,
+                        new Vec3(interpolatedPos.x + 0.5, interpolatedPos.y + 1 + 4 / 16D, interpolatedPos.z + 0.5),
+                        new Vec3(interpolatedPos.x + 0.5, frameY, interpolatedPos.z + 0.5),
+                        1 / 16D, true, 0
+                ));
+                renderWorldLaser(poseStack, laserBuffer, cameraPos, new LaserData_BC8(
+                        DRILL,
+                        new Vec3(interpolatedPos.x + 0.5, interpolatedPos.y + 1 + yOffset, interpolatedPos.z + 0.5),
+                        new Vec3(interpolatedPos.x + 0.5, interpolatedPos.y + yOffset, interpolatedPos.z + 0.5),
+                        1 / 16D, true, 0
+                ));
             } else {
-                VertexConsumer rangeBuffer = bufferSource.getBuffer(LaserRenderer_BC8.getDynamicRenderType());
-                LaserBoxRenderer.renderLaserBoxDynamic(
-                        tile.frameBox,
-                        BuildCraftLaserManager.STRIPES_WRITE,
-                        poseStack.last(),
-                        rangeBuffer,
-                        true
+                LaserBoxRenderer.renderLaserBoxWorld(
+                        tile.frameBox, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), laserBuffer, true, cameraPos
                 );
             }
+        } finally {
+            profiler.pop();
             profiler.pop();
         }
+    }
 
-//        GlStateManager.popMatrix();
-        poseStack.popPose();
-        profiler.push("items");
-
-        if (tile.frameBox.isInitialized() && false) {
-            TileQuarry.TaskAddFrame currentTask = (TileQuarry.TaskAddFrame) tile.currentTask;
-            int index = tile.framePoses.indexOf(currentTask.framePos);
-            if (index > 1) {
-                double progress = (double) currentTask.power / currentTask.getTarget() * (index - 1) / tile.framePoses.size();
-                double progress1 = (progress >= 0 && progress <= 0.25) ? progress * 4 ://
-                        (progress >= 0.25 && progress <= 0.5) ? 1 ://
-                                (progress >= 0.5 && progress <= 0.75) ? 1 - (progress - 0.5) * 4 ://
-                                        (progress >= 0.75 && progress <= 1) ? 0 : -1 /* not possible */;
-                double progress2 = (progress >= 0 && progress <= 0.25) ? 1 : (progress >= 0.25 && progress <= 0.5) ? 1 - (progress - 0.25) * 4 : (progress >= 0.5 && progress <= 0.75) ? 0 : (progress >= 0.75 && progress <= 1) ? (progress - 0.75) * 4
-                        : -1 /* not possible */;
-                double xProgress = -1;
-                double zProgress = -1;
-                Direction side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
-                BlockPos firstPos = tile.getBlockPos().relative(side);
-                switch (side) {
-                    case SOUTH:
-                        if (firstPos.getX() == min.getX()) {
-                            xProgress = 1 - progress2;
-                            zProgress = progress1;
-                        } else {
-                            xProgress = progress2;
-                            zProgress = progress1;
-                        }
-                        break;
-                    case WEST:
-                        if (firstPos.getZ() == min.getZ()) {
-                            xProgress = 1 - progress1;
-                            zProgress = 1 - progress2;
-                        } else {
-                            xProgress = 1 - progress1;
-                            zProgress = progress2;
-                        }
-                        break;
-                    case NORTH:
-                        if (firstPos.getX() == min.getX()) {
-                            xProgress = 1 - progress2;
-                            zProgress = 1 - progress1;
-                        } else {
-                            xProgress = progress2;
-                            zProgress = 1 - progress1;
-                        }
-                        break;
-                    case EAST:
-                        if (firstPos.getZ() == min.getZ()) {
-                            xProgress = progress1;
-                            zProgress = 1 - progress2;
-                        } else {
-                            xProgress = progress1;
-                            zProgress = progress2;
-                        }
-                        break;
-                }
-                double xResult = min.getX() + (max.getX() - min.getX()) * xProgress;
-                double zResult = min.getZ() + (max.getZ() - min.getZ()) * zProgress;
-                ItemStack stack = new ItemStack(BCBuildersBlocks.frame.get());
-
-//                RenderHelper.disableStandardItemLighting();
-//                GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-//                RenderSystem.activeTexture(33985);
-//                GlStateManager.disableTexture2D();
-//                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-//                RenderSystem.activeTexture(OpenGlHelper.defaultTexUnit);
-//                RenderSystem.activeTexture(33984);
-//                GlStateManager.pushMatrix();
-                poseStack.pushPose();
-//                GlStateManager.translate(x - tile.getBlockPos().getX(), y - tile.getBlockPos().getY(), z - tile.getBlockPos().getZ());
-                poseStack.translate(-tile.getBlockPos().getX(), -tile.getBlockPos().getY(), -tile.getBlockPos().getZ());
-//                GlStateManager.pushMatrix();
-                poseStack.pushPose();
-//                GlStateManager.translate(xResult + 0.5, tile.getBlockPos().getY(), zResult + 0.5);
-                poseStack.translate(xResult + 0.5, tile.getBlockPos().getY(), zResult + 0.5);
-//                GlStateManager.scale(3, 3, 3);
-                poseStack.scale(3, 3, 3);
-//                Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.GROUND);
-                Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, combinedLight, combinedOverlay, poseStack, bufferSource, tile.getLevel(), (int) tile.getBlockPos().asLong());
-
-//                GlStateManager.popMatrix();
-                poseStack.popPose();
-//                GlStateManager.popMatrix();
-                poseStack.popPose();
-            }
-        }
-//        RenderHelper.enableStandardItemLighting();
-
-        profiler.pop();
-        profiler.pop();
-        profiler.pop();
+    private static void renderWorldLaser(
+            PoseStack poseStack, VertexConsumer laserBuffer, Vec3 cameraPos, LaserData_BC8 laser
+    ) {
+        LaserRenderer_BC8.renderLaserWorld(laser, poseStack.last(), laserBuffer, cameraPos);
     }
 
     @Override
@@ -318,4 +210,9 @@ public class RenderQuarry implements BlockEntityRenderer<TileQuarry> {
     public static void init() {
 
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileQuarry tile) {
+        return tile.getRenderBoundingBox();
+    }
+
 }

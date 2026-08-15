@@ -54,4 +54,9 @@ public class RenderTube implements BlockEntityRenderer<TileMiner> {
 //        buffer.setTranslation(0, 0, 0);
         poseStack.popPose();
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileMiner tile) {
+        return tile.getRenderBoundingBox();
+    }
+
 }

@@ -27,13 +27,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -143,35 +143,33 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     public boolean isFull() {
         FluidStack fluidStack = getFluid();
 //        return fluidStack != null && fluidStack.getAmount() >= getCapacity();
-        return fluidStack.isEmpty() && fluidStack.getAmount() >= getCapacity();
+        return !fluidStack.isEmpty() && fluidStack.getAmount() >= getCapacity();
     }
 
     public Fluid getFluidType() {
         FluidStack fluidStack = getFluid();
-//        return fluidStack != null ? fluidStack.getRawFluid() : null;
-        return fluidStack.isEmpty() ? null : fluidStack.getRawFluid();
+//        return fluidStack != null ? fluidStack.getFluid() : null;
+        return fluidStack.isEmpty() ? null : fluidStack.getFluid();
     }
 
     public CompoundTag serializeNBT() {
         return writeToNBT(new CompoundTag());
     }
 
-    @Override
     public final CompoundTag writeToNBT(CompoundTag nbt) {
-        super.writeToNBT(nbt);
+        super.writeToNBT(FluidStackUtil.provider(), nbt);
         writeTankToNBT(nbt);
         return nbt;
     }
 
-    @Override
     public final FluidTank readFromNBT(CompoundTag nbt) {
         if (nbt.contains(name)) {
             // Old style of saving + loading
             CompoundTag tankData = nbt.getCompound(name);
-            super.readFromNBT(tankData);
+            super.readFromNBT(FluidStackUtil.provider(), tankData);
             readTankFromNBT(tankData);
         } else {
-            super.readFromNBT(nbt);
+            super.readFromNBT(FluidStackUtil.provider(), nbt);
             readTankFromNBT(nbt);
         }
         return this;
@@ -270,7 +268,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     }
 
     public FluidStack drainInternal(FluidStack resource, FluidAction action) {
-        if (resource == null || resource.isEmpty() || !resource.isFluidEqual(getFluid())) {
+        if (resource == null || resource.isEmpty() || !FluidStack.isSameFluidSameComponents(resource, getFluid())) {
             return StackUtil.EMPTY_FLUID;
         }
         return drainInternal(resource.getAmount(), action);
@@ -333,7 +331,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
             return null;
         } else {
             FluidStack stackBase = clientFluid.get();
-            return new FluidStack(stackBase, clientAmount);
+            return stackBase.copyWithAmount(clientAmount);
         }
     }
 
@@ -345,7 +343,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         FluidStack f = getFluidForRender();
         if (f == null) f = getFluid();
 //        return (f == null ? 0 : f.getAmount()) + " / " + capacity + " mB of " + (f != null ? f.getFluid().getRegistryName().getPath() : "n/a");
-        return (f.isEmpty() ? 0 : f.getAmount()) + " / " + capacity + " mB of " + (f.isEmpty() ? "n/a" : f.getRawFluid().builtInRegistryHolder().key().location().getPath());
+        return (f.isEmpty() ? 0 : f.getAmount()) + " / " + capacity + " mB of " + (f.isEmpty() ? "n/a" : f.getFluid().builtInRegistryHolder().key().location().getPath());
     }
 
     public void onGuiClicked(ContainerBC_Neptune container) {
@@ -453,7 +451,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
      * @param stack The stack to map. This will ALWAYS have an {@link ItemStack#getCount()} of 1.
      * @param space The maximum amount of fluid that can be accepted by this tank. */
     protected FluidGetResult map(ItemStack stack, int space) {
-        LazyOptional<IFluidHandlerItem> fluidHandlerOptional = FluidUtil.getFluidHandler(stack.copy());
+        java.util.Optional<IFluidHandlerItem> fluidHandlerOptional = FluidUtil.getFluidHandler(stack.copy());
         IFluidHandlerItem fluidHandler = fluidHandlerOptional.orElse(null);
         if (fluidHandler == null) return null;
         FluidStack drained = fluidHandler.drain(space, FluidAction.EXECUTE);

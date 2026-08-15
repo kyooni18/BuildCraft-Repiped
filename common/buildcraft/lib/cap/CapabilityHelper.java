@@ -2,9 +2,9 @@ package buildcraft.lib.cap;
 
 import buildcraft.api.core.EnumPipePart;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.capability.ICapabilityProvider;
+import buildcraft.api.compat.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;

@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 public class CompatManager {
     public static final ISoftBlockAccessor blockAccessor;

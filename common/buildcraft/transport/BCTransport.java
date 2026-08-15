@@ -6,6 +6,8 @@
 
 package buildcraft.transport;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.facades.FacadeAPI;
@@ -28,14 +30,15 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.*;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.InterModComms;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.*;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Consumer;
 
@@ -48,7 +51,7 @@ import java.util.function.Consumer;
 //)
 //@formatter:on
 @Mod(BCTransport.MODID)
-@Mod.EventBusSubscriber(modid = BCTransport.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = BCTransport.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class BCTransport {
     public static final String MODID = "buildcrafttransport";
 
@@ -93,7 +96,7 @@ public class BCTransport {
 
         BCTransportProxy.getProxy().fmlPreInit();
 //
-        MinecraftForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
+        NeoForge.EVENT_BUS.register(BCTransportEventDist.INSTANCE);
     }
 
     @SubscribeEvent
@@ -102,29 +105,34 @@ public class BCTransport {
         BCTransportRegistries.init();
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static final class ClientEvents {
         private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            BCTransportMenuTypes.registerScreens(event);
         }
 
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
             ItemBlockRenderTypes.setRenderLayer(BCTransportBlocks.pipeHolder.get(), RenderType.translucent());
             TransportItemModelPredicates.register(event);
-            MinecraftForge.EVENT_BUS.register(PipeTabButton.class);
+            NeoForge.EVENT_BUS.register(PipeTabButton.class);
         }
     }
 
     @SubscribeEvent
     public static void onRegisterEvent(RegisterEvent event) {
         ResourceKey<? extends Registry<?>> registry = event.getRegistryKey();
+        BCTransportMenuTypes.registerAll(event);
         if (registry == Registries.CREATIVE_MODE_TAB) {
             // Creative Tab
-            Registry.register(event.getVanillaRegistry(), tabPipes.getId(), tabPipes);
-            Registry.register(event.getVanillaRegistry(), tabPlugs.getId(), tabPlugs);
+            event.register(Registries.CREATIVE_MODE_TAB, tabPipes.getId(), () -> tabPipes);
+            event.register(Registries.CREATIVE_MODE_TAB, tabPlugs.getId(), () -> tabPlugs);
         } else if (registry == Registries.BLOCK) {
             // GUI
-            BCTransportMenuTypes.registerAll();
         }
     }
 

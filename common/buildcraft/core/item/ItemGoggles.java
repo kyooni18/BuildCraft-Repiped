@@ -13,9 +13,10 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
 //public class ItemGoggles extends ArmorItem implements IItemBuildCraft, ISpecialArmor
 public class ItemGoggles extends ArmorItem implements IItemBuildCraft {
@@ -61,7 +62,8 @@ public class ItemGoggles extends ArmorItem implements IItemBuildCraft {
     }
 
 //    public void damageArmor(LivingEntity entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot)
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+    @Override
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
         // Invulnerable goggles
         return 0;
     }

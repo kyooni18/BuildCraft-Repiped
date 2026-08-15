@@ -6,13 +6,14 @@
  */
 package buildcraft.lib.fluid;
 
+import buildcraft.lib.fluid.FluidStackUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 
@@ -37,7 +38,7 @@ public class SingleUseTank extends Tank {
             acceptedFluid.setAmount(1);
         }
 
-        if (acceptedFluid == null || acceptedFluid.isFluidEqual(resource)) {
+        if (acceptedFluid == null || FluidStack.isSameFluidSameComponents(acceptedFluid, resource)) {
             return super.fill(resource, doFill);
         }
 
@@ -60,7 +61,7 @@ public class SingleUseTank extends Tank {
         if (fluid == null) {
             this.acceptedFluid = null;
         } else {
-            this.acceptedFluid = new FluidStack(fluid, 1);
+            this.acceptedFluid = fluid.copyWithAmount(1);
         }
     }
 
@@ -72,7 +73,7 @@ public class SingleUseTank extends Tank {
     public void writeTankToNBT(CompoundTag nbt) {
         super.writeTankToNBT(nbt);
         if (acceptedFluid != null) {
-            nbt.put(NBT_ACCEPTED_FLUID, acceptedFluid.writeToNBT(new CompoundTag()));
+            nbt.put(NBT_ACCEPTED_FLUID, FluidStackUtil.save(acceptedFluid));
         }
     }
 
@@ -84,7 +85,7 @@ public class SingleUseTank extends Tank {
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
             setAcceptedFluid(fluid);
         } else {
-            acceptedFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound(NBT_ACCEPTED_FLUID));
+            acceptedFluid = FluidStackUtil.load(nbt.getCompound(NBT_ACCEPTED_FLUID));
         }
     }
 }

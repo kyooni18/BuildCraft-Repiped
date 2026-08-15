@@ -4,7 +4,7 @@ import buildcraft.energy.item.ItemOilPlacer;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 public class BCEnergyItems {
     private static final RegistrationHelper HELPER = new RegistrationHelper(BCEnergy.MODID);

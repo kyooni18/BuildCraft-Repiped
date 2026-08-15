@@ -13,12 +13,11 @@ import buildcraft.lib.misc.SpriteUtil;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.ModLoadingStage;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.fml.ModLoadingContext;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -118,14 +117,14 @@ public class SpriteHolderRegistry {
         }
     }
 
-    public static void onTextureStitchPost(TextureStitchEvent.Post event) {
+    public static void onTextureStitchPost(TextureAtlasStitchedEvent event) {
         for (SpriteHolder holder : HOLDER_MAP.values()) {
 //            holder.onTextureStitchPre(map);
             holder.onTextureStitchPost(event);
         }
 
 //        if (DEBUG && Loader.instance().isInState(LoaderState.AVAILABLE))
-        if (DEBUG && ModLoadingContext.get().getActiveContainer().getCurrentState() == ModLoadingStage.COMPLETE) {
+        if (DEBUG) {
             BCLog.logger.info("[lib.sprite.holder] List of registered sprites:");
             List<ResourceLocation> locations = new ArrayList<>();
             locations.addAll(HOLDER_MAP.keySet());
@@ -166,7 +165,7 @@ public class SpriteHolderRegistry {
         }
 
         // Calen: TextureStitchEvent.Pre -> load the texture into TextureAtlas.LOCATION_BLOCKS
-        // TextureStitchEvent.Post -> get the loaded texture u v from TextureAtlas.LOCATION_BLOCKS
+        // TextureAtlasStitchedEvent -> get the loaded texture u v from TextureAtlas.LOCATION_BLOCKS
 
         // protected void onTextureStitchPre(TextureAtlas map)
 //        protected void onTextureStitchPre(TextureStitchEvent.Pre event)
@@ -186,7 +185,7 @@ public class SpriteHolderRegistry {
             consumer.accept(spriteLocation);
         }
 
-        protected void onTextureStitchPost(TextureStitchEvent.Post event) {
+        protected void onTextureStitchPost(TextureAtlasStitchedEvent event) {
             // Calen
             // ensure LOCATION_BLOCKS
             // or will get wrong texture

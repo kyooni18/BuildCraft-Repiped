@@ -1,5 +1,11 @@
 package buildcraft.factory;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.RegisterEvent;
+
 import buildcraft.factory.container.ContainerAutoCraftItems;
 import buildcraft.factory.container.ContainerChute;
 import buildcraft.factory.container.ContainerTank;
@@ -10,15 +16,11 @@ import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileChute;
 import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.misc.MessageUtil;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
 public class BCFactoryMenuTypes {
-    public static final MenuType<ContainerChute> CHUTE = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerChute> CHUTE = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TileChute tile) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -28,7 +30,7 @@ public class BCFactoryMenuTypes {
                 }
             }
     );
-    public static final MenuType<ContainerAutoCraftItems> AUTO_WORKBENCH_ITEMS = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerAutoCraftItems> AUTO_WORKBENCH_ITEMS = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TileAutoWorkbenchItems tile) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -38,7 +40,7 @@ public class BCFactoryMenuTypes {
                 }
             }
     );
-    public static final MenuType<ContainerTank> TANK = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerTank> TANK = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TileTank tile) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -49,15 +51,15 @@ public class BCFactoryMenuTypes {
             }
     );
 
-    public static void registerAll() {
-        ForgeRegistries.MENU_TYPES.register("chute", CHUTE);
-        ForgeRegistries.MENU_TYPES.register("auto_workbench_items", AUTO_WORKBENCH_ITEMS);
-        ForgeRegistries.MENU_TYPES.register("tank", TANK);
+    public static void registerAll(RegisterEvent event) {
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcraftfactory", "chute"), () -> CHUTE);
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcraftfactory", "auto_workbench_items"), () -> AUTO_WORKBENCH_ITEMS);
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcraftfactory", "tank"), () -> TANK);
+    }
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            MenuScreens.register(CHUTE, GuiChute::new);
-            MenuScreens.register(AUTO_WORKBENCH_ITEMS, GuiAutoCraftItems::new);
-            MenuScreens.register(TANK, GuiTank::new);
-        }
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(CHUTE, GuiChute::new);
+        event.register(AUTO_WORKBENCH_ITEMS, GuiAutoCraftItems::new);
+        event.register(TANK, GuiTank::new);
     }
 }

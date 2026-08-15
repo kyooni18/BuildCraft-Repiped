@@ -6,6 +6,8 @@
 
 package buildcraft.robotics;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
 import buildcraft.api.BCModules;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.mj.MjAPI;
@@ -22,15 +24,16 @@ import buildcraft.robotics.client.particle.EntityRobotEnergyParticle;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Consumer;
 
@@ -42,7 +45,7 @@ import java.util.function.Consumer;
 //    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
 //)
 @Mod(BCRobotics.MODID)
-@Mod.EventBusSubscriber(modid = BCRobotics.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = BCRobotics.MODID, bus = EventBusSubscriber.Bus.MOD)
 //@formatter:on
 public class BCRobotics {
     public static final String MODID = "buildcraftrobotics";
@@ -131,18 +134,23 @@ public class BCRobotics {
     @SubscribeEvent
     public static void onRegisterEvent(RegisterEvent event) {
         ResourceKey<? extends Registry<?>> registry = event.getRegistryKey();
+        BCRoboticsMenuTypes.registerAll(event);
         if (registry == Registries.BLOCK) {
             // GUI
-            BCRoboticsMenuTypes.registerAll();
         } else if (registry == Registries.CREATIVE_MODE_TAB) {
             // Creative Tab
-            Registry.register(event.getVanillaRegistry(), tabBoards.getId(), tabBoards);
+            event.register(Registries.CREATIVE_MODE_TAB, tabBoards.getId(), () -> tabBoards);
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static final class ClientEvents {
         private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            BCRoboticsMenuTypes.registerScreens(event);
         }
 
         @SubscribeEvent

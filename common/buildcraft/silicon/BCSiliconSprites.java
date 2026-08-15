@@ -4,7 +4,6 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.common.MinecraftForge;
 
 public class BCSiliconSprites {
 
@@ -44,7 +43,9 @@ public class BCSiliconSprites {
     }
 
     public static void fmlPreInit() {
-        MinecraftForge.EVENT_BUS.register(BCSiliconSprites.class);
+        // Calling this method still forces static sprite-holder initialization.
+        // There are no event handlers in this class, so it must not be registered
+        // with NeoForge's event bus.
     }
 
 }

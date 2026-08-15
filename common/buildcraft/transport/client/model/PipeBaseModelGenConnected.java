@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -43,7 +43,7 @@ public enum PipeBaseModelGenConnected implements IPipeBaseModelGen {
     }
 
     @Override
-    public void onTextureStitchPost(TextureStitchEvent.Post event) {
+    public void onTextureStitchPost(TextureAtlasStitchedEvent event) {
         PipeBaseModelGenStandard.INSTANCE.onTextureStitchPost(event);
     }
 

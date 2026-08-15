@@ -9,7 +9,7 @@ package buildcraft.lib.inventory;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.lib.misc.StackUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 

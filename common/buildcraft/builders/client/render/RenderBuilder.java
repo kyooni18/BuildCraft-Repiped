@@ -22,8 +22,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
 
@@ -104,4 +104,9 @@ public class RenderBuilder implements BlockEntityRenderer<TileBuilder> {
     public int getViewDistance() {
         return 512;
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileBuilder tile) {
+        return tile.getRenderBoundingBox();
+    }
+
 }

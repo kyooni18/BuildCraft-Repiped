@@ -10,7 +10,7 @@ import buildcraft.builders.tile.*;
 import buildcraft.lib.block.BlockPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 public class BCBuildersBlocks {
     private static final RegistrationHelper HELPER = new RegistrationHelper(BCBuilders.MODID);

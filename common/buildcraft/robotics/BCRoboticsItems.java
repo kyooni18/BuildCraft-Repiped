@@ -18,7 +18,7 @@ import buildcraft.robotics.item.ItemRobotStation;
 import buildcraft.robotics.plug.PluggableRobotStation;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.List;
 import java.util.Map;

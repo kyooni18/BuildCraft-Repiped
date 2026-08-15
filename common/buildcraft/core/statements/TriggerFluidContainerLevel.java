@@ -14,9 +14,9 @@ import buildcraft.lib.misc.CapUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.Locale;
 
@@ -54,7 +54,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 
     @Override
     public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
-        IFluidHandler handler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
+        IFluidHandler handler = buildcraft.lib.misc.CapUtil.getCapability(tile, CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
         if (handler == null) {
             return false;
         }
@@ -84,7 +84,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
                 return searchedFluid == null || handler.fill(searchedFluid, IFluidHandler.FluidAction.SIMULATE) > 0;
             }
 
-            if (searchedFluid == null || searchedFluid.isFluidEqual(fluid)) {
+            if (searchedFluid == null || FluidStack.isSameFluidSameComponents(searchedFluid, fluid)) {
 //                float percentage = fluid.amount / (float) tankProperties.getCapacity();
                 float percentage = fluid.getAmount() / (float) handler.getTankCapacity(i);
                 return percentage < type.level;

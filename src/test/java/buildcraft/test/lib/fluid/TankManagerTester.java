@@ -5,8 +5,8 @@ import buildcraft.lib.fluid.TankManager;
 import buildcraft.test.VanillaSetupBaseTester;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.junit.Assert;
 import org.junit.Test;
 

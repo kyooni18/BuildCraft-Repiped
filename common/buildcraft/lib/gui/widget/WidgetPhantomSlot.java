@@ -19,9 +19,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @Override
-    public IMessage handleWidgetDataServer(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLIENT_TO_SERVER_CLICK) {
             byte flags = buffer.readByte();
@@ -88,7 +88,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @Override
-    public IMessage handleWidgetDataClient(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataClient(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_SERVER_TO_CLIENT_ITEM) {
             stack = StackUtil.asNonNull(buffer.readItem());

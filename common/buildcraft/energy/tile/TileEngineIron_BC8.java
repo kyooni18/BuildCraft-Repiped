@@ -42,11 +42,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -126,7 +126,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 implements IBCTileMen
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
@@ -203,7 +203,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 implements IBCTileMen
     @Override
     protected void burn() {
         final FluidStack fuel = this.tankFuel.getFluid();
-        if (currentFuel == null || !currentFuel.getFluid().isFluidEqual(fuel)) {
+        if (currentFuel == null || !FluidStack.isSameFluidSameComponents(currentFuel.getFluid(), fuel)) {
 //            currentFuel = BuildcraftFuelRegistry.fuel.getFuel(fuel);
             currentFuel = BuildcraftFuelRegistry.fuel.getFuel(level, fuel);
         }
@@ -380,7 +380,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 implements IBCTileMen
             return true;
         }
         if (currentFuel instanceof IDirtyFuel) {
-            return fluid.isFluidEqual(((IDirtyFuel) currentFuel).getResidue());
+            return FluidStack.isSameFluidSameComponents(fluid, ((IDirtyFuel) currentFuel).getResidue());
         }
         return false;
     }

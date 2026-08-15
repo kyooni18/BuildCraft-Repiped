@@ -16,8 +16,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 
@@ -46,7 +46,7 @@ public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable>
 
     @Override
 //    public void readMessage(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_SERVER) {
             if (id == ID_NAME) {

@@ -10,8 +10,8 @@ import buildcraft.api.core.IFluidFilter;
 import buildcraft.lib.misc.StackUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
 
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayFluidFilter implements IFluidFilter {
@@ -49,7 +49,7 @@ public class ArrayFluidFilter implements IFluidFilter {
     @Override
     public boolean matches(FluidStack fluid) {
         for (FluidStack filter : fluids) {
-            if (filter != null && filter.isFluidEqual(fluid)) {
+            if (filter != null && FluidStack.isSameFluidSameComponents(filter, fluid)) {
                 return true;
             }
         }

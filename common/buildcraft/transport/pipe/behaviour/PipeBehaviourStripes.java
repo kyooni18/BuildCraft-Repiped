@@ -25,12 +25,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.capabilities.Capability;
-import buildcraft.api.core.FakePlayer;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import buildcraft.api.compat.capability.Capability;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import buildcraft.api.compat.LazyOptional;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,7 +63,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     @Override
 //    public void readPayload(PacketBuffer buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(FriendlyByteBuf buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(FriendlyByteBuf buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
         direction = MessageUtil.readEnumOrNull(buffer, Direction.class);
     }

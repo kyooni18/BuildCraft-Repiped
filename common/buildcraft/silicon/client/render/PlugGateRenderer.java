@@ -13,8 +13,8 @@ import buildcraft.silicon.BCSiliconModels;
 import buildcraft.silicon.plug.PluggableGate;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public enum PlugGateRenderer implements IPlugDynamicRenderer<PluggableGate> {

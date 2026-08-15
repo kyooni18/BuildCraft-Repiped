@@ -20,14 +20,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.fml.ModList;
+import buildcraft.api.compat.registry.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -68,14 +70,13 @@ public class RulesLoader {
 //            String domain = modContainer.getModId();
             if (!READ_DOMAINS.contains(domain)) {
                 String base = "assets/" + domain + "/compat/buildcraft/builders/";
-                if (modContainer.getMod() == null) {
-//                    continue;
-                    return;
+                Path indexPath = modContainer.getModInfo().getOwningFile().getFile().findResource(base + "index.json");
+                InputStream inputStream;
+                try {
+                    inputStream = Files.exists(indexPath) ? Files.newInputStream(indexPath) : null;
+                } catch (IOException e) {
+                    throw new RuntimeException("Can't read " + indexPath, e);
                 }
-//                InputStream inputStream = modContainer.getMod().getClass().getClassLoader().getResourceAsStream(
-                InputStream inputStream = modContainer.getMod().getClass().getResourceAsStream(
-                        base + "index.json"
-                );
                 if (inputStream != null) {
                     GSON.<List<String>>fromJson(
                                     new InputStreamReader(inputStream, StandardCharsets.UTF_8),
@@ -85,14 +86,15 @@ public class RulesLoader {
                             .map(name -> base + name + ".json")
                             .map(name ->
                             {
-                                InputStream resourceAsStream = modContainer.getMod()
-                                        .getClass()
-                                        .getClassLoader()
-                                        .getResourceAsStream(name);
-                                if (resourceAsStream == null) {
-                                    throw new RuntimeException(new IOException("Can't read " + name));
+                                Path resourcePath = modContainer.getModInfo().getOwningFile().getFile().findResource(name);
+                                try {
+                                    if (!Files.exists(resourcePath)) {
+                                        throw new IOException("Can't read " + name);
+                                    }
+                                    return Files.newInputStream(resourcePath);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
                                 }
-                                return resourceAsStream;
                             })
                             .flatMap(localInputStream ->
                                     GSON.<List<JsonRule>>fromJson(

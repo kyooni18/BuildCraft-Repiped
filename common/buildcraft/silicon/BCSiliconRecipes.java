@@ -1,4 +1,6 @@
 /*
+
+import net.neoforged.fml.common.EventBusSubscriber;
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
@@ -8,7 +10,7 @@ package buildcraft.silicon;
 
 // 1.18.2: use datagen
 @Deprecated(forRemoval = true)
-//@Mod.EventBusSubscriber(modid = BCSilicon.MODID)
+//@EventBusSubscriber(modid = BCSilicon.MODID)
 public class BCSiliconRecipes {
 //    private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 

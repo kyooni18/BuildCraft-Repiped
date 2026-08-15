@@ -7,7 +7,7 @@ package buildcraft.lib.registry;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

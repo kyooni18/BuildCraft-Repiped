@@ -7,7 +7,7 @@ import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.HashMap;
 import java.util.Map;

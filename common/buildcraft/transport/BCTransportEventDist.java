@@ -8,40 +8,45 @@ package buildcraft.transport;
 
 import buildcraft.transport.net.PipeItemMessageQueue;
 import buildcraft.transport.wire.WorldSavedDataWireSystems;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.level.ChunkWatchEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ChunkWatchEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public enum BCTransportEventDist {
     INSTANCE;
 
     @SubscribeEvent
-    public void onWorldTick(TickEvent.LevelTickEvent event) {
+    public void onWorldTickPre(LevelTickEvent.Pre event) {
+        onWorldTick(event);
+    }
+
+    @SubscribeEvent
+    public void onWorldTickPost(LevelTickEvent.Post event) {
+        onWorldTick(event);
+    }
+
+    private void onWorldTick(LevelTickEvent event) {
 //        if (!event.world.isRemote && event.world.getMinecraftServer() != null)
-        if (!event.level.isClientSide && event.level.getServer() != null) {
-            WorldSavedDataWireSystems.get(event.level).tick();
+        if (!event.getLevel().isClientSide && event.getLevel().getServer() != null) {
+            WorldSavedDataWireSystems.get(event.getLevel()).tick();
         }
     }
 
     @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent event) {
+    public void onServerTickPre(ServerTickEvent.Pre event) {
         PipeItemMessageQueue.serverTick();
     }
 
     @SubscribeEvent
-    public void onChunkWatch(ChunkWatchEvent event) {
-        WorldSavedDataWireSystems.get(event.getPlayer().level()).changedPlayers.add(event.getPlayer());
+    public void onServerTickPost(ServerTickEvent.Post event) {
+        PipeItemMessageQueue.serverTick();
     }
 
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Post event) {
-        // 1.18.2: no longer use GlList
-//        PipeWireRenderer.clearWireCache();
+    public void onChunkWatch(ChunkWatchEvent.Sent event) {
+        WorldSavedDataWireSystems.get(event.getPlayer().level()).changedPlayers.add(event.getPlayer());
     }
 
     @SubscribeEvent

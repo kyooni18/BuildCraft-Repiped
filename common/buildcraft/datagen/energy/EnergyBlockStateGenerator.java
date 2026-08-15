@@ -6,7 +6,7 @@ import buildcraft.energy.BCEnergyBlocks;
 import buildcraft.energy.BCEnergyFluids;
 import buildcraft.lib.fluid.BCFluidRegistryContainer;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class EnergyBlockStateGenerator extends BCBaseBlockStateGenerator {

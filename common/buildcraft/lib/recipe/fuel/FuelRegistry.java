@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -66,7 +66,7 @@ public enum FuelRegistry implements IFuelManager {
         fuels.addAll(unregisteredFuels);
         world.getRecipeManager().getAllRecipesFor(IFuel.TYPE).forEach(r -> fuels.add(r.value()));
         for (IFuel fuel : fuels) {
-            if (fuel.getFluid().isFluidEqual(fluid)) {
+            if (FluidStack.isSameFluidSameComponents(fuel.getFluid(), fluid)) {
                 return fuel;
             }
         }

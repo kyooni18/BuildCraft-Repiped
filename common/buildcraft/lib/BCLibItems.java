@@ -5,7 +5,7 @@ import buildcraft.lib.item.ItemGuide;
 import buildcraft.lib.item.ItemGuideNote;
 import buildcraft.lib.item.ItemPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 public class BCLibItems {
     private static final RegistrationHelper HELPER = new RegistrationHelper(BCLib.MODID);

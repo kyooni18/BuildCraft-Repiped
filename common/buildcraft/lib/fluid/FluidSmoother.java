@@ -11,7 +11,7 @@ import buildcraft.lib.net.cache.NetworkedFluidStackCache;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.List;
 
@@ -79,7 +79,7 @@ public class FluidSmoother implements IDebuggable {
             if (fluid == null) {
                 return null;
             }
-            return new FluidStack(fluid, client.amount);
+            return fluid.copyWithAmount(client.amount);
         }
         return null;
     }

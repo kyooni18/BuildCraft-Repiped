@@ -13,8 +13,8 @@ import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.misc.CapUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -57,7 +57,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         }
 
         if (!blockInventoryTriggers) {
-            IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite()).orElse(null);
+            IItemHandler itemHandler = buildcraft.lib.misc.CapUtil.getCapability(tile, CapUtil.CAP_ITEMS, side.getOpposite()).orElse(null);
             if (itemHandler != null) {
                 res.add(BCCoreStatements.TRIGGER_INVENTORY_EMPTY);
                 res.add(BCCoreStatements.TRIGGER_INVENTORY_SPACE);
@@ -70,7 +70,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         }
 
         if (!blockFluidHandlerTriggers) {
-            IFluidHandler fluidHandler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
+            IFluidHandler fluidHandler = buildcraft.lib.misc.CapUtil.getCapability(tile, CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
             if (fluidHandler != null) {
 //                IFluidTankProperties[] liquids = fluidHandler.getTankProperties();
                 int liquids = fluidHandler.getTanks();
@@ -88,7 +88,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         }
 
 //        if (tile.hasCapability(TilesAPI.CAP_HAS_WORK, null))
-        if (tile.getCapability(TilesAPI.CAP_HAS_WORK, null).isPresent()) {
+        if (buildcraft.lib.misc.CapUtil.getCapability(tile, TilesAPI.CAP_HAS_WORK, null).isPresent()) {
             res.add(BCCoreStatements.TRIGGER_MACHINE_ACTIVE);
             res.add(BCCoreStatements.TRIGGER_MACHINE_INACTIVE);
         }

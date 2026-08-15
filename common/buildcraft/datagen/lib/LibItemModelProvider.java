@@ -4,7 +4,7 @@ import buildcraft.datagen.base.BCBaseItemModelGenerator;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nonnull;
 

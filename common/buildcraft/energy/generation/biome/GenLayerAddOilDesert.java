@@ -11,8 +11,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate.Parameter;
 import net.minecraft.world.level.biome.Climate.ParameterPoint;
-import net.minecraftforge.common.Tags.Biomes;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.Tags.Biomes;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import java.util.Arrays;
 import java.util.List;

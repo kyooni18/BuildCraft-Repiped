@@ -26,8 +26,8 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -209,8 +209,8 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(key.state);
 //        BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
 //        RenderType renderLayer = MinecraftForgeClient.getRenderType();
-//        ForgeHooksClient.setRenderLayer(null);
-//        ForgeHooksClient.setRenderType(null);
+//        ClientHooks.setRenderLayer(null);
+//        ClientHooks.setRenderType(null);
         List<MutableQuad> quads = new ArrayList<>();
         int pS = PluggableFacade.SIZE;
         int nS = 16 - pS;
@@ -284,8 +284,8 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                 }
             }
         }
-//        ForgeHooksClient.setRenderLayer(renderLayer);
-//        ForgeHooksClient.setRenderType(renderLayer);
+//        ClientHooks.setRenderLayer(renderLayer);
+//        ClientHooks.setRenderType(renderLayer);
         for (MutableQuad quad : quads) {
             int tint = quad.getTint();
             if (tint != -1) {

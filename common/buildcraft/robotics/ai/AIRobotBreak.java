@@ -14,9 +14,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
-import buildcraft.api.core.FakePlayer;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.event.EventHooks;
 
 public class AIRobotBreak extends AIRobot {
     private BlockPos blockToBreak;
@@ -82,13 +82,6 @@ public class AIRobotBreak extends AIRobot {
 
             boolean continueBreaking = true;
 
-            // if (robot.getMainHandItem() != null)
-            if (!robot.getMainHandItem().isEmpty()) {
-                FakePlayer fakePlayer = FakePlayerProvider.INSTANCE.getFakePlayer((ServerLevel) robot.level(), FakePlayerProvider.NULL_PROFILE);
-                if (robot.getMainHandItem().getItem().onBlockStartBreak(robot.getMainHandItem(), blockToBreak, fakePlayer)) {
-                    continueBreaking = false;
-                }
-            }
 
             if (continueBreaking && BlockUtil.harvestBlock((ServerLevel) robot.level(), blockToBreak, robot.getMainHandItem(), FakePlayerProvider.NULL_PROFILE)) {
                 // robot.worldObj.playAuxSFXAtEntity(null, 2001, blockToBreak, Block.getStateId(state));
@@ -131,7 +124,7 @@ public class AIRobotBreak extends AIRobot {
                 float f1 = i * i + 1;
 
                 // boolean canHarvest = ForgeHooks.canToolHarvestBlock(robot.level, pos, usingItem);
-                boolean canHarvest = ForgeHooks.isCorrectToolForDrops(robot.level().getBlockState(pos), BlockUtil.getFakePlayerWithTool((ServerLevel) robot.level(), usingItem, FakePlayerProvider.NULL_PROFILE));
+                boolean canHarvest = usingItem.isCorrectToolForDrops(state);
 
                 if (!canHarvest && f <= 1.0F) {
                     f += f1 * 0.08F;
@@ -141,7 +134,7 @@ public class AIRobotBreak extends AIRobot {
             }
         }
 
-        f = ForgeEventFactory.getBreakSpeed(BlockUtil.getFakePlayerWithTool((ServerLevel) robot.level(), robot.getMainHandItem(), FakePlayerProvider.NULL_PROFILE), state,
+        f = EventHooks.getBreakSpeed(BlockUtil.getFakePlayerWithTool((ServerLevel) robot.level(), robot.getMainHandItem(), FakePlayerProvider.NULL_PROFILE), state,
                 f, blockToBreak);
         return f < 0 ? 0 : f;
     }

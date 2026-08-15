@@ -19,9 +19,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 
@@ -131,7 +131,7 @@ public final class PluggableHolder {
     }
 
     // public void readPayload(PacketBufferBC buffer, Dist netSide, MessageContext ctx) throws IOException
-    public void readPayload(PacketBufferBC buffer, NetworkDirection netSide, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, NetworkDirection netSide, MessageContext ctx) throws IOException {
         int id = buffer.readUnsignedByte();
         if (netSide == NetworkDirection.PLAY_TO_SERVER) {
             if (id == ID_UPDATE_PLUG) {

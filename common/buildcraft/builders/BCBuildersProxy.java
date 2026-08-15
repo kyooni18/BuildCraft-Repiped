@@ -11,8 +11,8 @@ import buildcraft.builders.snapshot.MessageSnapshotRequest;
 import buildcraft.builders.snapshot.MessageSnapshotResponse;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.net.MessageManager;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLLoader;
 
 //public abstract class BCBuildersProxy implements IGuiHandler
 public abstract class BCBuildersProxy {
@@ -140,7 +140,7 @@ public abstract class BCBuildersProxy {
             super.fmlPreInit();
             // Calen: NullPointerException: Cannot set config value without assigned Config object present
             // ...
-            // at net.minecraftforge.common.ForgeConfigSpec$ConfigValue.set(ForgeConfigSpec.java:873)
+            // at net.neoforged.neoforge.common.ForgeConfigSpec$ConfigValue.set(ForgeConfigSpec.java:873)
             // at buildcraft.builders.BCBuildersProxy$ClientProxy.fmlPreInit(BCBuildersProxy.java:171)
             // ...
 //            if (BCBuildersConfig.enableStencil) {

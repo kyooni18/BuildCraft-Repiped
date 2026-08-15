@@ -28,8 +28,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -142,7 +142,7 @@ public class RenderDistiller implements BlockEntityRenderer<TileDistiller_BC8> {
         if (fluid == null || fluid.amount <= 0) {
             return;
         }
-        int blockLight = fluid.fluid.getRawFluid().getFluidType().getLightLevel(fluid.fluid) & 0xF;
+        int blockLight = fluid.fluid.getFluid().getFluidType().getLightLevel(fluid.fluid) & 0xF;
         combinedLight |= blockLight << 4;
         FluidRenderer.vertex.lighti(combinedLight);
         FluidRenderer.vertex.overlay(combinedOverlay);

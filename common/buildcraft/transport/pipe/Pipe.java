@@ -25,19 +25,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.LazyOptional;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 
-public final class Pipe implements IPipe, IDebuggable {
+public final class Pipe implements IPipe, IDebuggable, buildcraft.api.compat.capability.ICapabilityProvider {
     private static final float DEFAULT_CONNECTION_DISTANCE = 0.25f;
 
     public final IPipeHolder holder;
@@ -109,7 +109,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     // network
 
-    public Pipe(IPipeHolder holder, PacketBufferBC buffer, CustomPayloadEvent.Context ctx) throws IOException {
+    public Pipe(IPipeHolder holder, PacketBufferBC buffer, MessageContext ctx) throws IOException {
         this.holder = holder;
         try {
             this.definition = PipeRegistry.INSTANCE.loadDefinition(buffer.readUtf(256));
@@ -147,7 +147,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @OnlyIn(Dist.CLIENT)
 //    public void readPayload(PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             connected.clear();
             types.clear();
@@ -287,7 +287,7 @@ public final class Pipe implements IPipe, IDebuggable {
                     continue;
                 }
 //                PipePluggable oPlug = oTile.getCapability(PipeApi.CAP_PLUG, facing.getOpposite());
-                PipePluggable oPlug = oTile.getCapability(PipeApi.CAP_PLUG, facing.getOpposite()).orElse(null);
+                PipePluggable oPlug = buildcraft.lib.misc.CapUtil.getCapability(oTile, PipeApi.CAP_PLUG, facing.getOpposite()).orElse(null);
                 if (oPlug == null || !oPlug.isBlocking()) {
                     if (canPipesConnect(facing, this, oPipe)) {
                         connected.put(facing, DEFAULT_CONNECTION_DISTANCE);

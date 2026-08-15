@@ -1,5 +1,7 @@
 package buildcraft.core;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
 import buildcraft.core.client.CoreItemModelPredicates;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
@@ -15,17 +17,18 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Consumer;
 
@@ -40,7 +43,7 @@ import java.util.function.Consumer;
 //)
 //@formatter:on
 @Mod(BCCore.MODID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class BCCore {
     public static final String MODID = "buildcraftcore";
     public static final String MOD_VERSION = ModList.get().getModContainerById(MODID).get().getModInfo().getVersion().toString();
@@ -86,7 +89,7 @@ public class BCCore {
 //        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
 
 //        OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE); // 1.18.2: use datagen
-        MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
+        NeoForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
 //        BCCoreConfig.saveConfigs();
     }
 
@@ -112,9 +115,14 @@ public class BCCore {
         BCCoreConfig.postInit();
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static final class ClientEvents {
         private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            BCCoreMenuTypes.registerScreens(event);
         }
 
         @SubscribeEvent
@@ -127,12 +135,12 @@ public class BCCore {
     @SubscribeEvent
     public static void onRegisterEvent(RegisterEvent event) {
         ResourceKey<? extends Registry<?>> registry = event.getRegistryKey();
+        BCCoreMenuTypes.registerAll(event);
         if (registry == Registries.CREATIVE_MODE_TAB) {
             // Creative Tab
-            Registry.register(event.getVanillaRegistry(), mainTab.getId(), mainTab);
+            event.register(Registries.CREATIVE_MODE_TAB, mainTab.getId(), () -> mainTab);
         } else if (registry == Registries.BLOCK) {
             // GUI
-            BCCoreMenuTypes.registerAll();
         }
     }
 

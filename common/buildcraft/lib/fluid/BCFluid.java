@@ -22,7 +22,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
 import java.util.Map;
 
@@ -30,13 +30,14 @@ import java.util.Map;
  * The methods are just copied from the super classes and changed some vars
  * to make oils behave like they did in 1.12.2.
  */
-public abstract class BCFluid extends ForgeFlowingFluid {
+public abstract class BCFluid extends BaseFlowingFluid {
     protected BCFluidRegistryContainer fluidRegistryContainer;
-    protected boolean isGas = this.getFluidType().isLighterThanAir();
+    protected boolean isGas;
 
-    protected BCFluid(ForgeFlowingFluid.Properties properties, BCFluidRegistryContainer reg) {
+    protected BCFluid(BaseFlowingFluid.Properties properties, BCFluidRegistryContainer reg) {
         super(properties);
         this.fluidRegistryContainer = reg;
+        this.isGas = reg.isLighterThanAir();
     }
 
     public BCFluidRegistryContainer getReg() {
@@ -79,7 +80,7 @@ public abstract class BCFluid extends ForgeFlowingFluid {
         }
     }
 
-    // ForgeFlowingFluid
+    // BaseFlowingFluid
 
     @Override
     protected boolean canBeReplacedWith(FluidState state, BlockGetter level, BlockPos pos, Fluid fluidIn, Direction direction) {

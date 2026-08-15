@@ -14,8 +14,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +47,21 @@ public class LaserBoxRenderer {
 
         for (LaserData_BC8 data : box.laserData) {
             LaserRenderer_BC8.renderLaserDynamic(data, pose, bb);
+        }
+    }
+
+    /** Renders a world-coordinate laser box from a level render stage using camera-relative vertices. */
+    public static void renderLaserBoxWorld(
+            Box box, LaserType type, PoseStack.Pose pose, VertexConsumer buffer, boolean center, Vec3 cameraPos
+    ) {
+        if (box == null || box.min() == null || box.max() == null) {
+            return;
+        }
+
+        makeLaserBox(box, type, center);
+
+        for (LaserData_BC8 data : box.laserData) {
+            LaserRenderer_BC8.renderLaserWorld(data, pose, buffer, cameraPos);
         }
     }
 

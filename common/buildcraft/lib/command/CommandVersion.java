@@ -7,10 +7,10 @@ import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.VersionChecker.CheckResult;
-import net.minecraftforge.fml.VersionChecker.Status;
-import net.minecraftforge.versions.mcp.MCPVersion;
+import net.neoforged.fml.VersionChecker;
+import net.neoforged.fml.VersionChecker.CheckResult;
+import net.neoforged.fml.VersionChecker.Status;
+import net.minecraft.SharedConstants;
 
 //public class CommandVersion extends CommandBase
 public class CommandVersion extends BCSubCommandBase {
@@ -54,7 +54,7 @@ public class CommandVersion extends BCSubCommandBase {
                         style.withColor(ChatFormatting.GRAY);
                     }
 
-                    Object[] textArgs = { currentVersion, MCPVersion.getMCVersion(), result.target() };
+                    Object[] textArgs = { currentVersion, SharedConstants.getCurrentVersion().getName(), result.target() };
 //                    sender.sendMessage(Component.literalTranslation("command.buildcraft.version", textArgs).setStyle(style));
                     sender.sendSystemMessage(Component.translatable("command.buildcraft.version", textArgs).setStyle(style));
 

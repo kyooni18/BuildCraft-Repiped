@@ -17,7 +17,7 @@ import buildcraft.lib.config.ConfigCategory;
 import buildcraft.lib.config.Configuration;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.misc.MathUtil;
-import net.minecraftforge.data.loading.DatagenModLoader;
+import net.neoforged.neoforge.data.loading.DatagenModLoader;
 
 public class BCTransportConfig {
     public enum PowerLossMode {
@@ -63,7 +63,7 @@ public class BCTransportConfig {
         createProps();
 
         reloadConfig();
-//        MinecraftForge.EVENT_BUS.register(BCTransportConfig.class);
+//        NeoForge.EVENT_BUS.register(BCTransportConfig.class);
         BCConfig.registerReloadListener(module, BCTransportConfig::reloadConfig);
     }
 

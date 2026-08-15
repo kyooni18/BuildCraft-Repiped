@@ -36,9 +36,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import org.joml.Matrix4f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -103,18 +103,12 @@ public class RenderTickListener {
             }
             String headerFirst = DIFF_HEADER_FORMATTING + "SERVER:";
             String headerSecond = DIFF_HEADER_FORMATTING + "CLIENT:";
-            if (event.getSide() == CustomizeGuiOverlayEvent.DebugText.Side.Left) {
-                appendDiff(event.getText(), ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
-            } else {
-                appendDiff(event.getText(), ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
-            }
-//            debuggable.getClientDebugInfo(event.getLeft(), event.getRight(), mc.objectMouseOver.sideHit);
-            List<String> overlayLeft = event.getSide() == CustomizeGuiOverlayEvent.DebugText.Side.Left ? event.getText() : new ArrayList<>();
-            List<String> overlayRight = event.getSide() == CustomizeGuiOverlayEvent.DebugText.Side.Right ? event.getText() : new ArrayList<>();
+            appendDiff(event.getLeft(), ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
+            appendDiff(event.getRight(), ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
             if (mc.hitResult instanceof BlockHitResult blockHitResult) {
-                debuggable.getClientDebugInfo(overlayLeft, overlayRight, blockHitResult.getDirection());
+                debuggable.getClientDebugInfo(event.getLeft(), event.getRight(), blockHitResult.getDirection());
             } else {
-                debuggable.getClientDebugInfo(overlayLeft, overlayRight, null);
+                debuggable.getClientDebugInfo(event.getLeft(), event.getRight(), null);
             }
         }
     }
@@ -156,9 +150,10 @@ public class RenderTickListener {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             return;
         }
-        float partialTicks = event.getPartialTick();
+        float partialTicks = event.getPartialTick().getGameTimeDeltaPartialTick(false);
         PoseStack poseStack = new PoseStack();
-        poseStack.last().pose().set(new Matrix4f(event.getPoseStack()));
+        poseStack.last().pose().set(new Matrix4f(event.getPoseStack().last().pose()));
+        poseStack.last().normal().set(event.getPoseStack().last().normal());
         renderHeldItemInWorld(partialTicks, poseStack, event.getCamera());
     }
 

@@ -29,8 +29,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,7 +65,7 @@ public class TileRequester extends TileBC_Neptune implements IRequestProvider, I
     }
 
     @Override
-    public void readPayload(int command, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int command, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(command, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_SERVER && NET_SET_REQUEST == command) {
             setRequest(buffer.readUnsignedByte(), buffer.readItem());

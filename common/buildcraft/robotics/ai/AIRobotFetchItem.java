@@ -15,7 +15,7 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.robotics.boards.BoardRobotPicker;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 public class AIRobotFetchItem extends AIRobot {
 

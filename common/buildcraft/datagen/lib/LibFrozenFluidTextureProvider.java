@@ -11,8 +11,8 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.material.EmptyFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

@@ -30,15 +30,15 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LazyLoadedValue;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +75,7 @@ public class BCCoreModels {
 
     public static void fmlPreInit() {
         // 1.18.2: following events are IModBusEvent
-//        MinecraftForge.EVENT_BUS.register(BCCoreModels.class);
+//        NeoForge.EVENT_BUS.register(BCCoreModels.class);
         IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(BCCore.MODID).get()).getEventBus();
         modEventBus.register(BCCoreModels.class);
     }
@@ -107,7 +107,7 @@ public class BCCoreModels {
 
     // Calen 1.20.1
     @SubscribeEvent
-    public static void onTextureStitchEvent$Post(TextureStitchEvent.Post event) {
+    public static void onTextureStitchEvent$Post(TextureAtlasStitchedEvent event) {
         if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
             spriteTasks.forEach(Runnable::run);
         }

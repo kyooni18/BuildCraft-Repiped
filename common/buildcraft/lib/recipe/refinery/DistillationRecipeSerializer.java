@@ -10,7 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class DistillationRecipeSerializer implements RecipeSerializer<IDistillationRecipe> {
     public static final DistillationRecipeSerializer INSTANCE = new DistillationRecipeSerializer();

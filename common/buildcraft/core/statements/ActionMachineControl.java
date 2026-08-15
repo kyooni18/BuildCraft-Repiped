@@ -19,8 +19,8 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
@@ -48,7 +48,7 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 
     @Override
     public void actionActivate(BlockEntity target, Direction side, IStatementContainer source, IStatementParameter[] parameters) {
-        IControllable controllable = target.getCapability(TilesAPI.CAP_CONTROLLABLE, side.getOpposite()).orElse(null);
+        IControllable controllable = buildcraft.lib.misc.CapUtil.getCapability(target, TilesAPI.CAP_CONTROLLABLE, side.getOpposite()).orElse(null);
         if (controllable != null && controllable.acceptsControlMode(mode)) {
             controllable.setControlMode(mode);
         }

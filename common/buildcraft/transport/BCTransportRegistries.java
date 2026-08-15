@@ -18,7 +18,7 @@ import buildcraft.transport.stripes.*;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 public class BCTransportRegistries {
 
@@ -26,7 +26,7 @@ public class BCTransportRegistries {
         PipeApi.pipeRegistry = PipeRegistry.INSTANCE;
         PipeApi.stripeRegistry = StripesRegistry.INSTANCE;
         PipeApi.extensionManager = PipeExtensionManager.INSTANCE;
-        MinecraftForge.EVENT_BUS.register(PipeExtensionManager.INSTANCE);
+        NeoForge.EVENT_BUS.register(PipeExtensionManager.INSTANCE);
 
         PipeApi.flowItems = new PipeFlowType(PipeFlowItems::new, PipeFlowItems::new).setDefaultMapColour(MapColor.METAL);
         PipeApi.flowFluids = new PipeFlowType(PipeFlowFluids::new, PipeFlowFluids::new).setDefaultMapColour(MapColor.COLOR_GREEN);

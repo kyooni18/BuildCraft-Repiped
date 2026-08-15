@@ -27,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -118,7 +118,7 @@ public class SiliconAssemblyRecipeGenerator extends BCCompatRecipeProvider {
         }
 
 //        IngredientStack glass = IngredientStack.of("blockGlass");
-        IngredientStack glass = IngredientStack.of(Tags.Items.GLASS_COLORLESS);
+        IngredientStack glass = IngredientStack.of(Tags.Items.GLASS_BLOCKS_COLORLESS);
         ImmutableSet<IngredientStack> input2 = ImmutableSet.of(glass);
         ItemStack output2 = BCSiliconItems.plugLens.get().getStack(null, false);
 //        AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("lens-regular", 500 * MjAPI.MJ, input, output));

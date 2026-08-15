@@ -13,7 +13,7 @@ import buildcraft.robotics.block.BlockZonePlanner;
 import buildcraft.robotics.tile.TileRequester;
 import buildcraft.robotics.tile.TileZonePlanner;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 public class BCRoboticsBlocks {
     private static final RegistrationHelper HELPER = new RegistrationHelper(BCRobotics.MODID);

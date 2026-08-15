@@ -8,7 +8,7 @@ package buildcraft.lib.fluid;
 
 import buildcraft.lib.misc.StackUtil;
 import net.minecraft.world.level.material.EmptyFluid;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 //public class TankProperties implements FluidTankProperties
 public class TankProperties {
@@ -25,7 +25,7 @@ public class TankProperties {
     public FluidStack getContents() {
         FluidStack current = tank.getFluid();
 //        return current == null ? null : current.copy();
-        return (current == null || current.getRawFluid() instanceof EmptyFluid) ? StackUtil.EMPTY_FLUID : current.copy();
+        return (current == null || current.getFluid() instanceof EmptyFluid) ? StackUtil.EMPTY_FLUID : current.copy();
     }
 
     // @Override

@@ -1,5 +1,7 @@
 package buildcraft.energy;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
@@ -16,17 +18,17 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.function.Consumer;
 
@@ -39,7 +41,7 @@ import java.util.function.Consumer;
 //)
 //@formatter:on
 @Mod(BCEnergy.MODID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
 
@@ -82,9 +84,14 @@ public class BCEnergy {
         BCEnergyProxy.getProxy().fmlInit();
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static final class ClientEvents {
         private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            BCEnergyMenuTypes.registerScreens(event);
         }
 
         @SubscribeEvent
@@ -109,14 +116,17 @@ public class BCEnergy {
     @SubscribeEvent
     public static void onRegisterEvent(RegisterEvent event) {
         ResourceKey<? extends Registry<?>> registry = event.getRegistryKey();
+        event.register(Registries.RECIPE_TYPE, IFuel.TYPE_ID, () -> IFuel.TYPE);
+        event.register(Registries.RECIPE_TYPE, ICoolant.TYPE_ID, () -> ICoolant.TYPE);
+        event.register(Registries.RECIPE_SERIALIZER, IFuel.TYPE_ID, () -> FuelRecipeSerializer.INSTANCE);
+        event.register(Registries.RECIPE_SERIALIZER, ICoolant.TYPE_ID, () -> CoolantRecipeSerializer.INSTANCE);
+        BCEnergyMenuTypes.registerAll(event);
         if (registry == Registries.BLOCK) {
-            ForgeRegistries.RECIPE_TYPES.register(IFuel.TYPE_ID, IFuel.TYPE);
-            ForgeRegistries.RECIPE_TYPES.register(ICoolant.TYPE_ID, ICoolant.TYPE);
-            ForgeRegistries.RECIPE_SERIALIZERS.register(IFuel.TYPE_ID, FuelRecipeSerializer.INSTANCE);
-            ForgeRegistries.RECIPE_SERIALIZERS.register(ICoolant.TYPE_ID, CoolantRecipeSerializer.INSTANCE);
+
+
+
 
             // GUI
-            BCEnergyMenuTypes.registerAll();
 
             // Worldgen
             OilStructureRegistry.clinit();

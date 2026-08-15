@@ -22,8 +22,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Set;
 
@@ -121,4 +121,9 @@ public class RenderMarkerVolume implements BlockEntityRenderer<TileMarkerVolume>
             return vec.add(0, 0, -by);
         }
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileMarkerVolume tile) {
+        return tile.getRenderBoundingBox();
+    }
+
 }

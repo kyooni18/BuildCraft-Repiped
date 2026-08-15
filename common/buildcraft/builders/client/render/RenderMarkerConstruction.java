@@ -168,4 +168,9 @@ public class RenderMarkerConstruction implements BlockEntityRenderer<TileMarkerC
         // Calen: as beacon and endGateway
         return BCCoreConfig.markerMaxDistance * 2;
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileMarkerConstruction tile) {
+        return tile.getRenderBoundingBox();
+    }
+
 }

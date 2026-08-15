@@ -18,7 +18,7 @@ import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationProvideItems;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 

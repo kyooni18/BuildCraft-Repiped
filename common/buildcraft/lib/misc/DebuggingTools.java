@@ -12,16 +12,16 @@ import buildcraft.lib.block.ILocalBlockUpdateSubscriber;
 import buildcraft.lib.block.LocalBlockUpdateNotifier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public class DebuggingTools {
     public static final boolean ENABLE = BCDebugging.shouldDebugComplex("lib.debug.world");
 
     public static void fmlInit() {
         if (ENABLE) {
-            MinecraftForge.EVENT_BUS.register(new EventHook());
+            NeoForge.EVENT_BUS.register(new EventHook());
         }
     }
 

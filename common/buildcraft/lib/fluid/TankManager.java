@@ -20,10 +20,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -113,13 +113,13 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
 //            return null;
             return StackUtil.EMPTY_FLUID;
         }
-        FluidStack draining = new FluidStack(resource, 0);
+        FluidStack draining = resource.copyWithAmount(0);
         int left = resource.getAmount();
         for (Tank tank : getDrainOrderTanks()) {
             // Calen: in 1.18.2 isFluidEqual may ret f if amount of one is 0
             // Calen: should use resource, draining.getFluid() will ret EMPTY
-//            if (!draining.isFluidEqual(tank.getFluid()))
-            if (tank.getFluid().getRawFluid() != resource.getRawFluid()) {
+//            if (!FluidStack.isSameFluidSameComponents(draining, tank.getFluid()))
+            if (tank.getFluid().getFluid() != resource.getFluid()) {
                 continue;
             }
             FluidStack drained = tank.drain(left, doDrain);
@@ -144,7 +144,7 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
                     draining = drained;
                     maxDrain -= drained.getAmount();
                 }
-            } else if (draining.isFluidEqual(tank.getFluid())) {
+            } else if (FluidStack.isSameFluidSameComponents(draining, tank.getFluid())) {
                 FluidStack drained = tank.drain(maxDrain, doDrain);
 //                if (drained != null && drained.getAmount() > 0)
                 if (!drained.isEmpty() && drained.getAmount() > 0) {
@@ -174,7 +174,7 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
                     draining = drained;
                     maxDrain -= drained.getAmount();
                 }
-            } else if (draining.isFluidEqual(tank.getFluid())) {
+            } else if (FluidStack.isSameFluidSameComponents(draining, tank.getFluid())) {
                 FluidStack drained = tank.drain(maxDrain, doDrain);
 //                if (drained != null && drained.getAmount() > 0)
                 if (!drained.isEmpty() && drained.getAmount() > 0) {

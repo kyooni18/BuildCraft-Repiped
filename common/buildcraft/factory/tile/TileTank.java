@@ -34,12 +34,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,7 +136,7 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
 //            if (fluid == null)
             if (fluid.isEmpty()) {
                 fluid = held;
-            } else if (!fluid.isFluidEqual(held)) {
+            } else if (!FluidStack.isSameFluidSameComponents(fluid, held)) {
                 return;
             }
         }
@@ -144,7 +144,7 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
         if (fluid.isEmpty()) {
             return;
         }
-        if (fluid.getRawFluid().getFluidType().isLighterThanAir()) {
+        if (fluid.getFluid().getFluidType().isLighterThanAir()) {
             Collections.reverse(tanks);
         }
         TileTank prev = null;
@@ -191,7 +191,7 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -375,11 +375,11 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
         List<TileTank> tanks = getAllTanks();
         for (TileTank t : tanks) {
             FluidStack current = t.tank.getFluid();
-            if (!current.isEmpty() && !current.isFluidEqual(resource)) {
+            if (!current.isEmpty() && !FluidStack.isSameFluidSameComponents(current, resource)) {
                 return 0;
             }
         }
-        boolean gas = resource.getRawFluid().getFluidType().isLighterThanAir();
+        boolean gas = resource.getFluid().getFluidType().isLighterThanAir();
         if (gas) {
             Collections.reverse(tanks);
         }
@@ -432,7 +432,7 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
             FluidStack fluid = tile.tank.getFluid();
 //            if (fluid != null)
             if (!fluid.isEmpty()) {
-                gas = fluid.getRawFluid().getFluidType().isLighterThanAir();
+                gas = fluid.getFluid().getFluidType().isLighterThanAir();
                 break;
             }
         }

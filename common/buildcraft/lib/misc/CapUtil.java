@@ -3,11 +3,15 @@ package buildcraft.lib.misc;
 import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.inventory.IItemTransactor;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.*;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import buildcraft.api.compat.capability.*;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,8 +34,9 @@ public class CapUtil {
     // Calen: called in BCLib
     @SubscribeEvent
     public static void registerCapability(RegisterCapabilitiesEvent evt) {
-        evt.register(IItemTransactor.class);
-        evt.register(IFluidHandlerAdv.class);
+        // Capability type objects no longer need class registration in NeoForge. Instead expose BuildCraft's
+        // compatibility providers through the real block/entity capability registry.
+        LegacyCapabilityRegistry.registerNeoForgeProviders(evt);
     }
 
     @Nonnull
@@ -64,11 +69,27 @@ public class CapUtil {
     /** Attempts to fetch the given capability from the given provider, or returns null if either of those two are
      * null. */
     @Nullable
-    public static <T> LazyOptional<T> getCapability(ICapabilityProvider provider, Capability<T> capability, Direction facing) {
+    public static <T> LazyOptional<T> getCapability(Object provider, Capability<T> capability, Direction facing) {
         if (provider == null || capability == null) {
-//            return null;
             return LazyOptional.empty();
         }
-        return provider.getCapability(capability, facing);
+        if (provider instanceof ICapabilityProvider legacy) {
+            LazyOptional<T> value = legacy.getCapability(capability, facing);
+            if (value.isPresent()) return value;
+        }
+        if (provider instanceof BlockEntity blockEntity && blockEntity.getLevel() != null && capability.block() != null) {
+            T value = blockEntity.getLevel().getCapability(capability.block(), blockEntity.getBlockPos(), facing);
+            return value == null ? LazyOptional.empty() : LazyOptional.of(() -> value);
+        }
+        if (provider instanceof Entity entity && capability.entity() != null) {
+            T value = entity.getCapability(capability.entity(), facing);
+            return value == null ? LazyOptional.empty() : LazyOptional.of(() -> value);
+        }
+        if (provider instanceof ItemStack stack && capability.item() != null) {
+            @SuppressWarnings("unchecked")
+            T value = (T) stack.getCapability(capability.item());
+            return value == null ? LazyOptional.empty() : LazyOptional.of(() -> value);
+        }
+        return LazyOptional.empty();
     }
 }

@@ -13,8 +13,8 @@ import buildcraft.lib.misc.StackUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
 
 public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
     public PipeBehaviourDiamondFluid(IPipe pipe, CompoundTag nbt) {
@@ -41,7 +41,7 @@ public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
                         continue;
                     }
                     foundItem = true;
-                    if (target.isFluidEqual(toCompare)) {
+                    if (FluidStack.isSameFluidSameComponents(target, toCompare)) {
                         sideAllowed = true;
                         break;
                     }

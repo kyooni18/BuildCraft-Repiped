@@ -27,7 +27,7 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
+import buildcraft.api.compat.registry.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -39,13 +39,13 @@ public class BCFluidBlock extends LiquidBlock {
     private final BCFluidRegistryContainer registryContainer;
 
     public BCFluidBlock(Supplier<? extends FlowingFluid> p_54694_, BlockBehaviour.Properties properties, boolean sticky, BCFluidRegistryContainer registryContainer) {
-        super(p_54694_, properties);
+        super(p_54694_.get(), properties);
         this.registerDefaultState(
                 this.stateDefinition.any()
                         .setValue(LEVEL, Integer.valueOf(0))
         );
-        displaceWater = new LazyLoadedValue<>(() -> this.getFluid().getFluidType().getDensity() > 1000);
-        displaceLava = new LazyLoadedValue<>(() -> this.getFluid().getFluidType().getDensity() > 9000);
+        displaceWater = new LazyLoadedValue<>(() -> p_54694_.get().getFluidType().getDensity() > 1000);
+        displaceLava = new LazyLoadedValue<>(() -> p_54694_.get().getFluidType().getDensity() > 9000);
 
         this.sticky = sticky;
         this.registryContainer = registryContainer;

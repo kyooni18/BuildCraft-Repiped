@@ -18,9 +18,9 @@ import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraftforge.client.model.ItemLayerModel;
-import net.minecraftforge.client.model.ItemLayerModel.Loader;
-import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
+import net.neoforged.neoforge.client.model.ItemLayerModel;
+import net.neoforged.neoforge.client.model.ItemLayerModel.Loader;
+import net.neoforged.neoforge.client.model.geometry.StandaloneGeometryBakingContext;
 
 import java.util.HashSet;
 import java.util.List;

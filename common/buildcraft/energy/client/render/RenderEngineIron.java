@@ -11,8 +11,8 @@ import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.tile.RenderEngine_BC8;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderEngineIron extends RenderEngine_BC8<TileEngineIron_BC8> {

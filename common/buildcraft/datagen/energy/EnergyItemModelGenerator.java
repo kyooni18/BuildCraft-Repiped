@@ -5,7 +5,7 @@ import buildcraft.energy.BCEnergy;
 import buildcraft.energy.BCEnergyBlocks;
 import buildcraft.energy.BCEnergyItems;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nonnull;
 

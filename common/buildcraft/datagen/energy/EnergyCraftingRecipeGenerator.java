@@ -13,7 +13,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -33,7 +33,7 @@ public class EnergyCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern(" g ")
                 .pattern("GpG")
                 .define('w', Ingredient.of(Tags.Items.INGOTS_IRON))
-                .define('g', Ingredient.of(Tags.Items.GLASS_COLORLESS))
+                .define('g', Ingredient.of(Tags.Items.GLASS_BLOCKS_COLORLESS))
                 .define('G', Ingredient.of(OreDictionaryTags.GEAR_IRON))
                 .define('p', Ingredient.of(Items.PISTON))
                 .unlockedBy("has_item", has(OreDictionaryTags.GEAR_IRON))
@@ -44,8 +44,8 @@ public class EnergyCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern("www")
                 .pattern(" g ")
                 .pattern("GpG")
-                .define('w', Ingredient.of(Tags.Items.COBBLESTONE))
-                .define('g', Ingredient.of(Tags.Items.GLASS_COLORLESS))
+                .define('w', Ingredient.of(Tags.Items.COBBLESTONES))
+                .define('g', Ingredient.of(Tags.Items.GLASS_BLOCKS_COLORLESS))
                 .define('G', Ingredient.of(OreDictionaryTags.GEAR_STONE))
                 .define('p', Ingredient.of(Items.PISTON))
                 .unlockedBy("has_item", has(OreDictionaryTags.GEAR_STONE))
@@ -57,7 +57,7 @@ public class EnergyCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern(" g ")
                 .pattern("GpG")
                 .define('w', Ingredient.of(Tags.Items.DUSTS_REDSTONE))
-                .define('g', Ingredient.of(Tags.Items.GLASS_COLORLESS))
+                .define('g', Ingredient.of(Tags.Items.GLASS_BLOCKS_COLORLESS))
                 .define('G', Ingredient.of(OreDictionaryTags.GEAR_IRON))
                 .define('p', Ingredient.of(Items.PISTON))
                 .unlockedBy("has_item", has(OreDictionaryTags.GEAR_IRON))
@@ -69,7 +69,7 @@ public class EnergyCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern(" p ")
                 .pattern("GwG")
                 .define('w', Ingredient.of(Tags.Items.DUSTS_REDSTONE))
-                .define('g', Ingredient.of(Tags.Items.GLASS_COLORLESS))
+                .define('g', Ingredient.of(Tags.Items.GLASS_BLOCKS_COLORLESS))
                 .define('G', Ingredient.of(OreDictionaryTags.GEAR_IRON))
                 .define('p', Ingredient.of(Items.PISTON))
                 .unlockedBy("has_item", has(OreDictionaryTags.GEAR_IRON))

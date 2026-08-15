@@ -34,10 +34,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -196,7 +196,7 @@ public class TileProgrammingTable_Neptune extends TileLaserTableBase implements 
 //    }
 
     @Override
-    public void readPayload(int id, PacketBufferBC stream, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC stream, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(id, stream, side, ctx);
 
         if (id == NET_GUI_DATA) {

@@ -34,8 +34,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -168,7 +168,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 implements IBCTileMe
      */
     private static int getItemBurnTime(ItemStack itemstack) {
 //        return TileEntityFurnace.getItemBurnTime(itemstack);
-        return ForgeHooks.getBurnTime(itemstack, RecipeType.SMELTING);
+        return itemstack.getBurnTime(RecipeType.SMELTING);
     }
 
     @Override

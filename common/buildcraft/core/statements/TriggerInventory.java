@@ -17,7 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.Locale;
 
@@ -61,7 +61,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
             searchedStack = parameters[0].getItemStack();
         }
 
-        IItemHandler handler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite()).orElse(null);
+        IItemHandler handler = buildcraft.lib.misc.CapUtil.getCapability(tile, CapUtil.CAP_ITEMS, side.getOpposite()).orElse(null);
 
         if (handler != null) {
             boolean hasSlots = false;

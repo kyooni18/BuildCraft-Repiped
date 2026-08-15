@@ -16,8 +16,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderArchitectTable implements BlockEntityRenderer<TileArchitectTable> {
@@ -64,4 +64,9 @@ public class RenderArchitectTable implements BlockEntityRenderer<TileArchitectTa
     public int getViewDistance() {
         return 512;
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileArchitectTable tile) {
+        return tile.getRenderBoundingBox();
+    }
+
 }

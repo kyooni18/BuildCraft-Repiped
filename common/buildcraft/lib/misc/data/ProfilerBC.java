@@ -2,8 +2,8 @@ package buildcraft.lib.misc.data;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /** An extension for minecraft's {@link ProfilerFiller} class that returns {@link AutoCloseable} profiler sections. */
 public class ProfilerBC {

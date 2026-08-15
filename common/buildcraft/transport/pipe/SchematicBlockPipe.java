@@ -6,6 +6,7 @@
 
 package buildcraft.transport.pipe;
 
+import buildcraft.lib.fluid.FluidStackUtil;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IFakeWorld;
 import buildcraft.api.core.InvalidInputDataException;
@@ -40,8 +41,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
+import buildcraft.api.compat.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -146,7 +147,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
         if (tileNbt.contains("pipe")) {
             CompoundTag fluidNbt = tileNbt.getCompound("pipe").getCompound("flow").getCompound("fluid");
             if (!fluidNbt.isEmpty()) {
-                FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidNbt);
+                FluidStack stack = FluidStackUtil.load(fluidNbt);
                 if (!stack.isEmpty()) {
                     ret.add(stack);
                 }

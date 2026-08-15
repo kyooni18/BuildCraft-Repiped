@@ -7,7 +7,7 @@ import buildcraft.silicon.block.BlockLaser;
 import buildcraft.silicon.block.BlockLaserTable;
 import buildcraft.silicon.tile.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 public class BCSiliconBlocks {
     private static final RegistrationHelper HELPER = new RegistrationHelper(BCSilicon.MODID);

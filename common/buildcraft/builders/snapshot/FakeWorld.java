@@ -48,8 +48,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.BlackholeTickAccess;
 import net.minecraft.world.ticks.LevelTickAccess;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -284,6 +284,26 @@ public class FakeWorld extends IFakeWorld {
     @Override
     public RecipeManager getRecipeManager() {
         return null;
+    }
+
+    @Override
+    public float getDayTimeFraction() {
+        return 0.0F;
+    }
+
+    @Override
+    public void setDayTimeFraction(float dayTimeFraction) {
+        // Blueprint preview worlds keep a fixed daylight fraction.
+    }
+
+    @Override
+    public float getDayTimePerTick() {
+        return 0.0F;
+    }
+
+    @Override
+    public void setDayTimePerTick(float dayTimePerTick) {
+        // Blueprint preview worlds do not advance time.
     }
 
     @Override

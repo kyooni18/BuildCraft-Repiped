@@ -14,8 +14,8 @@ import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.HashSet;
 import java.util.Set;

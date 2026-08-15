@@ -5,9 +5,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraftforge.event.VanillaGameEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.VanillaGameEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.*;
 
@@ -16,7 +17,7 @@ import java.util.*;
  * Listens for BlockUpdates in a given world and notifies all registered IBlockUpdateSubscribers of the update provided
  * it was within the update range of the ILocalBlockUpdateSubscriber
  */
-@Mod.EventBusSubscriber(modid = BCLib.MODID) // Calen
+@EventBusSubscriber(modid = BCLib.MODID) // Calen
 public class LocalBlockUpdateNotifier {
 
     private static final Map<LevelAccessor, LocalBlockUpdateNotifier> instanceMap = new WeakHashMap<>();
@@ -40,7 +41,7 @@ public class LocalBlockUpdateNotifier {
     // Calen
     @SubscribeEvent
     public static void handleForgeEvent(VanillaGameEvent event) {
-        GameEvent gameEvent = event.getVanillaEvent();
+        GameEvent gameEvent = event.getVanillaEvent().value();
         if (listenedEvents.contains(gameEvent)) {
             instanceMap.forEach(
                     (level, notifier) ->

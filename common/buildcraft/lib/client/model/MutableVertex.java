@@ -13,8 +13,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -383,8 +383,8 @@ public class MutableVertex {
     }
 
     public MutableVertex texFromSprite(TextureAtlasSprite sprite) {
-        tex_u = sprite.getU(tex_u * 16);
-        tex_v = sprite.getV(tex_v * 16);
+        tex_u = sprite.getU(tex_u);
+        tex_v = sprite.getV(tex_v);
         return this;
     }
 

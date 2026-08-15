@@ -5,14 +5,14 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 public class BCBiomeRegistry {
     public static String BIOME_OIL_OCEAN = "oil_ocean";
     public static String BIOME_OIL_DESERT = "oil_desert";
 
-    public static final DeferredRegister<Biome> BIOMES = DeferredRegister.create(ForgeRegistries.BIOMES, BCEnergy.MODID);
+    public static final DeferredRegister<Biome> BIOMES = DeferredRegister.create(Registries.BIOME, BCEnergy.MODID);
 
 //    public static final RegistryObject<Biome> OIL_DESERT = BIOMES.register(BCWorldGenNames.BIOME_OIL_DESERT, () -> BCBiomes.makeOilDesertBiome());
 //    public static final RegistryObject<Biome> OIL_OCEAN = BIOMES.register(BCWorldGenNames.BIOME_OIL_OCEAN, () -> BCBiomes.makeOilOceanBiome());
@@ -63,7 +63,7 @@ public class BCBiomeRegistry {
 //        if (BCCoreConfig.worldGen) {
 //            if (BCEnergyConfig.enableOilGeneration) {
 //                // TODO Calen
-////                MinecraftForge.EVENT_BUS.register(OilStructureGenerator.class);
+////                NeoForge.EVENT_BUS.register(OilStructureGenerator.class);
 //                BCLog.logger.info("[energy.oilgen] Registered the oil spout generator");
 //            } else {
 //                BCLog.logger.info("[energy.oilgen] Not registering the oil spout generator, as it has been disabled by the config file.");

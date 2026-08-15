@@ -17,7 +17,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -147,7 +147,7 @@ public class SiliconCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern("mrm")
                 .pattern(" b ")
                 .define('r', Tags.Items.DUSTS_REDSTONE)
-                .define('b', Tags.Items.COBBLESTONE)
+                .define('b', Tags.Items.COBBLESTONES)
                 .define('m', m)
                 .unlockedBy("has_item", has(Tags.Items.DUSTS_REDSTONE))
                 .group(MOD_ID)

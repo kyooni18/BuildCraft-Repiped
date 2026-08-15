@@ -11,8 +11,8 @@ import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterXZDir;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterYDir;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 public class PatternStairs extends Pattern implements IFillerPatternShape {
     public PatternStairs() {

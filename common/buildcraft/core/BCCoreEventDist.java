@@ -12,18 +12,27 @@ import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.MessageManager;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public enum BCCoreEventDist {
     INSTANCE;
 
     @SubscribeEvent
-    public void onWorldTick(TickEvent.LevelTickEvent event) {
+    public void onWorldTickPre(LevelTickEvent.Pre event) {
+        onWorldTick(event);
+    }
+
+    @SubscribeEvent
+    public void onWorldTickPost(LevelTickEvent.Post event) {
+        onWorldTick(event);
+    }
+
+    private void onWorldTick(LevelTickEvent event) {
 //        if (event.world != null && !event.world.isRemote && event.world.getMinecraftServer() != null)
-        if (event.level != null && !event.level.isClientSide && event.level.getServer() != null) {
-            WorldSavedDataVolumeBoxes.get(event.level).tick();
+        if (event.getLevel() != null && !event.getLevel().isClientSide && event.getLevel().getServer() != null) {
+            WorldSavedDataVolumeBoxes.get(event.getLevel()).tick();
         }
     }
 

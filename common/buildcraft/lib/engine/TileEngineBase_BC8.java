@@ -29,14 +29,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.capability.ForgeCapabilities;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -104,7 +104,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
@@ -522,11 +522,11 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     @Deprecated
     public IMjReceiver getReceiverToPower(BlockEntity tile, Direction side) {
         if (tile == null) return null;
-        IMjReceiver rec = tile.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite()).orElse(null);
+        IMjReceiver rec = buildcraft.lib.misc.CapUtil.getCapability(tile, MjAPI.CAP_RECEIVER, side.getOpposite()).orElse(null);
         if (rec != null && rec.canConnect(mjConnector) && mjConnector.canConnect(rec)) {
             return rec;
         } else if (MjAPI.isRfAutoConversionEnabled()) {
-            IEnergyStorage rf = tile.getCapability(ForgeCapabilities.ENERGY, side.getOpposite()).orElse(null);
+            IEnergyStorage rf = buildcraft.lib.misc.CapUtil.getCapability(tile, ForgeCapabilities.ENERGY, side.getOpposite()).orElse(null);
             return MjToRfAutoConvertor.createReceiver(rf);
         } else {
             return null;

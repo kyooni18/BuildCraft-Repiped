@@ -24,8 +24,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -193,5 +193,33 @@ public class LaserRenderer_BC8 {
         profiler.popPush("render");
         compiled.render(pose, buffer);
         profiler.pop();
+    }
+
+    /**
+     * Emits a laser whose endpoints are expressed in world coordinates from a level render stage.
+     * The lightmap is still sampled using the original world coordinates; only the final vertex
+     * positions are made camera-relative. This is required for geometry that spans well beyond a
+     * block entity's local render origin (for example the quarry gantry and drill).
+     */
+    public static void renderLaserWorld(
+            LaserData_BC8 data, PoseStack.Pose pose, VertexConsumer buffer,
+            net.minecraft.world.phys.Vec3 cameraPos
+    ) {
+        ILaserRenderer renderer = (x, y, z, u, v, lmap, overlay, nx, ny, nz, diffuse) -> {
+            buffer.addVertex(
+                    pose.pose(),
+                    (float) (x - cameraPos.x),
+                    (float) (y - cameraPos.y),
+                    (float) (z - cameraPos.z)
+            );
+            int c = Math.max(0, Math.min(255, (int) (diffuse * 255.0f)));
+            buffer.setColor(c, c, c, 255);
+            buffer.setUv((float) u, (float) v);
+            buffer.setOverlay(overlay);
+            buffer.setLight(lmap);
+            buffer.setNormal(pose, nx, ny, nz);
+        };
+
+        makeLaser(data, renderer);
     }
 }

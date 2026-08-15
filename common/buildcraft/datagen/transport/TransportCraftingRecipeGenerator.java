@@ -22,8 +22,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.Tags;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -62,15 +62,15 @@ public class TransportCraftingRecipeGenerator extends BCCompatRecipeProvider {
         // pipe_structure
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, (Item) BCTransportItems.pipeStructure.get(null).get(), 8)
                 .pattern("cgc")
-                .define('c', Tags.Items.COBBLESTONE)
-                .define('g', Tags.Items.GRAVEL)
-                .unlockedBy("has_item", has(Tags.Items.COBBLESTONE))
+                .define('c', Tags.Items.COBBLESTONES)
+                .define('g', Tags.Items.GRAVELS)
+                .unlockedBy("has_item", has(Tags.Items.COBBLESTONES))
                 .group(MOD_ID)
                 .save(consumer);
         // plug_blocker
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, BCTransportItems.plugBlocker.get(), 4)
                 .requires(OreDictionaryTags.pipeStructure)
-                .unlockedBy("has_item", has(Tags.Items.COBBLESTONE))
+                .unlockedBy("has_item", has(Tags.Items.COBBLESTONES))
                 .group(MOD_ID)
                 .save(consumer);
         // plug_power_adaptor
@@ -88,13 +88,13 @@ public class TransportCraftingRecipeGenerator extends BCCompatRecipeProvider {
 
         // pipes
         addPipeRecipe(BCTransportItems.pipeItemWood, ItemTags.PLANKS);
-        addPipeRecipe(BCTransportItems.pipeItemCobble, Tags.Items.COBBLESTONE);
-        addPipeRecipe(BCTransportItems.pipeItemStone, Tags.Items.STONE);
-        addPipeRecipe(BCTransportItems.pipeItemQuartz, Tags.Items.STORAGE_BLOCKS_QUARTZ);
+        addPipeRecipe(BCTransportItems.pipeItemCobble, Tags.Items.COBBLESTONES);
+        addPipeRecipe(BCTransportItems.pipeItemStone, Tags.Items.STONES);
+        addPipeRecipe(BCTransportItems.pipeItemQuartz, TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "storage_blocks/quartz")));
         addPipeRecipe(BCTransportItems.pipeItemIron, Tags.Items.INGOTS_IRON);
         addPipeRecipe(BCTransportItems.pipeItemGold, Tags.Items.INGOTS_GOLD);
         addPipeRecipe(BCTransportItems.pipeItemClay, OreDictionaryTags.CLAY);
-        addPipeRecipe(BCTransportItems.pipeItemSandstone, Tags.Items.SANDSTONE);
+        addPipeRecipe(BCTransportItems.pipeItemSandstone, Tags.Items.SANDSTONE_BLOCKS);
         addPipeRecipe(BCTransportItems.pipeItemVoid, Tags.Items.DYES_BLACK, Tags.Items.DUSTS_REDSTONE);
         addPipeRecipe(BCTransportItems.pipeItemObsidian, Items.OBSIDIAN);
         addPipeRecipe(BCTransportItems.pipeItemDiamond, Tags.Items.GEMS_DIAMOND);
@@ -162,9 +162,9 @@ public class TransportCraftingRecipeGenerator extends BCCompatRecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, colourless, 8)
                 .pattern("lgr")
                 .define('l', left)
-                .define('g', Tags.Items.GLASS_COLORLESS)
+                .define('g', Tags.Items.GLASS_BLOCKS_COLORLESS)
                 .define('r', right)
-                .unlockedBy("has_item", has(Tags.Items.GLASS))
+                .unlockedBy("has_item", has(Tags.Items.GLASS_BLOCKS))
                 .group(MOD_ID)
                 .save(consumer, MOD_ID + ":" + ItemUtil.getRegistryName(colourless).getPath() + "_colorless");
         for (DyeColor colour : DyeColor.values()) {
@@ -174,7 +174,7 @@ public class TransportCraftingRecipeGenerator extends BCCompatRecipeProvider {
                     .define('l', left)
                     .define('g', TagKey.create(Registries.ITEM, ResourceLocation.parse("forge:glass/" + colour.getName())))
                     .define('r', right)
-                    .unlockedBy("has_item", has(Tags.Items.GLASS))
+                    .unlockedBy("has_item", has(Tags.Items.GLASS_BLOCKS))
                     .group(MOD_ID)
                     .save(consumer, MOD_ID + ":" + ItemUtil.getRegistryName(coloured).getPath() + "_" + colour.getName());
         }
@@ -191,13 +191,13 @@ public class TransportCraftingRecipeGenerator extends BCCompatRecipeProvider {
         Item to_colourless = (Item) to.get(null).get();
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, from_colourless)
                 .requires(to_colourless)
-                .unlockedBy("has_item", has(Tags.Items.GLASS))
+                .unlockedBy("has_item", has(Tags.Items.GLASS_BLOCKS))
                 .group(MOD_ID)
                 .save(consumer, MOD_ID + ":" + ItemUtil.getRegistryName(to_colourless).getPath() + "_colorless_undo");
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, to_colourless)
                 .requires(from_colourless)
                 .requires(additional)
-                .unlockedBy("has_item", has(Tags.Items.GLASS))
+                .unlockedBy("has_item", has(Tags.Items.GLASS_BLOCKS))
                 .group(MOD_ID)
                 .save(consumer, MOD_ID + ":" + ItemUtil.getRegistryName(to_colourless).getPath() + "_colorless");
 
@@ -206,13 +206,13 @@ public class TransportCraftingRecipeGenerator extends BCCompatRecipeProvider {
             Item to_coloured = (Item) to.get(colour).get();
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, from_coloured)
                     .requires(to_coloured)
-                    .unlockedBy("has_item", has(Tags.Items.GLASS))
+                    .unlockedBy("has_item", has(Tags.Items.GLASS_BLOCKS))
                     .group(MOD_ID)
                     .save(consumer, MOD_ID + ":" + ItemUtil.getRegistryName(to_coloured).getPath() + "_" + colour.getName() + "_undo");
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, to_coloured)
                     .requires(from_coloured)
                     .requires(additional)
-                    .unlockedBy("has_item", has(Tags.Items.GLASS))
+                    .unlockedBy("has_item", has(Tags.Items.GLASS_BLOCKS))
                     .group(MOD_ID)
                     .save(consumer, MOD_ID + ":" + ItemUtil.getRegistryName(to_coloured).getPath() + "_" + colour.getName());
         }

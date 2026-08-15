@@ -3,7 +3,7 @@ package buildcraft.lib.tile.item;
 import buildcraft.api.inventory.IItemHandlerFiltered;
 import buildcraft.lib.misc.StackUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 /** A type of {@link ItemHandlerSimple} that gets it's {@link IItemHandlerFiltered#getFilter(int)} from a given
  * {@link IItemHandler} instance. This currently instantiates to having the same {@link IItemHandler#getSlots() slot

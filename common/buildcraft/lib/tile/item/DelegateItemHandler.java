@@ -8,7 +8,7 @@ package buildcraft.lib.tile.item;
 
 import buildcraft.api.inventory.IItemHandlerFiltered;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 

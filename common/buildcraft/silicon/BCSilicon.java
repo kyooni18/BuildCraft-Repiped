@@ -1,5 +1,7 @@
 package buildcraft.silicon;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.facades.FacadeAPI;
@@ -34,14 +36,14 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.*;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.InterModComms;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.*;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Consumer;
 
@@ -56,7 +58,7 @@ import java.util.function.Consumer;
 //)
 //@formatter:on
 @Mod(BCSilicon.MODID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class BCSilicon {
     public static final String MODID = "buildcraftsilicon";
 
@@ -136,30 +138,39 @@ public class BCSilicon {
     @SubscribeEvent
     public static void onRegisterEvent(RegisterEvent event) {
         ResourceKey<? extends Registry<?>> registry = event.getRegistryKey();
+        event.register(Registries.RECIPE_TYPE, IAssemblyRecipe.TYPE_ID, () -> IAssemblyRecipe.TYPE);
+        event.register(Registries.RECIPE_SERIALIZER, AssemblyRecipe.TYPE_ID, () -> AssemblyRecipeSerializer.INSTANCE);
+        event.register(Registries.RECIPE_SERIALIZER, FacadeSwapRecipe.TYPE_ID, () -> FacadeSwapRecipeSerializer.INSTANCE);
+        event.register(Registries.RECIPE_SERIALIZER, IProgrammingRecipe.TYPE_ID, () -> ProgrammingRecipeSerializer.INSTANCE);
+        event.register(Registries.RECIPE_SERIALIZER, IntegrationRecipe.TYPE_ID, () -> IntegrationRecipeSerializer.INSTANCE);
+        BCSiliconMenuTypes.registerAll(event);
         if (registry == Registries.CREATIVE_MODE_TAB) {
             // Creative Tab
-            Registry.register(event.getVanillaRegistry(), tabFacades.getId(), tabFacades);
+            event.register(Registries.CREATIVE_MODE_TAB, tabFacades.getId(), () -> tabFacades);
             if (!BCModules.TRANSPORT.isLoaded()) {
-                Registry.register(event.getVanillaRegistry(), tabPlugs.getId(), tabPlugs);
+                event.register(Registries.CREATIVE_MODE_TAB, tabPlugs.getId(), () -> tabPlugs);
             }
         } else if (registry == Registries.BLOCK) {
             // Recipe
-            ForgeRegistries.RECIPE_TYPES.register(IAssemblyRecipe.TYPE_ID, IAssemblyRecipe.TYPE);
-            ForgeRegistries.RECIPE_SERIALIZERS.register(AssemblyRecipe.TYPE_ID, AssemblyRecipeSerializer.INSTANCE);
-            ForgeRegistries.RECIPE_SERIALIZERS.register(FacadeSwapRecipe.TYPE_ID, FacadeSwapRecipeSerializer.INSTANCE);
-            ForgeRegistries.RECIPE_SERIALIZERS.register(IProgrammingRecipe.TYPE_ID, ProgrammingRecipeSerializer.INSTANCE);
-            ForgeRegistries.RECIPE_SERIALIZERS.register(IntegrationRecipe.TYPE_ID, IntegrationRecipeSerializer.INSTANCE);
+
+
+
+
 
             AssemblyRecipeRegistry.FACADE_ASSEMBLY_RECIPE = FacadeAssemblyRecipes.INSTANCE;
 
             // GUI
-            BCSiliconMenuTypes.registerAll();
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static final class ClientEvents {
         private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            BCSiliconMenuTypes.registerScreens(event);
         }
 
         @SubscribeEvent

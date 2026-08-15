@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
 import buildcraft.builders.client.BuildersItemModelPredicates;
 import buildcraft.builders.client.render.*;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
@@ -20,14 +22,16 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.*;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.*;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Consumer;
 
@@ -39,7 +43,7 @@ import java.util.function.Consumer;
 //    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
 //)
 @Mod(BCBuilders.MODID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 //@formatter:on
 public class BCBuilders {
     public static final String MODID = "buildcraftbuilders";
@@ -69,7 +73,9 @@ public class BCBuilders {
 
         BCBuildersProxy.getProxy().fmlPreInit();
 
-        MinecraftForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
+        if (FMLLoader.getDist() == Dist.CLIENT) {
+            NeoForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
+        }
     }
 
     @SubscribeEvent
@@ -90,7 +96,7 @@ public class BCBuilders {
         BCBuildersConfig.saveConfigs();
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.DEDICATED_SERVER)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.DEDICATED_SERVER)
     public static final class DedicatedServerEvents {
         private DedicatedServerEvents() {
         }
@@ -101,9 +107,14 @@ public class BCBuilders {
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static final class ClientEvents {
         private ClientEvents() {
+        }
+
+        @SubscribeEvent
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            BCBuildersMenuTypes.registerScreens(event);
         }
 
         @SubscribeEvent
@@ -125,9 +136,9 @@ public class BCBuilders {
     @SubscribeEvent
     public static void onRegisterEvent(RegisterEvent event) {
         ResourceKey<? extends Registry<?>> registry = event.getRegistryKey();
+        BCBuildersMenuTypes.registerAll(event);
         if (registry == Registries.BLOCK) {
             // GUI
-            BCBuildersMenuTypes.registerAll();
         }
     }
 

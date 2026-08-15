@@ -17,8 +17,9 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.neoforged.neoforge.fluids.FluidStack;
+import buildcraft.api.compat.registry.ForgeRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.world.phys.Vec3;
 
 /** Special {@link FriendlyByteBuf} class that provides methods specific to "offset" reading and writing - like writing a
@@ -93,7 +94,16 @@ public class PacketBufferBC extends FriendlyByteBuf {
         return writeItemStack(stack, false);
     }
 
-    public <T> PacketBufferBC writeRegistryId(IForgeRegistry<T> registry, T value) {
+    public FluidStack readFluidStack() {
+        return FluidStack.OPTIONAL_STREAM_CODEC.decode(registryBuffer());
+    }
+
+    public PacketBufferBC writeFluidStack(FluidStack stack) {
+        FluidStack.OPTIONAL_STREAM_CODEC.encode(registryBuffer(), stack);
+        return this;
+    }
+
+    public <T> PacketBufferBC writeRegistryId(Registry<T> registry, T value) {
         ResourceLocation key = registry.getKey(value);
         writeResourceLocation(key == null ? ResourceLocation.parse("minecraft:empty") : key);
         return this;

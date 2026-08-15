@@ -325,7 +325,7 @@ public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
         minX = (width - BOOK_COVER.width) / 2;
         minY = (height - BOOK_COVER.height) / 2;
 
-        minecraft.textureManager.bindForSetup(COVER);
+        minecraft.getTextureManager().bindForSetup(COVER);
         BOOK_COVER.drawAt(guiGraphics, minX, minY);
     }
 
@@ -351,10 +351,10 @@ public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
             float offset = sin * 50;
             int bindingWidth = (int) (sin * BOOK_BINDING.width);
 
-            minecraft.textureManager.bindForSetup(RIGHT_PAGE);
+            minecraft.getTextureManager().bindForSetup(RIGHT_PAGE);
             PAGE_RIGHT.drawAt(guiGraphics, minX + BOOK_COVER.width - PAGE_RIGHT.width, minY);
 
-            minecraft.textureManager.bindForSetup(COVER);
+            minecraft.getTextureManager().bindForSetup(COVER);
 
             // BOOK_COVER.drawScaledInside(minX, minY, coverWidth, BOOK_COVER.height);
             // BOOK_COVER.drawCustomQuad(
@@ -379,10 +379,10 @@ public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
             minX = (width - BOOK_COVER.width) / 2;
             minY = (height - BOOK_COVER.height) / 2;
 
-            minecraft.textureManager.bindForSetup(RIGHT_PAGE);
+            minecraft.getTextureManager().bindForSetup(RIGHT_PAGE);
             PAGE_RIGHT.drawAt(guiGraphics, minX + BOOK_COVER.width - PAGE_LEFT.width, minY);
 
-            minecraft.textureManager.bindForSetup(COVER);
+            minecraft.getTextureManager().bindForSetup(COVER);
             BOOK_COVER.drawAt(guiGraphics, minX, minY);
         } else if (openingAngle > 0) {
             int pageWidth = (int) (sin * PAGE_LEFT.width);
@@ -393,10 +393,10 @@ public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
             minX = (width - PAGE_LEFT.width - pageWidth) / 2;
             minY = (height - BOOK_COVER.height) / 2;
 
-            minecraft.textureManager.bindForSetup(RIGHT_PAGE);
+            minecraft.getTextureManager().bindForSetup(RIGHT_PAGE);
             PAGE_RIGHT.drawAt(guiGraphics, minX + pageWidth + bindingWidth, minY);
 
-            minecraft.textureManager.bindForSetup(LEFT_PAGE);
+            minecraft.getTextureManager().bindForSetup(LEFT_PAGE);
             // PAGE_LEFT.drawCustomQuad(
             // minX + bindingWidth, minY + PAGE_LEFT.height + offset,
             // minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height,
@@ -410,14 +410,14 @@ public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
             );
             // PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
 
-            minecraft.textureManager.bindForSetup(COVER);
+            minecraft.getTextureManager().bindForSetup(COVER);
             BOOK_BINDING.drawScaledInside(
                     guiGraphics,
                     (int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height
                             + offset * 2)
             );
 
-            minecraft.textureManager.bindForSetup(ICONS_2);
+            minecraft.getTextureManager().bindForSetup(ICONS_2);
         }
     }
 

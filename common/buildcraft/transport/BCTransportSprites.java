@@ -16,14 +16,14 @@ import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
 
 import java.util.EnumMap;
 import java.util.Locale;
@@ -126,7 +126,7 @@ public class BCTransportSprites {
 
     public static void fmlPreInit() {
         // 1.18.2: following events are IModBusEvent
-//        MinecraftForge.EVENT_BUS.register(BCTransportSprites.class);
+//        NeoForge.EVENT_BUS.register(BCTransportSprites.class);
         IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(BCTransport.MODID).get()).getEventBus();
         modEventBus.register(BCTransportSprites.class);
     }
@@ -143,7 +143,7 @@ public class BCTransportSprites {
     }
 
     @SubscribeEvent
-    public static void onTextureStitchPost(TextureStitchEvent.Post event) {
+    public static void onTextureStitchPost(TextureAtlasStitchedEvent event) {
 //        PipeModelCacheBase.generator.onTextureStitchPre();
         PipeModelCacheBase.generator.onTextureStitchPost(event);
     }

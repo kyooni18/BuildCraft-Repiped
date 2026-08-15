@@ -17,7 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 public class GuiDiamondPipe extends GuiBC8<ContainerDiamondPipe> {
     private static final ResourceLocation TEXTURE = ResourceLocation.parse("buildcrafttransport:textures/gui/filter.png");

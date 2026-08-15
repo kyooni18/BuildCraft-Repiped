@@ -13,7 +13,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.registries.ForgeRegistries;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -33,8 +33,8 @@ public class StripesHandlerPipeWires implements IStripesHandlerItem {
 
             BlockEntity tile = world.getBlockEntity(pos);
 //            if (tile != null && tile.hasCapability(PipeApi.CAP_PIPE_HOLDER, null))
-            if (tile != null && tile.getCapability(PipeApi.CAP_PIPE_HOLDER, null).isPresent()) {
-                IPipeHolder pipeHolder = tile.getCapability(PipeApi.CAP_PIPE_HOLDER, null).orElse(null);
+            if (tile != null && buildcraft.lib.misc.CapUtil.getCapability(tile, PipeApi.CAP_PIPE_HOLDER, null).isPresent()) {
+                IPipeHolder pipeHolder = buildcraft.lib.misc.CapUtil.getCapability(tile, PipeApi.CAP_PIPE_HOLDER, null).orElse(null);
 
                 /*
                 if (!pipeHolder.pipe.wireSet[pipeWireColor]) {

@@ -35,9 +35,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fml.InterModComms.IMCMessage;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.fml.InterModComms.IMCMessage;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -155,7 +154,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
         if (disablingMod != null) {
             return new InteractionResultHolder<>(InteractionResult.FAIL, "it has been disabled by " + disablingMod);
         }
-        if (block instanceof IFluidBlock || block instanceof LiquidBlock) {
+        if (!block.defaultBlockState().getFluidState().isEmpty() || block instanceof LiquidBlock) {
             return new InteractionResultHolder<>(InteractionResult.FAIL, "it is a fluid block");
         }
         // Calen

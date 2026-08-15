@@ -10,7 +10,7 @@ import buildcraft.api.net.IMessage;
 import buildcraft.api.net.IMessageHandler;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
+import net.neoforged.api.distmarker.Dist;
 
 public class MessageSnapshotRequest implements IMessage {
     private Snapshot.Key key;

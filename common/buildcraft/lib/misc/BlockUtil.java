@@ -54,18 +54,15 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.MinecraftForge;
-import buildcraft.api.core.FakePlayer;
-import net.minecraftforge.event.level.BlockEvent.BreakEvent;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.wrappers.BucketPickupHandlerWrapper;
-import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.wrappers.BucketPickupHandlerWrapper;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -134,7 +131,7 @@ public final class BlockUtil {
     public static boolean harvestBlock(ServerLevel world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
         FakePlayer fakePlayer = getFakePlayerWithTool(world, tool, owner);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
-        MinecraftForge.EVENT_BUS.post(breakEvent);
+        NeoForge.EVENT_BUS.post(breakEvent);
 
         if (breakEvent.isCanceled()) {
             return false;
@@ -161,7 +158,7 @@ public final class BlockUtil {
     public static boolean destroyBlock(ServerLevel world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
         FakePlayer fakePlayer = getFakePlayerWithTool(world, tool, owner);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
-        MinecraftForge.EVENT_BUS.post(breakEvent);
+        NeoForge.EVENT_BUS.post(breakEvent);
 
         if (breakEvent.isCanceled()) {
             return false;
@@ -189,7 +186,7 @@ public final class BlockUtil {
     public static boolean breakBlock(ServerLevel world, BlockPos pos, NonNullList<ItemStack> drops, BlockPos ownerPos, GameProfile owner) {
         FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
-        MinecraftForge.EVENT_BUS.post(breakEvent);
+        NeoForge.EVENT_BUS.post(breakEvent);
 
         if (breakEvent.isCanceled()) {
             return false;
@@ -274,10 +271,8 @@ public final class BlockUtil {
             return false;
         }
 //        else if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null)
-        else if (block instanceof IFluidBlock fluidBlock && fluidBlock.getFluid() != null) {
-//            Fluid f = ((IFluidBlock) block).getFluid();
-            Fluid f = fluidBlock.getFluid();
-//            if (f.getDensity(world, pos) >= 3000)
+        else if (!state.getFluidState().isEmpty()) {
+            Fluid f = state.getFluidState().getType();
             if (f.getFluidType().getDensity(state.getFluidState(), world, pos) >= 3000) {
                 return false;
             }
@@ -321,29 +316,12 @@ public final class BlockUtil {
     }
 
     public static boolean isFullFluidBlock(BlockState state, Level world, BlockPos pos) {
-        Block block = state.getBlock();
-//        if (block instanceof IFluidBlock)
-        if (block instanceof IFluidBlock) {
-            FluidStack fluid = ((IFluidBlock) block).drain(world, pos, IFluidHandler.FluidAction.SIMULATE);
-//            return fluid == null || fluid.getAmount() > 0;
-            return !fluid.isEmpty() || fluid.getAmount() > 0;
-        } else if (block instanceof LiquidBlock) {
-            int level = state.getValue(LiquidBlock.LEVEL);
-//            return level == 0;
-            return level == 8;
-        }
-        return false;
+        FluidState fluidState = state.getFluidState();
+        return !fluidState.isEmpty() && fluidState.isSource();
     }
 
     public static boolean isFluidBlock(BlockState state) {
-        Block block = state.getBlock();
-        if (block instanceof IFluidBlock) {
-            return true;
-        } else if (block instanceof LiquidBlock) {
-            int level = state.getValue(LiquidBlock.LEVEL);
-            return level > 0;
-        }
-        return false;
+        return !state.getFluidState().isEmpty();
     }
 
     public static Fluid getFluid(Level world, BlockPos pos) {
@@ -369,53 +347,18 @@ public final class BlockUtil {
     }
 
     public static Fluid getFluid(Block block) {
-        if (block instanceof IFluidBlock fluidBlock) {
-            return fluidBlock.getFluid();
-        }
-//        return FluidRegistry.lookupFluidForBlock(block);
-        return null;
+        FluidState fluidState = block.defaultBlockState().getFluidState();
+        return fluidState.isEmpty() ? null : fluidState.getType();
     }
 
     public static Fluid getFluidWithoutFlowing(BlockState state) {
-        Block block = state.getBlock();
-//        if (block instanceof BlockFluidClassic) {
-//            if (((BlockFluidClassic) block).isSourceBlock(new SingleBlockAccess(state), SingleBlockAccess.POS)) {
-//                return getFluid(block);
-//            }
-//        }
-        if (block instanceof LiquidBlock) {
-//            if (state.getValue(BlockLiquid.LEVEL) != 0) {
-//                return null;
-//            }
-//            if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
-//                return FluidRegistry.WATER;
-//            }
-//            if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
-//                return FluidRegistry.LAVA;
-//            }
-//            return FluidRegistry.lookupFluidForBlock(block);
-            FluidState fluidState = state.getFluidState();
-            Fluid fluid = fluidState.getType();
-            if (fluid != null && !(fluid instanceof EmptyFluid) && fluid.isSource(fluidState)) {
-                return state.getFluidState().getType();
-            }
-        }
-        return null;
+        FluidState fluidState = state.getFluidState();
+        return !fluidState.isEmpty() && fluidState.isSource() ? fluidState.getType() : null;
     }
 
     public static Fluid getFluidWithFlowing(Block block) {
-        Fluid fluid = null;
-//        if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)
-        if (block == Blocks.LAVA) {
-            fluid = Fluids.LAVA;
-        }
-//        else if (block == Blocks.WATER || block == Blocks.FLOWING_WATER)
-        else if (block == Blocks.WATER) {
-            fluid = Fluids.WATER;
-        } else if (block instanceof IFluidBlock) {
-            fluid = ((IFluidBlock) block).getFluid();
-        }
-        return fluid;
+        FluidState fluidState = block.defaultBlockState().getFluidState();
+        return fluidState.isEmpty() ? null : fluidState.getType();
     }
 
     /**
@@ -431,23 +374,21 @@ public final class BlockUtil {
      */
     public static FluidStack drainBlock(Level world, BlockPos pos, IFluidHandler.FluidAction doDrain) {
         BlockState state = world.getBlockState(pos);
-        if (!state.getFluidState().getType().isSource(state.getFluidState())) {
+        FluidState fluidState = state.getFluidState();
+        if (fluidState.isEmpty() || !fluidState.isSource()) {
             return StackUtil.EMPTY_FLUID;
         }
-        IFluidHandler handler;
         Block block = state.getBlock();
-        if (block instanceof IFluidBlock fluidBlock) {
-            handler = new FluidBlockWrapper(fluidBlock, world, pos);
-        } else if (block instanceof BucketPickup bucketPickup) {
-            handler = new BucketPickupHandlerWrapper(bucketPickup, world, pos);
-        } else {
-            handler = FluidUtil.getFluidHandler(world, pos, null).orElse(null);
+        if (block instanceof BucketPickup bucketPickup) {
+            return new BucketPickupHandlerWrapper(null, bucketPickup, world, pos)
+                    .drain(FluidType.BUCKET_VOLUME, doDrain);
         }
+        IFluidHandler handler = FluidUtil.getFluidHandler(world, pos, null).orElse(null);
         if (handler != null) {
             return handler.drain(FluidType.BUCKET_VOLUME, doDrain);
-        } else {
-            return StackUtil.EMPTY_FLUID;
         }
+        // A source fluid with no pickup/capability provider can be inspected, but cannot safely be mutated.
+        return doDrain.simulate() ? new FluidStack(fluidState.getType(), FluidType.BUCKET_VOLUME) : StackUtil.EMPTY_FLUID;
     }
 
     /** Create an explosion which only affects a single block. */
@@ -700,9 +641,8 @@ public final class BlockUtil {
 
     public static boolean isSoftBlock(BlockState blockState) {
         return blockState.is(OreDictionaryTags.SOFT) ||
-                blockState.getBlock() instanceof IFluidBlock ||
+                !blockState.getFluidState().isEmpty() ||
                 blockState.getBlock() instanceof LiquidBlock ||
-                blockState.getBlock() instanceof IPlantable ||
                 blockState.canBeReplaced();
     }
 }

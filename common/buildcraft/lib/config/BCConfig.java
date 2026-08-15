@@ -1,10 +1,10 @@
 package buildcraft.lib.config;
 
 import buildcraft.api.BCModules;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
 
 import java.util.LinkedList;
 import java.util.List;

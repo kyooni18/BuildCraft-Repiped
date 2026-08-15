@@ -6,7 +6,7 @@ package buildcraft.factory;
 
 import buildcraft.factory.client.render.RenderMiningWell;
 import buildcraft.factory.client.render.RenderPump;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLLoader;
 
 //public abstract class BCFactoryProxy implements IGuiHandler
 public abstract class BCFactoryProxy {

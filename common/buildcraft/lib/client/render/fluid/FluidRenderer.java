@@ -30,12 +30,12 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.material.EmptyFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import buildcraft.api.compat.registry.ForgeRegistries;
 import org.apache.commons.compress.utils.Lists;
 import org.joml.Matrix4f;
 
@@ -64,6 +64,7 @@ public class FluidRenderer {
     private static TextureAtlasSprite sprite;
     private static TexMap texmap;
     private static boolean invertU, invertV;
+    private static boolean frozenUv;
     private static double xTexDiff, yTexDiff, zTexDiff;
 
     // Calen 1.20.1
@@ -107,7 +108,7 @@ public class FluidRenderer {
             fluidSprites.put(type, new HashMap<>());
         }
 
-        Minecraft.getInstance().textureManager.register(FROZEN_ATLAS.location(), FROZEN_ATLAS);
+        Minecraft.getInstance().getTextureManager().register(FROZEN_ATLAS.location(), FROZEN_ATLAS);
     }
 
 //    public static void onTextureStitchPre(TextureMap map) {
@@ -138,13 +139,14 @@ public class FluidRenderer {
 //        }
 
     // Calen: part of onTextureStitchPre in 1.12.2
-    public static void onTextureStitchPost(TextureStitchEvent.Post event) {
+    public static void onTextureStitchPost(TextureAtlasStitchedEvent event) {
         // ensure LOCATION_BLOCKS
         // or we will get wrong texture
         TextureAtlas map = event.getAtlas();
         if (map.location().equals(TextureAtlas.LOCATION_BLOCKS)) {
             SpriteLoader spriteLoader = SpriteLoader.create(FROZEN_ATLAS);
             List<SpriteContents> spriteContentsList = Lists.newArrayList();
+            Map<ResourceLocation, ResourceLocation> frozenSources = new HashMap<>();
             // TextureAtlas#upload requires every atlas to contain the vanilla missing-texture sprite.
             spriteContentsList.add(MissingTextureAtlasSprite.create());
             // Calen: BC 1.12.2
@@ -164,26 +166,25 @@ public class FluidRenderer {
                 TextureAtlasSprite stillSprite = map.getSprite(still);
                 fluidSprites.get(FluidSpriteType.STILL).put(registryName.toString(), stillSprite);
                 fluidSprites.get(FluidSpriteType.FLOWING).put(registryName.toString(), map.getSprite(flowing));
-                spriteContentsList.add(createFrozenSprite(registryName, stillSprite));
+                ResourceLocation frozenLocation = frozenLocation(registryName);
+                spriteContentsList.add(SpriteFluidFrozen.createSpriteContents(stillSprite, frozenLocation));
+                frozenSources.put(frozenLocation, registryName);
             }
             SpriteLoader.Preparations preparations = spriteLoader.stitch(spriteContentsList, Minecraft.getInstance().options.mipmapLevels().get(), Runnable::run);
             FROZEN_ATLAS.upload(preparations);
-            FROZEN_ATLAS.getTextureLocations().forEach(location -> {
-                if (location.equals(MissingTextureAtlasSprite.getLocation())) {
-                    return;
-                }
-                TextureAtlasSprite frozenSprite = FROZEN_ATLAS.getSprite(location);
-                if (frozenSprite instanceof SpriteFluidFrozen spriteFluidFrozen) {
-                    fluidSprites.get(FluidSpriteType.FROZEN).put(spriteFluidFrozen.srcRegistryName.toString(), spriteFluidFrozen);
+            FROZEN_ATLAS.getTextures().forEach((location, frozenSprite) -> {
+                ResourceLocation sourceFluid = frozenSources.get(location);
+                if (sourceFluid != null) {
+                    fluidSprites.get(FluidSpriteType.FROZEN).put(sourceFluid.toString(), frozenSprite);
                 }
             });
         }
     }
 
-    private static SpriteContents createFrozenSprite(ResourceLocation registryName, TextureAtlasSprite stillSprite) {
-        ResourceLocation frozenLocation = ResourceLocation.fromNamespaceAndPath(BCLib.MODID, "fluid_" + registryName.toString().replace(':', '_') + "_convert_frozen");
-        return SpriteFluidFrozen.createSpriteContents(stillSprite, registryName, frozenLocation);
+    private static ResourceLocation frozenLocation(ResourceLocation registryName) {
+        return ResourceLocation.fromNamespaceAndPath(BCLib.MODID, "fluid_" + registryName.toString().replace(':', '_') + "_convert_frozen");
     }
+
 
     /** Renders a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary
      * (so the cube must be contained within a block).
@@ -251,7 +252,7 @@ public class FluidRenderer {
             VertexConsumer bbIn,
             boolean[] sideRender
     ) {
-        if (fluid == null || fluid.getRawFluid() == null || fluid.getRawFluid() instanceof EmptyFluid || amount <= 0) {
+        if (fluid == null || fluid.getFluid() == null || fluid.getFluid() instanceof EmptyFluid || amount <= 0) {
             return;
         }
         ProfilerFiller prof = Minecraft.getInstance().getProfiler();
@@ -263,7 +264,7 @@ public class FluidRenderer {
 //        double height = MathHelper.clamp(amount / cap, 0, 1);
         double height = Mth.clamp(amount / cap, 0, 1);
         final Vec3 realMin, realMax;
-        if (fluid.getRawFluid().getFluidType().isLighterThanAir()) {
+        if (fluid.getFluid().getFluidType().isLighterThanAir()) {
             realMin = VecUtil.replaceValue(min, Axis.Y, MathUtil.interp(1 - height, min.y, max.y));
             realMax = max;
         } else {
@@ -279,6 +280,7 @@ public class FluidRenderer {
             type = FluidSpriteType.STILL;
         }
         sprite = getFluidSprite(type, fluid);
+        frozenUv = type == FluidSpriteType.FROZEN;
 
         final double xs = realMin.x;
         final double ys = realMin.y;
@@ -316,7 +318,7 @@ public class FluidRenderer {
             zTexDiff = 0;
         }
 
-        vertex.colouri(RenderUtil.swapARGBforABGR(FluidUtilBC.getColor(fluid.getRawFluid())));
+        vertex.colouri(RenderUtil.swapARGBforABGR(FluidUtilBC.getColor(fluid.getFluid())));
 
         texmap = TexMap.XZ;
         // TODO: Enable/disable inversion for the correct faces
@@ -370,11 +372,12 @@ public class FluidRenderer {
         texmap = null;
         FluidRenderer.bb = null;
         FluidRenderer.pose = null;
+        frozenUv = false;
         prof.pop();
     }
 
     public static TextureAtlasSprite getFluidSprite(FluidSpriteType type, FluidStack fluid) {
-        return getFluidSprite(type, fluid.getRawFluid());
+        return getFluidSprite(type, fluid.getFluid());
     }
 
     public static TextureAtlasSprite getFluidSprite(FluidSpriteType type, Fluid fluid) {
@@ -399,7 +402,8 @@ public class FluidRenderer {
         PoseStack.Pose pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();
 
-        sprite = FluidRenderer.fluidSprites.get(FluidSpriteType.STILL).get(FluidUtilBC.getRegistryName(fluid.getRawFluid()).toString());
+        frozenUv = false;
+        sprite = FluidRenderer.fluidSprites.get(FluidSpriteType.STILL).get(FluidUtilBC.getRegistryName(fluid.getFluid()).toString());
         if (sprite == null) {
 //            sprite = Minecraft.getInstance().getTextureMapBlocks().getMissingSprite();
             sprite = SpriteUtil.missingSprite().get();
@@ -407,7 +411,7 @@ public class FluidRenderer {
 //        Minecraft.getInstance().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         SpriteUtil.bindTexture(TextureAtlas.LOCATION_BLOCKS);
 //        RenderUtil.setGLColorFromInt(fluid.getFluid().getColor(fluid));
-        RenderUtil.setGLColorFromInt(FluidUtilBC.getColor(fluid.getRawFluid()));
+        RenderUtil.setGLColorFromInt(FluidUtilBC.getColor(fluid.getFluid()));
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
 //        Tessellator tess = Tessellator.getInstance();
@@ -492,13 +496,21 @@ public class FluidRenderer {
 
     private static void guiVertex(Matrix4f poseMatrix, double x, double y, double u, double v) {
 //        float ru = sprite.getInterpolatedU(u);
-        float ru = sprite.getU((float) u);
+        float ru = spriteU(u);
 //        float rv = sprite.getInterpolatedV(v);
-        float rv = sprite.getV((float) v);
+        float rv = spriteV(v);
 //        poseStack.translate(x, y, 0);
         bb.addVertex(poseMatrix, (float) x, (float) y, 0);
 //        bb.tex(ru, rv);
         bb.setUv(ru, rv);
+    }
+
+    private static float spriteU(double u) {
+        return sprite.getU((float) ((frozenUv ? u / 2.0 + 4.0 : u) / 16.0));
+    }
+
+    private static float spriteV(double v) {
+        return sprite.getV((float) ((frozenUv ? v / 2.0 + 4.0 : v) / 16.0));
     }
 
     /** Used to keep track of what position maps to what texture co-ord.
@@ -531,7 +543,7 @@ public class FluidRenderer {
                 realv = 1 - realv;
             }
 //            vertex.texf(sprite.getInterpolatedU(realu * 16), sprite.getInterpolatedV(realv * 16));
-            vertex.texf(sprite.getU((float) (realu * 16)), sprite.getV((float) (realv * 16)));
+            vertex.texf(spriteU(realu * 16), spriteV(realv * 16));
         }
     }
 

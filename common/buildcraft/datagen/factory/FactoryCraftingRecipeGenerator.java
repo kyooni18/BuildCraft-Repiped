@@ -13,7 +13,7 @@ import buildcraft.datagen.base.BCCompatRecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -75,7 +75,7 @@ public class FactoryCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern("igi")
                 .define('i', Ingredient.of(Tags.Items.INGOTS_IRON))
                 .define('g', Ingredient.of(OreDictionaryTags.GEAR_IRON))
-                .define('#', Ingredient.of(Tags.Items.GLASS_COLORLESS))
+                .define('#', Ingredient.of(Tags.Items.GLASS_BLOCKS_COLORLESS))
                 .unlockedBy("has_item", has(OreDictionaryTags.GEAR_IRON))
                 .group(MOD_ID)
                 .save(consumer);
@@ -109,8 +109,8 @@ public class FactoryCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern("ggg")
                 .pattern("g g")
                 .pattern("ggg")
-                .define('g', Ingredient.of(Tags.Items.GLASS_COLORLESS))
-                .unlockedBy("has_item", has(Tags.Items.GLASS))
+                .define('g', Ingredient.of(Tags.Items.GLASS_BLOCKS_COLORLESS))
+                .unlockedBy("has_item", has(Tags.Items.GLASS_BLOCKS))
                 .group(MOD_ID)
                 .save(consumer);
         // water_gel_spawn
@@ -118,9 +118,9 @@ public class FactoryCraftingRecipeGenerator extends BCCompatRecipeProvider {
                 .pattern(" s ")
                 .pattern("srs")
                 .pattern(" s ")
-                .define('s', Ingredient.of(Tags.Items.SAND))
+                .define('s', Ingredient.of(Tags.Items.SANDS))
                 .define('r', Ingredient.of(BCEnergyFluids.oilResidue[0].get().getBucket()))
-                .unlockedBy("has_item", has(Tags.Items.SAND))
+                .unlockedBy("has_item", has(Tags.Items.SANDS))
                 .group(MOD_ID)
                 .save(consumer);
         // water_bucket

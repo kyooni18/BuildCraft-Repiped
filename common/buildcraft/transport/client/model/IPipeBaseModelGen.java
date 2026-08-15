@@ -13,7 +13,7 @@ import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentK
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -33,5 +33,5 @@ public interface IPipeBaseModelGen {
     // Calen 1.20.1
     public void onDatagenTextureRegister(Consumer<ResourceLocation> consumer);
 
-    void onTextureStitchPost(TextureStitchEvent.Post event);
+    void onTextureStitchPost(TextureAtlasStitchedEvent event);
 }

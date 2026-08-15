@@ -9,9 +9,8 @@ import buildcraft.lib.registry.TagManager;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.extensions.IForgeItem;
 
-public class ItemBC_Neptune extends Item implements IItemBuildCraft, IForgeItem {
+public class ItemBC_Neptune extends Item implements IItemBuildCraft {
     /** The tag used to identify this in the {@link TagManager} */
     public final String idBC;
 

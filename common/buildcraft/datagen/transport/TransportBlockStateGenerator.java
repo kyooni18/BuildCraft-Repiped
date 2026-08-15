@@ -4,8 +4,8 @@ import buildcraft.datagen.base.BCBaseBlockStateGenerator;
 import buildcraft.transport.BCTransport;
 import buildcraft.transport.BCTransportBlocks;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class TransportBlockStateGenerator extends BCBaseBlockStateGenerator {

@@ -2,7 +2,7 @@ package buildcraft.robotics;
 
 import buildcraft.lib.registry.RegistrationHelper;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 public class BCRoboticsParticleTypes {
     private static final RegistrationHelper HELPER = new RegistrationHelper(BCRobotics.MODID);

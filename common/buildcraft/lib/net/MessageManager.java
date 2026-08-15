@@ -9,71 +9,57 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.net.IMessage;
 import buildcraft.api.net.IMessageHandler;
-import buildcraft.core.BCCore;
-import buildcraft.lib.BCLib;
+import buildcraft.api.net.MessageContext;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.MessageUtil;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
-
-import javax.annotation.Nullable;
+import io.netty.buffer.Unpooled;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import javax.annotation.Nullable;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
-// Calen: Thread safety is a terrible problem in 1.18.2 if sub mods load together
+/**
+ * BuildCraft's legacy message registry, transported through a single NeoForge custom payload.
+ * The IMessage serialization format is intentionally retained to avoid rewriting every packet class.
+ */
 public class MessageManager {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.messages");
 
-    private static final Map<IBuildCraftMod, PerModHandler> MOD_HANDLERS;
-    // private static final Map<Class<? extends IMessage>, PerMessageInfo<?>> MESSAGE_HANDLERS = new HashMap<>();
+    private static final Map<IBuildCraftMod, PerModHandler> MOD_HANDLERS =
+            new ConcurrentSkipListMap<>(MessageManager::compareMods);
     private static final Map<Class<? extends IMessage>, PerMessageInfo<?>> MESSAGE_HANDLERS = new ConcurrentHashMap<>();
-
-    static {
-        // Calen: Thread Safety -> IllegalArgumentException: NetworkDirection Channel {buildcraftcore:default} already registered
-//        MOD_HANDLERS = new TreeMap<>(MessageManager::compareMods);
-        MOD_HANDLERS = new ConcurrentSkipListMap<>(MessageManager::compareMods);
-    }
+    private static final Map<String, PerMessageInfo<?>> MESSAGE_HANDLERS_BY_NAME = new ConcurrentHashMap<>();
+    private static volatile boolean payloadRegistered;
 
     static class PerModHandler {
         final IBuildCraftMod module;
-        // final SimpleNetworkWrapper netWrapper;
-        final SimpleChannel netWrapper;
-        final SortedMap<Class<? extends IMessage>, PerMessageInfo<?>> knownMessages;
+        final SortedMap<Class<? extends IMessage>, PerMessageInfo<?>> knownMessages =
+                new TreeMap<>(Comparator.comparing(Class::getName));
 
         PerModHandler(IBuildCraftMod module) {
             this.module = module;
-//            this.netWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(module.getModId());
-            this.netWrapper = ChannelBuilder
-                    .named(ResourceLocation.fromNamespaceAndPath(module.getModId(), "default"))
-                    .networkProtocolVersion(1)
-                    .acceptedVersions((status, version) -> true)
-                    .simpleChannel();
-            knownMessages = new TreeMap<>(Comparator.comparing(Class::getName));
         }
     }
 
     static class PerMessageInfo<I extends IMessage> {
         final PerModHandler modHandler;
         final Class<I> messageClass;
-
-        /** The handler to register, or null if this isn't handled in this physical side. */
-        @Nullable
-        IMessageHandler<I, ?> clientHandler, serverHandler;
+        @Nullable IMessageHandler<I, ?> clientHandler, serverHandler;
 
         PerMessageInfo(PerModHandler modHandler, Class<I> messageClass) {
             this.modHandler = modHandler;
@@ -92,52 +78,36 @@ public class MessageManager {
         return modA.getModId().compareTo(modB.getModId());
     }
 
-    /** Registers a message as one that will not be received, but will be sent. */
     public static <I extends IMessage> void registerMessageClass(IBuildCraftMod module, Class<I> clazz, Dist... sides) {
         registerMessageClass(module, clazz, null, sides);
     }
 
     public static <I extends IMessage> void registerMessageClass(
-            IBuildCraftMod module,
-            Class<I> messageClass,
-            IMessageHandler<I, ?> messageHandler,
-            Dist... sides
-    ) {
+            IBuildCraftMod module, Class<I> messageClass, IMessageHandler<I, ?> messageHandler, Dist... sides) {
         PerModHandler modHandler = MOD_HANDLERS.computeIfAbsent(module, PerModHandler::new);
+        @SuppressWarnings("unchecked")
         PerMessageInfo<I> messageInfo = (PerMessageInfo<I>) modHandler.knownMessages.get(messageClass);
         if (messageInfo == null) {
             messageInfo = new PerMessageInfo<>(modHandler, messageClass);
             modHandler.knownMessages.put(messageClass, messageInfo);
             MESSAGE_HANDLERS.put(messageClass, messageInfo);
+            MESSAGE_HANDLERS_BY_NAME.put(messageClass.getName(), messageInfo);
         }
-        String netName = module.getModId();
         if (messageHandler == null) {
-            if (DEBUG) {
-                BCLog.logger.info("[lib.messages] Registered message " + messageClass + " for " + netName);
-            }
             return;
         }
         Dist specificSide = sides != null && sides.length == 1 ? sides[0] : null;
         if (specificSide == null || specificSide == Dist.CLIENT) {
-            if (messageInfo.clientHandler != null && DEBUG) {
-                BCLog.logger.info("[lib.messages] Replacing existing client handler for " + netName + " " + messageClass
-                        + " " + messageInfo.clientHandler + " with " + messageHandler);
-            }
             messageInfo.clientHandler = messageHandler;
         }
         if (specificSide == null || specificSide == Dist.DEDICATED_SERVER) {
-            if (messageInfo.serverHandler != null && DEBUG) {
-                BCLog.logger.info("[lib.messages] Replacing existing server handler for " + netName + " " + messageClass
-                        + " " + messageInfo.serverHandler + " with " + messageHandler);
-            }
             messageInfo.serverHandler = messageHandler;
         }
     }
 
-    /** Sets the handler for the specified handler.
-     *
-     * @param side The side that the given handler will receive messages on. */
-    public static <I extends IMessage> void setHandler(Class<I> messageClass, IMessageHandler<I, ?> messageHandler, Dist side) {
+    public static <I extends IMessage> void setHandler(
+            Class<I> messageClass, IMessageHandler<I, ?> messageHandler, Dist side) {
+        @SuppressWarnings("unchecked")
         PerMessageInfo<I> messageInfo = (PerMessageInfo<I>) MESSAGE_HANDLERS.get(messageClass);
         if (messageInfo == null) {
             throw new IllegalArgumentException("Cannot set handler for unregistered message: " + messageClass);
@@ -145,165 +115,121 @@ public class MessageManager {
         registerMessageClass(messageInfo.modHandler.module, messageClass, messageHandler, side);
     }
 
-    /** Called by {@link BCLib} to finish registering this class. */
+    /** NeoForge mod-bus registration hook. */
+    public static void registerPayloads(RegisterPayloadHandlersEvent event) {
+        if (payloadRegistered) {
+            return;
+        }
+        payloadRegistered = true;
+        event.registrar("1").playBidirectional(
+                LegacyMessagePayload.TYPE,
+                LegacyMessagePayload.STREAM_CODEC,
+                MessageManager::handlePayload
+        );
+    }
+
+    private static void handlePayload(LegacyMessagePayload payload, net.neoforged.neoforge.network.handling.IPayloadContext neoContext) {
+        PerMessageInfo<?> rawInfo = MESSAGE_HANDLERS_BY_NAME.get(payload.messageClass());
+        if (rawInfo == null) {
+            BCLog.logger.warn("Received unregistered BuildCraft message {}", payload.messageClass());
+            return;
+        }
+        handlePayloadTyped(rawInfo, payload, new MessageContext(neoContext));
+    }
+
+    private static <I extends IMessage> void handlePayloadTyped(
+            PerMessageInfo<I> info, LegacyMessagePayload payload, MessageContext context) {
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.wrappedBuffer(payload.data()));
+        I message = IMessage.staticFromBytes(info.messageClass, buf);
+        if (message == null) {
+            return;
+        }
+        IMessageHandler<I, ?> handler = context.isServerSide() ? info.serverHandler : info.clientHandler;
+        IMessage reply = wrapHandler(handler, info.messageClass).onMessage(message, context);
+        if (reply != null) {
+            MessageUtil.sendReturnMessage(context, reply);
+        }
+    }
+
+    /** Final consistency check retained from the old channel-registration phase. */
     public static void fmlPostInit() {
-        if (DEBUG) {
-            BCLog.logger.info("[lib.messages] Sorting and registering message classes and orders:");
-        }
         for (PerModHandler handler : MOD_HANDLERS.values()) {
-            if (DEBUG) {
-                BCLog.logger.info("[lib.messages]  - Module: " + handler.module.getModId());
-            }
-            int wholeId = 0;
             for (PerMessageInfo<?> info : handler.knownMessages.values()) {
-                int id = wholeId++;
-                postInitSingle(handler, id, info);
+                if (info.clientHandler == null && info.serverHandler == null && FMLEnvironment.dist == Dist.CLIENT) {
+                    throw new IllegalStateException("Registered message has no handlers: " + info.messageClass.getName());
+                }
             }
-            handler.netWrapper.build();
         }
     }
 
-    /**
-     * Both direction is allowed if parameter direction of {@link SimpleChannel#messageBuilder(Class, int, NetworkDirection)} is null.
-     * When message handled, we should call {@link net.minecraftforge.network.CustomPayloadEvent.Context#setPacketHandled(boolean)},
-     * or [Unknown custom packet identifier: buildcraftlib:default] will appear in console
-     *
-     * @param handler
-     * @param id
-     * @param info
-     * @param <I>
-     */
-    private static <I extends IMessage> void postInitSingle(PerModHandler handler, int id, PerMessageInfo<I> info) {
-        boolean cl = info.clientHandler != null;
-        boolean sv = info.serverHandler != null;
-        if (!(cl | sv)) {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                // the client should *always* be able to handle everything.
-                throw new IllegalStateException("Found a registered message " + info.messageClass + " for "
-                        + info.modHandler.module.getModId() + " that didn't have any handlers!");
-            }
-        }
-
-        Class<I> msgClass = info.messageClass;
-
-//        handler.netWrapper.registerMessage(wrapHandler(info.clientHandler, msgClass), msgClass, id, Side.CLIENT);
-//        handler.netWrapper.registerMessage(wrapHandler(info.serverHandler, msgClass), msgClass, id, Side.SERVER);
-        handler.netWrapper.messageBuilder(msgClass, id)
-                .encoder(I::toBytes)
-                .decoder((buf) -> IMessage.staticFromBytes(msgClass, buf))
-                .consumerMainThread((msg, context) ->
-                {
-                    IMessageHandler<I, ?> messageHandler = null;
-                    if (context.isServerSide()) {
-                        messageHandler = info.serverHandler;
-                    } else if (context.isClientSide()) {
-                        messageHandler = info.clientHandler;
-                    }
-                    IMessage reply = wrapHandler(messageHandler, msgClass).onMessage(msg, context);
-                    context.setPacketHandled(true);
-                })
-                .add();
-        if (DEBUG) {
-            String sides = cl ? (sv ? "{client, server}" : "{client}") : "{server}";
-            BCLog.logger.info("[lib.messages]      " + id + ": " + msgClass + " on sides: " + sides);
-        }
-    }
-
-    private static <I extends IMessage> IMessageHandler<I, ?> wrapHandler(IMessageHandler<I, ?> messageHandler, Class<I> messageClass) {
+    private static <I extends IMessage> IMessageHandler<I, ?> wrapHandler(
+            IMessageHandler<I, ?> messageHandler, Class<I> messageClass) {
         if (messageHandler == null) {
-            return (message, context) ->
-            {
-//                if (context.side == Dist.DEDICATED_SERVER)
+            return (message, context) -> {
                 if (context.isServerSide()) {
-                    // Bad/Buggy client
                     Player player = context.getSender();
-                    BCLog.logger.warn(
-                            "[lib.messages] The client " + player.getName() + " (ID = " + player.getGameProfile().getId()
-                                    + ") sent an invalid message " + messageClass + ", when they should only receive them!");
+                    BCLog.logger.warn("Client {} sent invalid BuildCraft message {}", player, messageClass.getName());
                 } else {
-                    throw new Error("Received message " + messageClass
-                            + " on the client, when it should only be sent by the client and received on the server!");
+                    BCLog.logger.error("Received server-only BuildCraft message {} on client", messageClass.getName());
                 }
-                return null;
-            };
-        } else {
-            return (message, context) ->
-            {
-                Player player = BCLibProxy.getProxy().getPlayerForContext(context);
-                if (player == null || player.level() == null) {
-                    return null;
-                }
-                BCLibProxy.getProxy().addScheduledTask(player.level(), () ->
-                {
-                    IMessage reply = messageHandler.onMessage(message, context);
-                    if (reply != null) {
-                        MessageUtil.sendReturnMessage(context, reply);
-                    }
-                });
                 return null;
             };
         }
+        return (message, context) -> {
+            Player player = BCLibProxy.getProxy().getPlayerForContext(context);
+            if (player == null || player.level() == null) {
+                return null;
+            }
+            BCLibProxy.getProxy().addScheduledTask(player.level(), () -> {
+                IMessage reply = messageHandler.onMessage(message, context);
+                if (reply != null) {
+                    MessageUtil.sendReturnMessage(context, reply);
+                }
+            });
+            return null;
+        };
     }
 
-    private static SimpleChannel getSimpleNetworkWrapper(IMessage message) {
-        PerMessageInfo<?> info = MESSAGE_HANDLERS.get(message.getClass());
-        if (info == null) {
+    private static LegacyMessagePayload toPayload(IMessage message) {
+        if (!MESSAGE_HANDLERS.containsKey(message.getClass())) {
             throw new IllegalArgumentException("Cannot send unregistered message " + message.getClass());
         }
-        return info.modHandler.netWrapper;
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        message.toBytes(buf);
+        byte[] bytes = new byte[buf.readableBytes()];
+        buf.getBytes(buf.readerIndex(), bytes);
+        return new LegacyMessagePayload(message.getClass().getName(), bytes);
     }
 
-    /** Send this message to everyone. The {@link IMessageHandler} for this message type should be on the CLIENT side.
-     *
-     * @param message The message to send */
     public static void sendToAll(IMessage message) {
-//        getSimpleNetworkWrapper(message).sendToAll(message);
-        getSimpleNetworkWrapper(message).send(message, PacketDistributor.ALL.noArg());
+        PacketDistributor.sendToAllPlayers(toPayload(message));
     }
 
-    /** Send this message to the specified player. The {@link IMessageHandler} for this message type should be on the
-     * CLIENT side.
-     *
-     * @param message The message to send
-     * @param player The player to send it to */
     public static void sendTo(IMessage message, ServerPlayer player) {
-//        getSimpleNetworkWrapper(message).sendTo(message, player);
-        getSimpleNetworkWrapper(message).send(message, PacketDistributor.PLAYER.with(player));
+        PacketDistributor.sendToPlayer(player, toPayload(message));
     }
 
-    /** Send this message to everyone within a certain range of a point. The {@link IMessageHandler} for this message
-     * type should be on the CLIENT side.
-     *
-     * @param message The message to send
-     * @param point The {@link PacketDistributor.TargetPoint} around which to
-     *            send */
-
-    public static void sendToAllAround(IMessage message, PacketDistributor.TargetPoint point) {
-//        getSimpleNetworkWrapper(message).sendToAllAround(message, point);
-        getSimpleNetworkWrapper(message).send(message, PacketDistributor.NEAR.with(point));
+    public static void sendToAllAround(
+            IMessage message, ServerLevel level, @Nullable ServerPlayer excluded,
+            double x, double y, double z, double radius) {
+        PacketDistributor.sendToPlayersNear(level, excluded, x, y, z, radius, toPayload(message));
     }
 
-    /** Send this message to everyone within the supplied dimension. The {@link IMessageHandler} for this message type
-     * should be on the CLIENT side.
-     *
-     * @param message The message to send
-     * @param dimensionId The dimension id to target */
-//    public static void sendToDimension(IMessage message, int dimensionId)
     public static void sendToDimension(IMessage message, ResourceKey<Level> dimensionId) {
-//        getSimpleNetworkWrapper(message).sendToDimension(message, dimensionId);
-        getSimpleNetworkWrapper(message).send(message, PacketDistributor.DIMENSION.with(dimensionId));
+        if (ServerLifecycleHooks.getCurrentServer() == null) {
+            return;
+        }
+        ServerLevel level = ServerLifecycleHooks.getCurrentServer().getLevel(dimensionId);
+        if (level != null) {
+            PacketDistributor.sendToPlayersInDimension(level, toPayload(message));
+        }
     }
 
-    /** Send this message to the server. The {@link IMessageHandler} for this message type should be on the SERVER side.
-     *
-     * @param message The message to send */
     public static void sendToServer(IMessage message) {
-        getSimpleNetworkWrapper(message).send(message, PacketDistributor.SERVER.noArg());
+        PacketDistributor.sendToServer(toPayload(message));
     }
 
-    // Calen 1.18.2 form 1.8 for robotics
     public static void sendToEntity(IMessage message, Entity entity) {
-//        getSimpleNetworkWrapper(message).sendTo(message, player);
-        getSimpleNetworkWrapper(message).send(message, PacketDistributor.TRACKING_ENTITY.with(entity));
+        PacketDistributor.sendToPlayersTrackingEntity(entity, toPayload(message));
     }
 }

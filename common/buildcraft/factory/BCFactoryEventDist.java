@@ -9,8 +9,8 @@ package buildcraft.factory;
 import buildcraft.factory.tile.TileMiner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public enum BCFactoryEventDist {
     INSTANCE;
@@ -24,7 +24,7 @@ public enum BCFactoryEventDist {
 
 //    @SubscribeEvent
 //    @OnlyIn(Dist.CLIENT)
-//    public static void textureStitchPost(TextureStitchEvent.Post event) {
+//    public static void textureStitchPost(TextureAtlasStitchedEvent event) {
 //        if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
 //            // Calen: don't call here! The event will be called several times, then the setWhiteTex(event) will be called duplicated to make the texture lean
 //            // moved to RenderPump&RenderMiningWell#initWhiteTex()

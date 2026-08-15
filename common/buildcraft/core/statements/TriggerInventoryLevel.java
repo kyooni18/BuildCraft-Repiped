@@ -19,9 +19,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.Locale;
 
@@ -62,7 +62,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 
     @Override
     public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer container, IStatementParameter[] parameters) {
-        IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite()).orElse(null);
+        IItemHandler itemHandler = buildcraft.lib.misc.CapUtil.getCapability(tile, CapUtil.CAP_ITEMS, side.getOpposite()).orElse(null);
         if (itemHandler == null) {
             return false;
         }

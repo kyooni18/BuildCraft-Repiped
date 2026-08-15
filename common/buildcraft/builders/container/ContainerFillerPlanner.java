@@ -13,8 +13,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.FullStatement;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
@@ -77,7 +77,7 @@ public class ContainerFillerPlanner extends ContainerBC_Neptune<TileFiller> impl
 
     @Override
 //    public void readMessage(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
         IContainerFilling.super.readMessage(id, buffer, side, ctx);
     }

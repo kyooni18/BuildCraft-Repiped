@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.entity;
 
+import buildcraft.lib.fluid.FluidStackUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.api.BCItems;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -52,6 +53,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -83,24 +85,25 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.common.NeoForge;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
 
-public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpawnData, IPayloadReceiver, IDebuggable {
+public class EntityRobot extends EntityRobotBase implements IEntityWithComplexSpawn, IPayloadReceiver, IDebuggable {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.entity");
 
     protected static final IdAllocator IDS = new IdAllocator("robot");
@@ -564,7 +567,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     @Override
-    public void writeSpawnData(FriendlyByteBuf data) {
+    public void writeSpawnData(RegistryFriendlyByteBuf data) {
         data.writeByte(wearables.size());
         PacketBufferBC bcData = new PacketBufferBC(data);
         for (ItemStack s : wearables) {
@@ -574,7 +577,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     @Override
-    public void readSpawnData(FriendlyByteBuf data) {
+    public void readSpawnData(RegistryFriendlyByteBuf data) {
         int amount = data.readUnsignedByte();
         PacketBufferBC bcData = new PacketBufferBC(data);
         while (amount > 0) {
@@ -801,7 +804,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         }
 
 //        if (nbt.hasKey("tank")) {
-//            tank = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("tank"));
+//            tank = FluidStackUtil.load(nbt.getCompoundTag("tank"));
 //        } else {
 //            tank = null;
 //        }
@@ -991,7 +994,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         }
     }
 
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (NET_CLIENT_SET_ITEM_IN_USE == id) {
                 itemInUse = buffer.readItem();
@@ -1022,7 +1025,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 }
             }
         } else if (side == NetworkDirection.PLAY_TO_SERVER) {
-            ServerPlayer p = ctx.getSender();
+            ServerPlayer p = ctx.getSender() instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (NET_REQUEST_INITIALIZATION == id) {
                 IMessage message0 = createMessage(NET_INITIALIZE, (data) ->
                 {
@@ -1072,9 +1075,12 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         // Ignore hits from mobs or when docked.
         Entity src = source.getEntity();
         if (src != null && !(src instanceof FallingBlockEntity) && !(src instanceof Mob) && currentDockingStation == null) {
-            if (!ForgeHooks.onLivingAttack(this, source, f)) {
+            net.neoforged.neoforge.common.damagesource.DamageContainer damageContainer =
+                    new net.neoforged.neoforge.common.damagesource.DamageContainer(source, f);
+            if (net.neoforged.neoforge.common.CommonHooks.onEntityIncomingDamage(this, damageContainer)) {
                 return false;
             }
+            f = damageContainer.getNewDamage();
 
             if (!level().isClientSide) {
                 // hurtTime = maxHurtTime = 10;
@@ -1239,8 +1245,10 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public void attackTargetEntityWithCurrentItem(Entity target) {
         BlockPos entPos = VecUtil.convertFloor(VecUtil.getVec(target));
         ServerLevel serverLevel = (ServerLevel) level();
-        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(
-                FakePlayerProvider.INSTANCE.getFakePlayer(serverLevel, FakePlayerProvider.NULL_PROFILE, entPos), target))) {
+        AttackEntityEvent attackEvent = new AttackEntityEvent(
+                FakePlayerProvider.INSTANCE.getFakePlayer(serverLevel, FakePlayerProvider.NULL_PROFILE, entPos), target);
+        NeoForge.EVENT_BUS.post(attackEvent);
+        if (attackEvent.isCanceled()) {
             return;
         }
         if (!target.isAttackable() || target.skipAttackInteraction(this)) {
@@ -1396,7 +1404,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         }
 
         RobotEvent.Interact robotInteractEvent = new RobotEvent.Interact(this, player, stack);
-        MinecraftForge.EVENT_BUS.post(robotInteractEvent);
+        NeoForge.EVENT_BUS.post(robotInteractEvent);
         if (robotInteractEvent.isCanceled()) {
             // return false;
             return InteractionResult.PASS;
@@ -1404,7 +1412,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
         if (player.isShiftKeyDown() && stack.is(OreDictionaryTags.WRENCH)) {
             RobotEvent.Dismantle robotDismantleEvent = new RobotEvent.Dismantle(this, player);
-            MinecraftForge.EVENT_BUS.post(robotDismantleEvent);
+            NeoForge.EVENT_BUS.post(robotDismantleEvent);
             if (robotDismantleEvent.isCanceled()) {
                 // return false;
                 return InteractionResult.PASS;
@@ -1599,7 +1607,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 //    public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 //        int result = 0;
 //
-//        if (tank != null && !tank.isFluidEqual(resource)) {
+//        if (tank != null && !FluidStack.isSameFluidSameComponents(tank, resource)) {
 //            return 0;
 //        }
 //
@@ -1630,7 +1638,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
 //    @Override
 //    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-//        if (tank != null && tank.isFluidEqual(resource)) {
+//        if (tank != null && FluidStack.isSameFluidSameComponents(tank, resource)) {
 //            return drain(from, resource.amount, doDrain);
 //        } else {
 //            return null;
@@ -1672,7 +1680,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
 //    @Override
 //    public boolean canDrain(Direction from, Fluid fluid) {
-//        return tank != null && tank.getAmount() != 0 && tank.getRawFluid() == fluid;
+//        return tank != null && tank.getAmount() != 0 && tank.getFluid() == fluid;
 //    }
 
 //    @Override
@@ -1752,7 +1760,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     // Calen 1.18.2
     @Override
-    public final IMessage receivePayload(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public final IMessage receivePayload(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         int id = buffer.readUnsignedShort();
         readPayload(id, buffer, MessageUtil.getNetworkDirection(ctx), ctx);
 
@@ -1802,7 +1810,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
         LazyOptional<T> obj = caps.getCapability(capability, facing);
         if (!obj.isPresent()) {
-            obj = super.getCapability(capability, facing);
+            obj = LazyOptional.empty();
         }
         return obj;
     }

@@ -13,7 +13,7 @@ import buildcraft.lib.recipe.FinishedRecipe;
 import buildcraft.datagen.base.BCCompatRecipeProvider;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;

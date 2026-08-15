@@ -38,8 +38,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 import java.util.*;
@@ -264,7 +264,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
     }
 
     // public void readPayload(PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         int id = buffer.readUnsignedByte();
         if (id == NET_ID_CHANGE) {
             boolean isAction = buffer.readBoolean();

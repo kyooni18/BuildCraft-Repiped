@@ -17,7 +17,7 @@ import buildcraft.lib.config.*;
 import buildcraft.lib.misc.ConfigUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.registry.RegistryConfig;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.File;
 
@@ -98,7 +98,7 @@ public class BCCoreConfig {
 //        reloadConfig(EnumRestartRequirement.GAME);
         reloadConfig();
 //        addReloadListener(BCCoreConfig::reloadConfig);
-//        MinecraftForge.EVENT_BUS.register(BCCoreConfig.class);
+//        NeoForge.EVENT_BUS.register(BCCoreConfig.class);
         BCConfig.registerReloadListener(module, BCCoreConfig::reloadConfig);
     }
 

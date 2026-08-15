@@ -40,7 +40,7 @@ public enum CropHandlerReeds implements ICropHandler {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 //        return block.canSustainPlant(state, world, pos, Direction.UP, Blocks.REEDS) && block != Blocks.REEDS && world.isAirBlock(pos.up());
-        return block.canSustainPlant(state, world, pos, Direction.UP, (SugarCaneBlock) Blocks.SUGAR_CANE) && block != Blocks.SUGAR_CANE && world.isEmptyBlock(pos.above());
+        return block != Blocks.SUGAR_CANE && world.isEmptyBlock(pos.above()) && Blocks.SUGAR_CANE.defaultBlockState().canSurvive(world, pos.above());
     }
 
     @Override

@@ -18,18 +18,19 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.data.loading.DatagenModLoader;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.data.loading.DatagenModLoader;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@Mod.EventBusSubscriber(modid = BCCore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = BCCore.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class BCDataGenerators {
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {
@@ -109,7 +110,7 @@ public class BCDataGenerators {
 
         // Sprite
         // Calen 1.20.1: 1 mod jar should contain at most 1 SpriteSourceProvider for BLOCKS_ATLAS, more will overwrite the earlier /assets/minecraft/atlases/blocks.json files
-        packGenerator.addProvider(packOutput -> new BCSpriteSourceProvider(packOutput, existingFileHelper));
+        packGenerator.addProvider(packOutput -> new BCSpriteSourceProvider(packOutput, lookupProvider, existingFileHelper));
 
         // Calen 1.20.1
         enableShouldExecute(generator);

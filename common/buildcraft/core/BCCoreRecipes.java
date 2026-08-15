@@ -11,7 +11,7 @@ package buildcraft.core;
 public class BCCoreRecipes {
 
 //    public static void fmlPreInit() {
-//        MinecraftForge.EVENT_BUS.register(BCCoreRecipes.class);
+//        NeoForge.EVENT_BUS.register(BCCoreRecipes.class);
 //    }
 
 //    @SubscribeEvent

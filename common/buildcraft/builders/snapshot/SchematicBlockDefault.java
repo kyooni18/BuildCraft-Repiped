@@ -6,6 +6,7 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.fluid.FluidStackUtil;
 import buildcraft.api.core.IFakeWorld;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
@@ -33,9 +34,9 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import buildcraft.api.compat.registry.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -130,7 +131,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 // Calen
                 // containing items
                 items = new ListTag();
-                tileEntity.getCapability(CapUtil.CAP_ITEMS).ifPresent(c ->
+                buildcraft.lib.misc.CapUtil.getCapability(tileEntity, CapUtil.CAP_ITEMS, null).ifPresent(c ->
                 {
                     for (int index = 0; index < c.getSlots(); index++) {
                         ItemStack stack = c.getStackInSlot(index);
@@ -148,7 +149,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                     FluidStack stack = h.getFluidInTank(index);
                     if (!stack.isEmpty()) {
                         CompoundTag fluidNbt_i = new CompoundTag();
-                        stack.writeToNBT(fluidNbt_i);
+                        FluidStackUtil.save(stack, fluidNbt_i);
                         fluids.add(fluidNbt_i);
                     }
                 }
@@ -280,7 +281,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
         List<FluidStack> ret = Lists.newArrayList();
         if (fluids != null) {
             for (int index = 0; index < fluids.size(); index++) {
-                FluidStack stack_i = FluidStack.loadFluidStackFromNBT(fluids.getCompound(index));
+                FluidStack stack_i = FluidStackUtil.load(fluids.getCompound(index));
                 if (!stack_i.isEmpty()) {
                     ret.add(stack_i);
                 }

@@ -20,8 +20,8 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.common.crafting.IShapedRecipe;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -72,8 +72,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
             return null;
         }
         Ingredient[][] matrix = new Ingredient[3][3];
-        int maxX = recipe instanceof IShapedRecipe ? ((IShapedRecipe) recipe).getRecipeWidth() : 3;
-        int maxY = recipe instanceof IShapedRecipe ? ((IShapedRecipe) recipe).getRecipeHeight() : 3;
+        int maxX = recipe instanceof ShapedRecipe shaped ? shaped.getWidth() : 3;
+        int maxY = recipe instanceof ShapedRecipe shaped ? shaped.getHeight() : 3;
         int offsetX = maxX == 1 ? 1 : 0;
         int offsetY = maxY == 1 ? 1 : 0;
         for (int y = 0; y < 3; y++) {

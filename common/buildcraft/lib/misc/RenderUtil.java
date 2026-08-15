@@ -21,7 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.ForgeRenderTypes;
+import net.neoforged.neoforge.client.NeoForgeRenderTypes;
 
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
@@ -299,17 +299,26 @@ public class RenderUtil {
         }
     }
 
-    /** {@link ForgeRenderTypes.CustomizableTextureState} is private, so we create our own. */
+    /** {@link NeoForgeRenderTypes.CustomizableTextureState} is private, so we create our own. */
     public static class BCCustomizableTextureState extends RenderStateShard.TextureStateShard {
+        private final ResourceLocation texture;
+        private final Supplier<Boolean> blurSupplier;
+        private final Supplier<Boolean> mipmapSupplier;
+
         public BCCustomizableTextureState(ResourceLocation resLoc, Supplier<Boolean> blur, Supplier<Boolean> mipmap) {
             super(resLoc, blur.get(), mipmap.get());
-            this.setupState = () -> {
-                this.blur = blur.get();
-                this.mipmap = mipmap.get();
-                TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
-                texturemanager.getTexture(resLoc).setFilter(this.blur, this.mipmap);
-                RenderSystem.setShaderTexture(0, resLoc);
-            };
+            this.texture = resLoc;
+            this.blurSupplier = blur;
+            this.mipmapSupplier = mipmap;
+        }
+
+        @Override
+        public void setupRenderState() {
+            this.blur = blurSupplier.get();
+            this.mipmap = mipmapSupplier.get();
+            TextureManager textureManager = Minecraft.getInstance().getTextureManager();
+            textureManager.getTexture(texture).setFilter(this.blur, this.mipmap);
+            RenderSystem.setShaderTexture(0, texture);
         }
     }
 }

@@ -146,7 +146,7 @@ public class BCEnergyRecipes {
 //        IDistillationRecipe existing =
 //            BuildcraftRecipeRegistry.refineryRecipes.getDistillationRegistry().getRecipeForInput(_in);
 //        if (existing != null) {
-//            throw new IllegalStateException("Already added distillation recipe for " + _in.getRawFluid().getRegistryName());
+//            throw new IllegalStateException("Already added distillation recipe for " + _in.getFluid().getRegistryName());
 //        }
 //        int hcf = MathUtil.findHighestCommonFactor(_in.getAmount(), _outGas.getAmount());
 //        hcf = MathUtil.findHighestCommonFactor(hcf, _outLiquid.getAmount());

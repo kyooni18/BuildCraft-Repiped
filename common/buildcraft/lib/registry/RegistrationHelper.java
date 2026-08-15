@@ -17,13 +17,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.core.registries.BuiltInRegistries;
+import buildcraft.lib.registry.RegistryObject;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -56,11 +56,11 @@ public final class RegistrationHelper {
     private final String namespace;
 
     public RegistrationHelper(String namespace) {
-        BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, namespace);
-        ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, namespace);
-        TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, namespace);
-        ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, namespace);
-        PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, namespace);
+        BLOCKS = DeferredRegister.create(BuiltInRegistries.BLOCK, namespace);
+        ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, namespace);
+        TILE_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, namespace);
+        ENTITIES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, namespace);
+        PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, namespace);
         MOD_EVENT_BUS = ((FMLModContainer) ModList.get().getModContainerById(namespace).get()).getEventBus(); // Calen: don't use FMLJavaModLoadingContext.get().getModEventBus()
         BLOCKS.register(MOD_EVENT_BUS);
         ITEMS.register(MOD_EVENT_BUS);
@@ -148,32 +148,32 @@ public final class RegistrationHelper {
 //            }
 //        }
         String registryId = TagManager.getTag(idBC, EnumTagType.REGISTRY_NAME).replace(this.namespace + ":", "");
-        RegistryObject<I> reg = ITEMS.register(registryId, () -> item.apply(idBC, properties));
+        RegistryObject<I> reg = RegistryObject.of(ITEMS.register(registryId, () -> item.apply(idBC, properties)));
         items.add(reg);
         return reg;
     }
 
     public <I extends Item> RegistryObject<I> addForcedItem(String idBC, String registryId, Item.Properties properties, BiFunction<String, Item.Properties, I> item) {
-        RegistryObject<I> reg = ITEMS.register(registryId, () -> item.apply(idBC, properties));
+        RegistryObject<I> reg = RegistryObject.of(ITEMS.register(registryId, () -> item.apply(idBC, properties)));
         items.add(reg);
         return reg;
     }
 
     public <I extends Item> RegistryObject<I> addForcedItem(String registryId, Supplier<I> item) {
-        RegistryObject<I> reg = ITEMS.register(registryId, item);
+        RegistryObject<I> reg = RegistryObject.of(ITEMS.register(registryId, item));
         items.add(reg);
         return reg;
     }
 
     public <I extends Item> RegistryObject<I> addForcedBlockItem(String idBC, Supplier<I> item) {
         String registryId = TagManager.getTag(idBC, EnumTagType.REGISTRY_NAME).replace(this.namespace + ":", "");
-        RegistryObject<I> reg = ITEMS.register(registryId, item);
+        RegistryObject<I> reg = RegistryObject.of(ITEMS.register(registryId, item));
         items.add(reg);
         return reg;
     }
 
     public <I extends Item> RegistryObject<I> addForcedBlockItem(String idBC, String registryId, Supplier<I> item) {
-        RegistryObject<I> reg = ITEMS.register(registryId, item);
+        RegistryObject<I> reg = RegistryObject.of(ITEMS.register(registryId, item));
         items.add(reg);
         return reg;
     }
@@ -219,13 +219,13 @@ public final class RegistrationHelper {
 //        }
 //        return block;
         String registryId = TagManager.getTag(idBC, EnumTagType.REGISTRY_NAME).replace(this.namespace + ":", "");
-        RegistryObject<B> reg = BLOCKS.register(registryId, () -> block.apply(idBC, properties));
+        RegistryObject<B> reg = RegistryObject.of(BLOCKS.register(registryId, () -> block.apply(idBC, properties)));
         blocks.add(reg);
         return reg;
     }
 
     public <B extends Block> RegistryObject<B> addForcedBlock(String idBC, String registryId, BlockBehaviour.Properties properties, BiFunction<String, BlockBehaviour.Properties, B> block) {
-        RegistryObject<B> reg = BLOCKS.register(registryId, () -> block.apply(idBC, properties));
+        RegistryObject<B> reg = RegistryObject.of(BLOCKS.register(registryId, () -> block.apply(idBC, properties)));
         blocks.add(reg);
         return reg;
     }
@@ -292,25 +292,25 @@ public final class RegistrationHelper {
 //                        block.get()
 //                ).build(null)
 //        );
-        return TILE_ENTITIES.register(
+        return RegistryObject.of(TILE_ENTITIES.register(
                 regName,
                 () -> BlockEntityType.Builder.of(
                         blockEntityConstructor,
                         block.get()
-                ).build(Util.fetchChoiceType(References.BLOCK_ENTITY, regName)));
+                ).build(Util.fetchChoiceType(References.BLOCK_ENTITY, regName))));
     }
 
     // Calen 1.18.2
     public <E extends LivingEntity> RegistryObject<EntityType<E>> addEntity(String idBC, Supplier<EntityType.Builder<E>> entityTypeBuilder, String registryName, Supplier<AttributeSupplier.Builder> attributes) {
         // String regName = TagManager.getTag(idBC, EnumTagType.REGISTRY_NAME).replace(this.namespace + ":", "");
-        RegistryObject<EntityType<E>> ret = ENTITIES.register(registryName, () -> entityTypeBuilder.get().build(registryName));
+        RegistryObject<EntityType<E>> ret = RegistryObject.of(ENTITIES.register(registryName, () -> entityTypeBuilder.get().build(registryName)));
         EntityAttributesRegisterer r = (event) -> event.put(ret.get(), attributes.get().build());
         MOD_EVENT_BUS.addListener(r::registerEntityAttributes);
         return ret;
     }
 
     public RegistryObject<SimpleParticleType> addParticle(String name) {
-        return PARTICLE_TYPES.register(name, () -> new SimpleParticleType(false));
+        return RegistryObject.of(PARTICLE_TYPES.register(name, () -> new SimpleParticleType(false)));
     }
 
     @FunctionalInterface

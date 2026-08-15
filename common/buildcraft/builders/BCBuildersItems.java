@@ -10,7 +10,7 @@ import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.lib.item.ItemPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 public class BCBuildersItems {
     private static final RegistrationHelper HELPER = new RegistrationHelper(BCBuilders.MODID);

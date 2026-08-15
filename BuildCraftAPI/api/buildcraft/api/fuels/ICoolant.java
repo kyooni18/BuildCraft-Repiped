@@ -1,0 +1,53 @@
+package buildcraft.api.fuels;
+
+import buildcraft.api.BCModules;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.fluids.FluidStack;
+
+public interface ICoolant extends Recipe<RecipeInput> {
+    public static final ResourceLocation TYPE_ID = ResourceLocation.fromNamespaceAndPath(BCModules.ENERGY.getModId(), "coolant");
+
+    public static final RecipeType<ICoolant> TYPE = RecipeType.simple(TYPE_ID);
+
+    EnumCoolantType getCoolantType();
+
+    FluidStack getFluid();
+
+    ResourceLocation getId();
+
+    @Override
+    default boolean matches(RecipeInput inv, Level world) {
+        return false;
+    }
+
+    @Override
+    default ItemStack assemble(RecipeInput inv, HolderLookup.Provider registryAccess) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    default boolean canCraftInDimensions(int width, int height) {
+        return true;
+    }
+
+    @Override
+    default ItemStack getResultItem(HolderLookup.Provider registryAccess) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    default boolean isSpecial() {
+        return true;
+    }
+
+    @Override
+    default RecipeType<?> getType() {
+        return TYPE;
+    }
+}

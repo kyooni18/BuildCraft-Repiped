@@ -15,8 +15,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.SoundActions;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.common.SoundActions;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 
@@ -91,12 +91,12 @@ public class SoundUtil {
     }
 
     public static void playBucketEmpty(Level world, BlockPos pos, FluidStack moved) {
-        SoundEvent sound = moved.getRawFluid().getFluidType().getSound(moved, SoundActions.BUCKET_EMPTY);
+        SoundEvent sound = moved.getFluid().getFluidType().getSound(moved, SoundActions.BUCKET_EMPTY);
         world.playSound(null, pos, sound, SoundSource.PLAYERS, 1, 1);
     }
 
     public static void playBucketFill(Level world, BlockPos pos, FluidStack moved) {
-        SoundEvent sound = moved.getRawFluid().getFluidType().getSound(moved, SoundActions.BUCKET_FILL);
+        SoundEvent sound = moved.getFluid().getFluidType().getSound(moved, SoundActions.BUCKET_FILL);
         world.playSound(null, pos, sound, SoundSource.PLAYERS, 1, 1);
     }
 }

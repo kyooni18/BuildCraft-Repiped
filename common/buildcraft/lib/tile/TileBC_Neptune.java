@@ -57,20 +57,20 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Set;
 
-public abstract class TileBC_Neptune extends BlockEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
+public abstract class TileBC_Neptune extends BlockEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned, buildcraft.api.compat.capability.ICapabilityProvider {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.tile");
 
     protected static final IdAllocator IDS = new IdAllocator("tile");
@@ -363,7 +363,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
         LazyOptional<T> obj = caps.getCapability(capability, facing);
         if (!obj.isPresent()) {
-            obj = super.getCapability(capability, facing);
+            obj = LazyOptional.empty();
         }
         return obj;
     }
@@ -626,7 +626,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     }
 
     @Override
-    public final IMessage receivePayload(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public final IMessage receivePayload(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         int id = buffer.readUnsignedShort();
         readPayload(id, buffer, MessageUtil.getNetworkDirection(ctx), ctx);
 
@@ -666,7 +666,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
 
     /** @param ctx The context. Will be null if this is a generic update payload
      * @throws IOException if something went wrong */
-    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, MessageContext ctx) throws IOException {
         // read render data with gui data
         if (id == NET_GUI_DATA) {
             readPayload(NET_RENDER_DATA, buffer, side, ctx);

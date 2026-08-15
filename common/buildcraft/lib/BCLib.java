@@ -4,6 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import buildcraft.api.BCBlocks;
+import buildcraft.api.BCItems;
+
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.MjAPI;
@@ -28,19 +31,18 @@ import buildcraft.lib.script.ReloadableRegistryManager;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.world.ForgeChunkManager;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Consumer;
 
@@ -54,7 +56,7 @@ import java.util.function.Consumer;
 //        dependencies = "required-after:forge@(gradle_replace_forgeversion,)"
 //)
 @Mod(BCLib.MODID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
@@ -92,25 +94,28 @@ public class BCLib {
     @SubscribeEvent
     public static void onRegisterEvent(RegisterEvent event) {
         ResourceKey<? extends Registry<?>> registry = event.getRegistryKey();
+        event.register(Registries.RECIPE_TYPE, IRefineryRecipeManager.IHeatableRecipe.TYPE_ID, () -> IRefineryRecipeManager.IHeatableRecipe.TYPE);
+        event.register(Registries.RECIPE_TYPE, IRefineryRecipeManager.ICoolableRecipe.TYPE_ID, () -> IRefineryRecipeManager.ICoolableRecipe.TYPE);
+        event.register(Registries.RECIPE_TYPE, IRefineryRecipeManager.IDistillationRecipe.TYPE_ID, () -> IRefineryRecipeManager.IDistillationRecipe.TYPE);
+        BCLibMenuTypes.registerAll(event);
         if (registry == Registries.BLOCK) {
-            ForgeRegistries.RECIPE_TYPES.register(IRefineryRecipeManager.IHeatableRecipe.TYPE_ID, IRefineryRecipeManager.IHeatableRecipe.TYPE);
-            ForgeRegistries.RECIPE_TYPES.register(IRefineryRecipeManager.ICoolableRecipe.TYPE_ID, IRefineryRecipeManager.ICoolableRecipe.TYPE);
-            ForgeRegistries.RECIPE_TYPES.register(IRefineryRecipeManager.IDistillationRecipe.TYPE_ID, IRefineryRecipeManager.IDistillationRecipe.TYPE);
+
+
             BCLibRegistries.initRecipeRegistry();
 
             // GUI
-            BCLibMenuTypes.registerAll();
         }
     }
 
     @SubscribeEvent
     public static void preInit(FMLConstructModEvent evt) {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(MODID).orElseThrow()).getEventBus();
         // Cap
         modEventBus.addListener(CapUtil::registerCapability);
         modEventBus.addListener(MjAPI::registerCapability);
         modEventBus.addListener(TilesAPI::registerCapability);
         modEventBus.addListener(PipeApi::registerCapability);
+        modEventBus.addListener(MessageManager::registerPayloads);
         // CreativeModTab
         modEventBus.addListener(CreativeTabManager::addItemsToVanillaTabs);
 
@@ -159,15 +164,14 @@ public class BCLib {
         BuildCraftObjectCaches.fmlPreInit();
 //        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
 //
-        MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(MigrationManager.INSTANCE);
-//        MinecraftForge.EVENT_BUS.register(FluidManager.class); // Calen: not used in 1.18.2
+        NeoForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
+//        NeoForge.EVENT_BUS.register(FluidManager.class); // Calen: not used in 1.18.2
 
 //        // Set max chunk limit for quarries: 1 chunk for quarry itself and 5 * 5 chunks square for working area
 //        ForgeChunkManager.getConfig().get(MODID, "maximumChunksPerTicket", 26);
 //        ForgeChunkManager.syncConfigDefaults();
 //        ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
-        ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.MODID, ChunkLoaderManager::rebindTickets);
+        ChunkLoaderManager.registerTicketController(modEventBus);
     }
 
     public static Error throwBadClass(Error e, Class<?> cls) throws Error {
@@ -178,6 +182,8 @@ public class BCLib {
 
     @SubscribeEvent
     public static void init(FMLCommonSetupEvent evt) {
+        BCBlocks.init();
+        BCItems.init();
         BCLibProxy.getProxy().fmlInit();
 
         BCLibRegistries.fmlInit(); // did nothing in 1.12.2 as well

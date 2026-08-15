@@ -1,5 +1,11 @@
 package buildcraft.transport;
 
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.RegisterEvent;
+
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
@@ -14,17 +20,13 @@ import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
 // Calen: instead of BCTransportProxy in 1.12.2
 // For Client
 public class BCTransportMenuTypes {
-    public static final MenuType<ContainerDiamondPipe> PIPE_DIAMOND = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerDiamondPipe> PIPE_DIAMOND = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TilePipeHolder tile && tile.getPipe().behaviour instanceof PipeBehaviourDiamond diamond) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -41,7 +43,7 @@ public class BCTransportMenuTypes {
                 }
             }
     );
-    public static final MenuType<ContainerDiamondWoodPipe> PIPE_DIAMOND_WOOD = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerDiamondWoodPipe> PIPE_DIAMOND_WOOD = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TilePipeHolder tile && tile.getPipe().behaviour instanceof PipeBehaviourWoodDiamond woodDiamond) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -58,7 +60,7 @@ public class BCTransportMenuTypes {
                 }
             }
     );
-    public static final MenuType<ContainerEmzuliPipe_BC8> PIPE_EMZULI = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerEmzuliPipe_BC8> PIPE_EMZULI = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TilePipeHolder tile && tile.getPipe().behaviour instanceof PipeBehaviourEmzuli emzuli) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -75,7 +77,7 @@ public class BCTransportMenuTypes {
                 }
             }
     );
-    public static final MenuType<ContainerFilteredBuffer_BC8> FILTERED_BUFFER = IForgeMenuType.create((windowId, inv, data) ->
+    public static final MenuType<ContainerFilteredBuffer_BC8> FILTERED_BUFFER = IMenuTypeExtension.create((windowId, inv, data) ->
             {
                 if (inv.player.level().getBlockEntity(data.readBlockPos()) instanceof TileFilteredBuffer tile) {
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
@@ -86,17 +88,17 @@ public class BCTransportMenuTypes {
             }
     );
 
-    public static void registerAll() {
-        ForgeRegistries.MENU_TYPES.register("pipe_diamond", PIPE_DIAMOND);
-        ForgeRegistries.MENU_TYPES.register("pipe_diamond_wood", PIPE_DIAMOND_WOOD);
-        ForgeRegistries.MENU_TYPES.register("pipe_emzuli", PIPE_EMZULI);
-        ForgeRegistries.MENU_TYPES.register("filtered_buffer", FILTERED_BUFFER);
+    public static void registerAll(RegisterEvent event) {
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcrafttransport", "pipe_diamond"), () -> PIPE_DIAMOND);
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcrafttransport", "pipe_diamond_wood"), () -> PIPE_DIAMOND_WOOD);
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcrafttransport", "pipe_emzuli"), () -> PIPE_EMZULI);
+        event.register(Registries.MENU, ResourceLocation.fromNamespaceAndPath("buildcrafttransport", "filtered_buffer"), () -> FILTERED_BUFFER);
+    }
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            MenuScreens.register(PIPE_DIAMOND, GuiDiamondPipe::new);
-            MenuScreens.register(PIPE_DIAMOND_WOOD, GuiDiamondWoodPipe::new);
-            MenuScreens.register(PIPE_EMZULI, GuiEmzuliPipe_BC8::new);
-            MenuScreens.register(FILTERED_BUFFER, GuiFilteredBuffer::new);
-        }
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(PIPE_DIAMOND, GuiDiamondPipe::new);
+        event.register(PIPE_DIAMOND_WOOD, GuiDiamondWoodPipe::new);
+        event.register(PIPE_EMZULI, GuiEmzuliPipe_BC8::new);
+        event.register(FILTERED_BUFFER, GuiFilteredBuffer::new);
     }
 }

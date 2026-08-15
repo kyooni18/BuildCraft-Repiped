@@ -9,8 +9,8 @@ package buildcraft.builders.snapshot;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.Tags;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.Arrays;

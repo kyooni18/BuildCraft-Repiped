@@ -32,13 +32,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.BlockSnapshot;
-import buildcraft.api.core.FakePlayer;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.util.BlockSnapshot;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.LogicalSide;
 
 import java.util.*;
 
@@ -72,21 +72,21 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
     }
 
     @SubscribeEvent
-    public void tick(TickEvent.LevelTickEvent event) {
+    public void tick(LevelTickEvent.Post event) {
 //        if (event.phase != Phase.END || event.side != Side.SERVER)
-        if (event.phase != TickEvent.Phase.END || event.side != LogicalSide.SERVER) {
+        if (event.getLevel().isClientSide) {
             return;
         }
 //        List<PipeExtensionRequest> rList = requests.get(event.world.provider.getDimension());
-        List<PipeExtensionRequest> rList = requests.get(event.level.dimension().location().toString());
+        List<PipeExtensionRequest> rList = requests.get(event.getLevel().dimension().location().toString());
         if (rList == null) {
             return;
         }
         for (PipeExtensionRequest r : rList) {
             if (retractionPipeDefs.contains(r.pipeDef)) {
-                retract(event.level, r);
+                retract(event.getLevel(), r);
             } else {
-                extend(event.level, r);
+                extend(event.getLevel(), r);
             }
         }
         rList.clear();
@@ -150,7 +150,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         NonNullList<ItemStack> list = NonNullList.create();
         boolean canceled = !BlockUtil.breakBlock((ServerLevel) w, p, list, r.pos, owner);
         if (canceled) {
-            blockSnapshot2.restore(true);
+            blockSnapshot2.restore();
             BlockEntity tile = w.getBlockEntity(p);
             if (tile != null) {
                 tile.onLoad();
@@ -169,26 +169,26 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             player.getInventory().clearContent();
             w.setBlock(p, stripesStateOld, Block.UPDATE_ALL);
 //            BlockEvent.PlaceEvent placeEvent = ForgeEventFactory.onPlayerBlockPlace(player, blockSnapshot2, r.dir, InteractionHand.MAIN_HAND);
-            canceled = ForgeEventFactory.onBlockPlace(player, blockSnapshot2, r.dir.getOpposite());
+            canceled = EventHooks.onBlockPlace(player, blockSnapshot2, r.dir.getOpposite());
 //            if (canceled = placeEvent.isCanceled())
             if (canceled) {
-                blockSnapshot2.restore(true);
+                blockSnapshot2.restore();
                 BlockEntity tile = w.getBlockEntity(r.pos);
                 if (tile != null) {
                     tile.onLoad();
                 }
             } else {
-                SoundUtil.playBlockBreak(w, p, blockSnapshot2.getReplacedBlock());
+                SoundUtil.playBlockBreak(w, p, blockSnapshot2.getState());
 
                 canceled = !BlockUtil.breakBlock((ServerLevel) w, r.pos, NonNullList.create(), r.pos, owner);
                 if (canceled) {
-                    blockSnapshot1.restore(true);
+                    blockSnapshot1.restore();
                     BlockEntity tile1 = w.getBlockEntity(r.pos);
                     if (tile1 != null) {
                         tile1.onLoad();
                     }
 
-                    blockSnapshot2.restore(true);
+                    blockSnapshot2.restore();
                     BlockEntity tile2 = w.getBlockEntity(p);
                     if (tile2 != null) {
                         tile2.onLoad();
@@ -253,7 +253,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         if (canceled) {
             stacksToSendBack.add(r.stack);
 
-            blockSnapshot1.restore(true);
+            blockSnapshot1.restore();
             BlockEntity tile = w.getBlockEntity(r.pos);
             if (tile != null) {
                 tile.onLoad();
@@ -267,8 +267,8 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             FakePlayer player = BuildCraftAPI.fakePlayerProvider.getFakePlayer((ServerLevel) w, owner, r.pos);
             player.getInventory().clearContent();
             player.getInventory().setItem(player.getInventory().selected, r.stack);
-//            InteractionResult result = ForgeHooks.onPlaceItemIntoWorld(r.stack, player, w, r.pos, r.dir.getOpposite(), 0.5F, 0.5F, 0.5F, InteractionHand.MAIN_HAND);
-            InteractionResult result = ForgeHooks.onPlaceItemIntoWorld(
+//            InteractionResult result = CommonHooks.onPlaceItemIntoWorld(r.stack, player, w, r.pos, r.dir.getOpposite(), 0.5F, 0.5F, 0.5F, InteractionHand.MAIN_HAND);
+            InteractionResult result = CommonHooks.onPlaceItemIntoWorld(
                     new UseOnContext(w,
                             player,
                             InteractionHand.MAIN_HAND,
@@ -290,7 +290,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             }
 //            if (canceled = result != EnumActionResult.SUCCESS)
             if (canceled = (!result.consumesAction())) {
-                blockSnapshot1.restore(true);
+                blockSnapshot1.restore();
                 BlockEntity tile = w.getBlockEntity(r.pos);
                 if (tile != null) {
                     tile.onLoad();
@@ -313,17 +313,17 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             BlockSnapshot blockSnapshot2 = BlockSnapshot.create(w.dimension(), w, p);
             w.setBlock(p, stripesStateOld, Block.UPDATE_ALL);
 //            BlockEvent.PlaceEvent placeEvent = ForgeEventFactory.onPlayerBlockPlace(player, blockSnapshot2, r.dir.getOpposite(), InteractionHand.MAIN_HAND);
-            canceled = ForgeEventFactory.onBlockPlace(player, blockSnapshot2, r.dir.getOpposite());
+            canceled = EventHooks.onBlockPlace(player, blockSnapshot2, r.dir.getOpposite());
             if (canceled) {
                 stacksToSendBack.add(r.stack);
 
-                blockSnapshot1.restore(true);
+                blockSnapshot1.restore();
                 BlockEntity tile = w.getBlockEntity(r.pos);
                 if (tile != null) {
                     tile.onLoad();
                 }
 
-                blockSnapshot2.restore(true);
+                blockSnapshot2.restore();
             } else {
                 stacksToSendBack.addAll(list);
             }

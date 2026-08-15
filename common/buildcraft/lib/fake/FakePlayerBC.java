@@ -9,7 +9,7 @@ package buildcraft.lib.fake;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
-import buildcraft.api.core.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
 public class FakePlayerBC extends FakePlayer {
     public FakePlayerBC(ServerLevel world, GameProfile name) {

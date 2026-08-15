@@ -217,8 +217,8 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
         if (f == -1.0F) {
             return 0.0F;
         } else {
-            int i = net.minecraftforge.common.ForgeHooks.isCorrectToolForDrops(state, player) ? 30 : 100;
-            return player.getDestroySpeed(state, pos) / f / (float) i;
+            int i = player.getMainHandItem().isCorrectToolForDrops(state) ? 30 : 100;
+            return player.getDestroySpeed(state) / f / (float) i;
         }
     }
 

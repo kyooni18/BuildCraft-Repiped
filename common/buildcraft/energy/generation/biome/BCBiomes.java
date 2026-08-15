@@ -1,5 +1,7 @@
 package buildcraft.energy.generation.biome;
 
+import net.neoforged.fml.common.EventBusSubscriber;
+
 import buildcraft.energy.BCEnergy;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -20,7 +22,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import javax.annotation.Nullable;
 
 // Calen: OverworldBiomes.class https://forums.minecraftforge.net/topic/104296-solved1165-custom-biome-not-generating-in-overworld-dimension/
-//@Mod.EventBusSubscriber(modid = BCEnergy.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+//@EventBusSubscriber(modid = BCEnergy.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class BCBiomes {
     @Nullable
     private static final Music NORMAL_MUSIC = null;

@@ -9,8 +9,8 @@ package buildcraft.lib.client.render.tile;
 import buildcraft.lib.client.model.MutableVertex;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.core.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderMachineWave {

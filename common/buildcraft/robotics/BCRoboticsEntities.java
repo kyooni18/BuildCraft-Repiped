@@ -8,7 +8,7 @@ import buildcraft.robotics.entity.EntityRobot;
 import com.google.common.collect.Maps;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.Map;
 

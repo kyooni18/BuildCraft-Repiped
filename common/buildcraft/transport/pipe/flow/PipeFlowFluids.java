@@ -6,6 +6,7 @@
 
 package buildcraft.transport.pipe.flow;
 
+import buildcraft.lib.fluid.FluidStackUtil;
 import buildcraft.api.core.*;
 import buildcraft.api.robots.IDockingStationProvider;
 import buildcraft.api.tiles.IDebuggable;
@@ -33,15 +34,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.network.NetworkDirection;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.LazyOptional;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import buildcraft.api.net.NetworkDirection;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -91,7 +92,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             sections.put(part, new Section(part));
         }
         if (nbt.contains("fluid")) {
-            setFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompound("fluid")));
+            setFluid(FluidStackUtil.load(nbt.getCompound("fluid")));
         } else {
             setFluid(null);
         }
@@ -101,11 +102,11 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (nbt.contains("tank[" + direction + "]")) {
                 CompoundTag compound = nbt.getCompound("tank[" + direction + "]");
                 if (compound.contains("FluidType")) {
-                    FluidStack stack = FluidStack.loadFluidStackFromNBT(compound);
+                    FluidStack stack = FluidStackUtil.load(compound);
                     if (currentFluid == null) {
                         setFluid(stack);
                     }
-                    if (stack != null && stack.isFluidEqual(currentFluid)) {
+                    if (stack != null && FluidStack.isSameFluidSameComponents(stack, currentFluid)) {
                         sections.get(part).readFromNbt(compound);
                     }
                 } else {
@@ -121,7 +122,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         if (currentFluid != null) {
             CompoundTag fluidTag = new CompoundTag();
-            currentFluid.writeToNBT(fluidTag);
+            FluidStackUtil.save(currentFluid, fluidTag);
             nbt.put("fluid", fluidTag);
 
             for (EnumPipePart part : EnumPipePart.VALUES) {
@@ -142,7 +143,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     @Override
     public boolean canConnect(Direction face, BlockEntity oTile) {
-        return oTile.getCapability(CapUtil.CAP_FLUIDS, face.getOpposite()).isPresent();
+        return buildcraft.lib.misc.CapUtil.getCapability(oTile, CapUtil.CAP_FLUIDS, face.getOpposite()).isPresent();
     }
 
     @Override
@@ -163,7 +164,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 totalAmount += sections.get(part).amount;
             }
             if (totalAmount > 0) {
-                BCCoreItems.fragileFluidShard.get().addFluidDrops(toDrop, new FluidStack(currentFluid, totalAmount));
+                BCCoreItems.fragileFluidShard.get().addFluidDrops(toDrop, currentFluid.copyWithAmount(totalAmount));
             }
         }
     }
@@ -305,7 +306,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         FluidStack drained = handler.drain(filter, action);
 //        if (drained != null)
         if (!drained.isEmpty()) {
-            if (!filter.isFluidEqual(filter)) {
+            if (!FluidStack.isSameFluidSameComponents(filter, filter)) {
                 String detail = "(Filter = " + StringUtilBC.fluidToString(filter);
                 detail += ",\nactually drained = " + StringUtilBC.fluidToString(drained) + ")";
                 detail += ",\nIFluidHandler = " + handler.getClass() + "(" + handler + ")";
@@ -322,7 +323,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (fluid == null || fluid.getAmount() == 0) {
             return 0;
         }
-        if (currentFluid != null && !currentFluid.isFluidEqual(fluid)) {
+        if (currentFluid != null && !FluidStack.isSameFluidSameComponents(currentFluid, fluid)) {
             return 0;
         }
 //        if (currentFluid == null && !simulate)
@@ -359,7 +360,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             return null;
         }
         int amount = MathUtil.clamp(s.amount, min, max);
-        FluidStack fluid = new FluidStack(currentFluid, amount);
+        FluidStack fluid = currentFluid.copyWithAmount(amount);
 //        if (!simulate)
         if (action.execute()) {
             s.amount -= amount;
@@ -563,7 +564,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(part.face, CapUtil.CAP_FLUIDS);
                     if (fluidHandler == null) continue;
 
-                    FluidStack fluidToPush = new FluidStack(currentFluid, maxDrain);
+                    FluidStack fluidToPush = currentFluid.copyWithAmount(maxDrain);
 
                     if (fluidToPush.getAmount() > 0) {
                         int filled = fluidHandler.fill(fluidToPush, IFluidHandler.FluidAction.EXECUTE);
@@ -1023,7 +1024,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 return 0;
             }
 
-            if (currentFluid == null || currentFluid.isFluidEqual(resource)) {
+            if (currentFluid == null || FluidStack.isSameFluidSameComponents(currentFluid, resource)) {
                 if (doFill.execute()) {
                     if (currentFluid == null) {
                         setFluid(resource.copy());

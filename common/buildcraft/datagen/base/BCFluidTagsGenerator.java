@@ -7,8 +7,8 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;

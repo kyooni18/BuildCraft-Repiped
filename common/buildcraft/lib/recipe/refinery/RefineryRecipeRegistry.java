@@ -16,7 +16,7 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -119,7 +119,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
             }
 //            for (R recipe : allRecipes)
             for (R recipe : getAllRecipes(world)) {
-                if (recipe.in().isFluidEqual(fluid)) {
+                if (FluidStack.isSameFluidSameComponents(recipe.in(), fluid)) {
                     return recipe;
                 }
             }
@@ -150,7 +150,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
             ListIterator<R> iter = unregisteredRecipes.listIterator();
             while (iter.hasNext()) {
                 R existing = iter.next();
-                if (existing.in().isFluidEqual(recipe.in())) {
+                if (FluidStack.isSameFluidSameComponents(existing.in(), recipe.in())) {
                     iter.set(recipe);
                     return recipe;
                 }

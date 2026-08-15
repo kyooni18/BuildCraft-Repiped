@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.HashMap;
 
@@ -45,7 +45,7 @@ public class RobotRegistryProvider implements IRobotRegistryProvider {
                 d.world = world;
             }
 
-            MinecraftForge.EVENT_BUS.register(newRegistry);
+            NeoForge.EVENT_BUS.register(newRegistry);
 
             registries.put(world.dimension(), newRegistry);
 

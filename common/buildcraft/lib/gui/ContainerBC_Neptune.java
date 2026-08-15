@@ -28,11 +28,11 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -222,7 +222,7 @@ public abstract class ContainerBC_Neptune<MENU_PROVIDER extends MenuProvider> ex
     public void writeMessage(int id, PacketBufferBC buffer, Dist side) {
     }
 
-    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection direction, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection direction, MessageContext ctx) throws IOException {
         if (id == NET_WIDGET) {
             int widgetId = buffer.readUnsignedShort();
             if (widgetId < 0 || widgetId >= widgets.size()) {
@@ -253,7 +253,7 @@ public abstract class ContainerBC_Neptune<MENU_PROVIDER extends MenuProvider> ex
         }
     }
 
-    private void readSingleSetPhantom(PacketBufferBC buffer, CustomPayloadEvent.Context ctx) throws IOException {
+    private void readSingleSetPhantom(PacketBufferBC buffer, MessageContext ctx) throws IOException {
         int idx = buffer.readVarInt();
         ItemStack stack = buffer.readItem();
         if (idx >= 0 && idx < slots.size()) {

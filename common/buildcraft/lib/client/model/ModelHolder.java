@@ -7,7 +7,7 @@
 package buildcraft.lib.client.model;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.Set;
 

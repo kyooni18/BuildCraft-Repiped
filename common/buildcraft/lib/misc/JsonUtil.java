@@ -29,9 +29,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.util.JsonUtils;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.util.JsonUtils;
+import net.neoforged.neoforge.fluids.FluidStack;
+import buildcraft.api.compat.registry.ForgeRegistries;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
@@ -607,7 +607,7 @@ public class JsonUtil {
 
     public static JsonElement serializeFluidStack(FluidStack fluidStack) {
         JsonObject json = new JsonObject();
-        json.addProperty("fluid", FluidUtilBC.getRegistryName(fluidStack.getRawFluid()).toString());
+        json.addProperty("fluid", FluidUtilBC.getRegistryName(fluidStack.getFluid()).toString());
         json.addProperty("amount", fluidStack.getAmount());
         return json;
     }

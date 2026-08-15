@@ -4,7 +4,7 @@ import buildcraft.datagen.base.BCBaseBlockStateGenerator;
 import buildcraft.robotics.BCRobotics;
 import buildcraft.robotics.BCRoboticsBlocks;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class RoboticsBlockStateGenerator extends BCBaseBlockStateGenerator {

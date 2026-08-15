@@ -7,8 +7,8 @@
 package buildcraft.lib.client.guide.parts;
 
 import buildcraft.lib.client.guide.GuiGuide;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @FunctionalInterface
 @OnlyIn(Dist.CLIENT)

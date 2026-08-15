@@ -20,14 +20,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class FluidUtilBC {
             if (target == null) {
                 continue;
             }
-            IFluidHandler handler = target.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
+            IFluidHandler handler = CapUtil.getCapability(target, CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
             if (handler != null) {
                 int used = handler.fill(potential.copy(), FluidAction.EXECUTE);
 
@@ -78,7 +78,7 @@ public class FluidUtilBC {
         {
             boolean found = false;
             for (FluidStack stack : stacks) {
-                if (stack.isFluidEqual(toAdd)) {
+                if (FluidStack.isSameFluidSameComponents(stack, toAdd)) {
                     stack.setAmount(stack.getAmount() + toAdd.getAmount());
                     found = true;
                 }
@@ -91,7 +91,7 @@ public class FluidUtilBC {
     }
 
     public static boolean areFluidStackEqual(FluidStack a, FluidStack b) {
-        return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.getAmount() == b.getAmount());
+        return (a == null && b == null) || (a != null && b != null && FluidStack.isSameFluidSameComponents(a, b) && a.getAmount() == b.getAmount());
     }
 
     // Calen: use areFluidsEqualIgnoringStillOrFlow in 1.18.2
@@ -108,7 +108,7 @@ public class FluidUtilBC {
         if (a == null || b == null) {
             return a == b;
         }
-        return a.isSame(b);
+        return a == b || a.getFluidType() == b.getFluidType();
     }
 
     /** @return The fluidstack that was moved, or null if no fluid was moved. */
@@ -143,7 +143,7 @@ public class FluidUtilBC {
 //            return null;
             return StackUtil.EMPTY_FLUID;
         }
-        FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
+        FluidStack toDrain = toDrainPotential.copyWithAmount(accepted);
         if (accepted < toDrainPotential.getAmount()) {
             toDrainPotential = from.drain(toDrain, FluidAction.SIMULATE);
 //            if (toDrainPotential == null || toDrainPotential.getAmount() < accepted)
@@ -153,8 +153,8 @@ public class FluidUtilBC {
             }
         }
         FluidStack drained = from.drain(toDrain.copy(), FluidAction.EXECUTE);
-//        if (drained == null || toDrain.getAmount() != drained.getAmount() || !toDrain.isFluidEqual(drained))
-        if (drained.isEmpty() || toDrain.getAmount() != drained.getAmount() || !toDrain.isFluidEqual(drained)) {
+//        if (drained == null || toDrain.getAmount() != drained.getAmount() || !FluidStack.isSameFluidSameComponents(toDrain, drained))
+        if (drained.isEmpty() || toDrain.getAmount() != drained.getAmount() || !FluidStack.isSameFluidSameComponents(toDrain, drained)) {
             String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
             detail += ",\npotential drain = " + StringUtilBC.fluidToString(toDrainPotential) + ")";
             detail += ",\nactually drained = " + StringUtilBC.fluidToString(drained) + ")";
@@ -167,7 +167,7 @@ public class FluidUtilBC {
             String detail = "(actually accepted = " + actuallyAccepted + ", accepted = " + accepted + ")";
             throw new IllegalStateException("Mismatched IFluidHandler implementations!\n" + detail);
         }
-        return new FluidStack(drained, accepted);
+        return drained.copyWithAmount(accepted);
     }
 
     public static InteractionResult onTankActivated(Player player, BlockPos pos, InteractionHand hand, IFluidHandler fluidHandler) {
@@ -180,14 +180,14 @@ public class FluidUtilBC {
         boolean single = held.getCount() == 1;
         IFluidHandlerItem flItem = null;
         if (replace && single) {
-            flItem = FluidUtil.getFluidHandler(held).resolve().orElse(null);
+            flItem = FluidUtil.getFluidHandler(held).orElse(null);
         } else {
             // replace and not single - need a copy and count set to 1
             // not replace and single - need a copy, does not need change of count but it should be ok
             // not replace and not single - need a copy count set to 1
             ItemStack copy = held.copy();
             copy.setCount(1);
-            flItem = FluidUtil.getFluidHandler(copy).resolve().orElse(null);
+            flItem = FluidUtil.getFluidHandler(copy).orElse(null);
         }
         if (flItem == null) {
             return InteractionResult.PASS;
@@ -237,14 +237,14 @@ public class FluidUtilBC {
     }
 
     public static ResourceLocation getStillTexture(Fluid fluid) {
-        return ((IClientFluidTypeExtensions) fluid.getFluidType().getRenderPropertiesInternal()).getStillTexture();
+        return IClientFluidTypeExtensions.of(fluid).getStillTexture();
     }
 
     public static ResourceLocation getFlowingTexture(Fluid fluid) {
-        return ((IClientFluidTypeExtensions) fluid.getFluidType().getRenderPropertiesInternal()).getFlowingTexture();
+        return IClientFluidTypeExtensions.of(fluid).getFlowingTexture();
     }
 
     public static int getColor(Fluid fluid) {
-        return ((IClientFluidTypeExtensions) fluid.getFluidType().getRenderPropertiesInternal()).getTintColor();
+        return IClientFluidTypeExtensions.of(fluid).getTintColor();
     }
 }

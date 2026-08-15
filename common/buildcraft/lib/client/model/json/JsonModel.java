@@ -13,7 +13,7 @@ import com.google.gson.reflect.TypeToken;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

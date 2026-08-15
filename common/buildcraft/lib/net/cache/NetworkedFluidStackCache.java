@@ -12,8 +12,8 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -34,7 +34,7 @@ public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
                 if (o == null) {
                     return 0;
                 }
-                return Objects.hash(o.getRawFluid(), o.getTag());
+                return Objects.hash(o.getFluid(), o.getComponentsPatch());
             }
 
             @Override
@@ -42,8 +42,8 @@ public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
                 if (a == null || b == null) {
                     return a == b;
                 }
-                return a.getRawFluid() == b.getRawFluid() //
-                        && Objects.equals(a.getTag(), b.getTag());
+                return a.getFluid() == b.getFluid() //
+                        && Objects.equals(a.getComponentsPatch(), b.getComponentsPatch());
             }
         });
     }
@@ -55,30 +55,12 @@ public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
 
     @Override
     protected void writeObject(FluidStack obj, PacketBufferBC buffer) {
-//        Fluid f = obj.getFluid();
-        Fluid f = obj.getRawFluid();
-//        buffer.writeString(FluidRegistry.getFluidName(f));
-        buffer.writeRegistryId(ForgeRegistries.FLUIDS, f); // Calen: just like FluidStack#writeToPacket
-//        if (obj.tag == null)
-        if (obj.getTag() == null) {
-            buffer.writeBoolean(false);
-        } else {
-            buffer.writeBoolean(true);
-//            buffer.writeCompoundTag(obj.tag);
-            buffer.writeNbt(obj.getTag());
-        }
+        buffer.writeFluidStack(obj.copyWithAmount(FLUID_AMOUNT));
     }
 
     @Override
     protected FluidStack readObject(PacketBufferBC buffer) throws IOException {
-//        Fluid fluid = FluidRegistry.getFluid(buffer.readString(255));
-        Fluid fluid = buffer.readRegistryId(); // Calen: just like FluidStack#readFromPacket
-        FluidStack stack = new FluidStack(fluid, FLUID_AMOUNT);
-        if (buffer.readBoolean()) {
-//            stack.tag = buffer.readCompoundTag();
-            stack.setTag(buffer.readNbt());
-        }
-        return stack;
+        return buffer.readFluidStack().copyWithAmount(FLUID_AMOUNT);
     }
 
     @Override

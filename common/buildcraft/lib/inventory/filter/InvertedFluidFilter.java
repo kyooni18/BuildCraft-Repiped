@@ -7,7 +7,7 @@
 package buildcraft.lib.inventory.filter;
 
 import buildcraft.api.core.IFluidFilter;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class InvertedFluidFilter implements IFluidFilter {
 

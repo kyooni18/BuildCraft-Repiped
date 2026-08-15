@@ -50,7 +50,7 @@ public class BCSiliconConfig {
 
 //        reloadConfig(EnumRestartRequirement.NONE);
         reloadConfig();
-//        MinecraftForge.EVENT_BUS.register(BCSiliconConfig.class);
+//        NeoForge.EVENT_BUS.register(BCSiliconConfig.class);
         BCConfig.registerReloadListener(module, BCSiliconConfig::reloadConfig);
     }
 

@@ -6,7 +6,7 @@
 
 package buildcraft.silicon;
 
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLLoader;
 
 //public abstract class BCSiliconProxy implements IGuiHandler
 public abstract class BCSiliconProxy {

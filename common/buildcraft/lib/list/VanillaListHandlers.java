@@ -9,7 +9,7 @@ package buildcraft.lib.list;
 import buildcraft.api.lists.ListRegistry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 public class VanillaListHandlers {
     public static void fmlInit() {

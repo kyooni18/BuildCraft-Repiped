@@ -16,7 +16,7 @@ import buildcraft.transport.item.ItemPipeHolder;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

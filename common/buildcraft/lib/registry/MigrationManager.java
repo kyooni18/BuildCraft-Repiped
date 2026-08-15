@@ -8,18 +8,11 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.ItemUtil;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.MissingMappingsEvent;
-import net.minecraftforge.registries.MissingMappingsEvent.Mapping;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -67,58 +60,10 @@ public enum MigrationManager {
         }
     }
 
-//    @SubscribeEvent
-//    public void onMissingBlocks(RegistryEvent.MissingMappings<Block> missing) {
-//        onMissingMappings(missing, blockMigrations);
-//    }
+    /**
+     * NeoForge 21.1 removed the old MissingMappingsEvent. The legacy registration call sites in this branch are
+     * already disabled, so there are no active mappings to service here. New aliases should be registered through
+     * DeferredRegister#addAlias before RegisterEvent.
+     */
 
-//    @SubscribeEvent
-//    public void onMissingItems(RegistryEvent.MissingMappings<Item> missing) {
-//        onMissingMappings(missing, itemMigrations);
-//    }
-
-    @SubscribeEvent
-    public void onMissingItemsAndBlocks(MissingMappingsEvent missing) {
-        if (missing.getKey() == ForgeRegistries.BLOCKS.getRegistryKey()) {
-            onMissingMappings(missing, ForgeRegistries.BLOCKS.getRegistryKey(), blockMigrations);
-        } else if (missing.getKey() == ForgeRegistries.ITEMS.getRegistryKey()) {
-            onMissingMappings(missing, ForgeRegistries.ITEMS.getRegistryKey(), itemMigrations);
-        }
-    }
-
-    // private static <T extends IForgeRegistryEntry<T>> void onMissingMappings(MissingMappingsEvent missing, Map<String, T> migrations)
-    private static <T> void onMissingMappings(MissingMappingsEvent missing, ResourceKey<? extends Registry<T>> registryKey, Map<String, T> migrations) {
-        List<MissingMappingsEvent.Mapping<T>> all = missing.getAllMappings(registryKey);
-        if (all.isEmpty()) {
-            return;
-        }
-        if (DEBUG) {
-//            BCLog.logger.info("[lib.migrate] Received missing mappings event for " + missing.getGenericType() + " with "
-            BCLog.logger.info("[lib.migrate] Received missing mappings event for " + missing.getKey().location() + " with "
-                    + all.size() + " missing.");
-        }
-        for (Mapping<T> mapping : all) {
-            ResourceLocation loc = mapping.getKey();
-            String domain = loc.getNamespace();
-            String path = loc.getPath().toLowerCase(Locale.ROOT);
-            if (DEBUG) {
-                BCLog.logger.info("[lib.migrate]  - " + domain + ":" + path);
-            }
-            // TECHNICALLY this can pick up non-bc mods, but generally only addons
-            if (!domain.startsWith("buildcraft")) continue;
-            T to = migrations.get(path);
-            if (to != null) {
-                mapping.remap(to);
-                if (DEBUG) {
-                    ResourceLocation registryName = null;
-                    if (to instanceof Item toItem) {
-                        registryName = ItemUtil.getRegistryName(toItem);
-                    } else if (to instanceof Block toBlock) {
-                        registryName = BlockUtil.getRegistryName(toBlock);
-                    }
-                    BCLog.logger.info("[lib.migrate]    -> " + registryName);
-                }
-            }
-        }
-    }
 }

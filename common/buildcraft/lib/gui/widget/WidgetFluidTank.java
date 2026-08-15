@@ -15,9 +15,9 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,7 +33,7 @@ public class WidgetFluidTank<C extends ContainerBC_Neptune<?>> extends Widget_Ne
     }
 
     @Override
-    public IMessage handleWidgetDataServer(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLICK) {
             tank.onGuiClicked(container);

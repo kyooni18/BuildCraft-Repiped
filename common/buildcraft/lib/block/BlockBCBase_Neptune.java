@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -195,7 +195,7 @@ public class BlockBCBase_Neptune extends Block {
     }
 
     protected static boolean isExceptionBlockForAttaching(Block attachBlock) {
-        return attachBlock instanceof ShulkerBoxBlock || attachBlock instanceof LeavesBlock || attachBlock instanceof TrapDoorBlock || attachBlock == Blocks.BEACON || attachBlock == Blocks.CAULDRON || attachBlock == Blocks.GLASS || attachBlock == Blocks.GLOWSTONE || attachBlock == Blocks.ICE || attachBlock == Blocks.SEA_LANTERN || attachBlock.builtInRegistryHolder().is(Tags.Blocks.STAINED_GLASS);
+        return attachBlock instanceof ShulkerBoxBlock || attachBlock instanceof LeavesBlock || attachBlock instanceof TrapDoorBlock || attachBlock == Blocks.BEACON || attachBlock == Blocks.CAULDRON || attachBlock == Blocks.GLASS || attachBlock == Blocks.GLOWSTONE || attachBlock == Blocks.ICE || attachBlock == Blocks.SEA_LANTERN || attachBlock.builtInRegistryHolder().is(Tags.Blocks.GLASS_BLOCKS);
     }
 
     // Calen:

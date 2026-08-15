@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.text.DecimalFormat;
 import java.util.Comparator;
@@ -99,7 +99,7 @@ public final class StringUtilBC {
         if (fluid == null) {
             return "null";
         }
-        return fluid.getAmount() + "mb " + FluidUtilBC.getRegistryName(fluid.getRawFluid()).getPath();
+        return fluid.getAmount() + "mb " + FluidUtilBC.getRegistryName(fluid.getFluid()).getPath();
     }
 
     // Displaying objects

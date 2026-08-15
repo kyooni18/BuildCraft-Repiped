@@ -21,7 +21,7 @@ public class DelegateFontRenderer extends Font {
         // TODO Calen creat Font Intance? where is fontset???  When soved, GuidePageContents#<init>:new ConfigurableFontRenderer(Minecraft.getInstance().font).disableShadow();
 //        super(
 //                Minecraft.getInstance().options,
-//                ResourceLocation.parse("textures/font/ascii.png"), //                Minecraft.getInstance().textureManager,
+//                ResourceLocation.parse("textures/font/ascii.png"), //                Minecraft.getInstance().getTextureManager(),
 //                delegate.getUnicodeFlag()
 //        );
         // 参考 FontManager#public Font createFont()
@@ -40,7 +40,7 @@ public class DelegateFontRenderer extends Font {
                         f_fontSets.setAccessible(true);
                         Map<ResourceLocation, FontSet> mcFontManager_fontSets = (Map) f_fontSets.get(mcFontManager);
                         mcFontManager_fontSets.put(p_95014_, fontset);
-//                new FontSet(Minecraft.getInstance().textureManager,ResourceLocation.parse("textures/font/ascii.png"))
+//                new FontSet(Minecraft.getInstance().getTextureManager(),ResourceLocation.parse("textures/font/ascii.png"))
                         return fontset;
                     } catch (Exception e) {
                         e.printStackTrace();

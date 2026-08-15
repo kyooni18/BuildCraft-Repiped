@@ -32,7 +32,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
@@ -369,7 +369,7 @@ public class GuiUtil {
         double endY;
 
 //        if (fluid.getFluid().isGaseous(fluid))
-        if (fluid.getRawFluid().getFluidType().isLighterThanAir()) {
+        if (fluid.getFluid().getFluidType().isLighterThanAir()) {
             startY = position.getY() + height;
             endY = position.getY();
         } else {

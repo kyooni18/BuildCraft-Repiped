@@ -19,7 +19,7 @@ import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import buildcraft.api.net.MessageContext;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -75,7 +75,7 @@ public class ContainerEmzuliPipe_BC8 extends ContainerPipe {
         }
 
         @Override
-        public IMessage handleWidgetDataServer(CustomPayloadEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+        public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
             DyeColor colour = MessageUtil.readEnumOrNull(buffer, DyeColor.class);
             if (colour == null) {
                 container.behaviour.slotColours.remove(index);

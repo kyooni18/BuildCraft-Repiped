@@ -22,9 +22,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.Arrays;
 
@@ -50,7 +50,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         double[] amounts = flow.getAmountsForRender(partialTicks);
         Vec3[] offsets = flow.getOffsetsForRender(partialTicks);
 
-        int blocklight = forRender.getRawFluid().getFluidType().getLightLevel(forRender);
+        int blocklight = forRender.getFluid().getFluidType().getLightLevel(forRender);
 //        IPipeHolder holder = flow.pipe.getHolder();
 //        combinedLight = holder.getPipeWorld().getCombinedLight(holder.getPipePos(), blocklight);
         combinedLight = RenderUtil.combineWithFluidLight(combinedLight, (byte) blocklight);
@@ -63,7 +63,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
 //            fluidBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 //            fluidBuffer.setTranslation(x, y, z);
 
-        boolean gas = forRender.getRawFluid().getFluidType().isLighterThanAir();
+        boolean gas = forRender.getFluid().getFluidType().isLighterThanAir();
         boolean horizontal = false;
         boolean vertical = flow.pipe.isConnected(gas ? Direction.DOWN : Direction.UP);
 

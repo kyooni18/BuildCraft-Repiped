@@ -32,9 +32,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -71,11 +71,11 @@ public class MessageUtil {
         }
     }
 
-    public static NetworkDirection getNetworkDirection(CustomPayloadEvent.Context ctx) {
+    public static NetworkDirection getNetworkDirection(MessageContext ctx) {
         return ctx == null || ctx.isClientSide() ? NetworkDirection.PLAY_TO_CLIENT : NetworkDirection.PLAY_TO_SERVER;
     }
 
-    public static boolean isClientbound(CustomPayloadEvent.Context ctx) {
+    public static boolean isClientbound(MessageContext ctx) {
         return ctx == null || ctx.isClientSide();
     }
 
@@ -308,7 +308,7 @@ public class MessageUtil {
         return set;
     }
 
-    public static void sendReturnMessage(CustomPayloadEvent.Context context, IMessage reply) {
+    public static void sendReturnMessage(MessageContext context, IMessage reply) {
         Player player = context.getSender();
 //        Player player = BCLibProxy.getProxy().getPlayerForContext(context);
         if (player instanceof ServerPlayer playerMP) {

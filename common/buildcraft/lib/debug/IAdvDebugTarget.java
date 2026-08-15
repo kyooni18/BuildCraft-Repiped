@@ -7,8 +7,8 @@
 package buildcraft.lib.debug;
 
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /** Something that can be put into an "advanced debug" state - every tick {@link #sendDebugState()} will be called on
  * the server, to allow the client to render all of the details normally hidden on the server. */

@@ -25,8 +25,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderLaser implements BlockEntityRenderer<TileLaser> {
@@ -79,4 +79,9 @@ public class RenderLaser implements BlockEntityRenderer<TileLaser> {
         Item headArmor = Minecraft.getInstance().player.getItemBySlot(EquipmentSlot.HEAD).getItem();
         return headArmor instanceof ItemGoggles;
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileLaser tile) {
+        return tile.getRenderBoundingBox();
+    }
+
 }

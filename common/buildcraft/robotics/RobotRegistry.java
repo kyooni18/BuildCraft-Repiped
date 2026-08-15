@@ -18,8 +18,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 import java.security.InvalidParameterException;
 import java.util.*;

@@ -25,11 +25,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.NetworkDirection;
+import net.neoforged.api.distmarker.Dist;
+import buildcraft.api.compat.capability.Capability;
+import buildcraft.api.compat.capability.ForgeCapabilities;
+import buildcraft.api.compat.LazyOptional;
+import buildcraft.api.net.NetworkDirection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -118,12 +118,12 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     @Override
     public boolean canConnect(Direction face, BlockEntity oTile) {
         if (isReceiver) {
-            IMjPassiveProvider provider = oTile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, face.getOpposite()).orElse(null);
+            IMjPassiveProvider provider = buildcraft.lib.misc.CapUtil.getCapability(oTile, MjAPI.CAP_PASSIVE_PROVIDER, face.getOpposite()).orElse(null);
             if (provider != null) {
                 return true;
             }
         }
-        IMjConnector receiver = oTile.getCapability(MjAPI.CAP_CONNECTOR, face.getOpposite()).orElse(null);
+        IMjConnector receiver = buildcraft.lib.misc.CapUtil.getCapability(oTile, MjAPI.CAP_CONNECTOR, face.getOpposite()).orElse(null);
         return receiver != null && receiver.canConnect(sections.get(face));
     }
 
@@ -165,7 +165,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         if (tile == null) {
             return 0;
         }
-        IMjPassiveProvider receiver = tile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, from.getOpposite()).orElse(null);
+        IMjPassiveProvider receiver = buildcraft.lib.misc.CapUtil.getCapability(tile, MjAPI.CAP_PASSIVE_PROVIDER, from.getOpposite()).orElse(null);
         if (receiver == null) {
             return 0;
         }

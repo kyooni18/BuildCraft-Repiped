@@ -1,5 +1,7 @@
 package buildcraft.energy;
 
+import net.minecraft.core.registries.Registries;
+
 import buildcraft.api.BCModules;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.BCFluidAttributes;
@@ -16,27 +18,31 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.common.SoundActions;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fluids.DispenseFluidContainer;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.SoundActions;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.fluids.DispenseFluidContainer;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import buildcraft.api.compat.registry.ForgeRegistries;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class BCEnergyFluids {
-    private static final DeferredRegister<Fluid> fluidRegister = DeferredRegister.create(ForgeRegistries.FLUIDS, BCEnergy.MODID);
-    private static final DeferredRegister<Block> blockRegister = DeferredRegister.create(ForgeRegistries.BLOCKS, BCEnergy.MODID);
-    private static final DeferredRegister<Item> bucketRegister = DeferredRegister.create(ForgeRegistries.ITEMS, BCEnergy.MODID);
+    private static final DeferredRegister<FluidType> fluidTypeRegister = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, BCEnergy.MODID);
+    private static final DeferredRegister<Fluid> fluidRegister = DeferredRegister.create(Registries.FLUID, BCEnergy.MODID);
+    private static final DeferredRegister<Block> blockRegister = DeferredRegister.create(Registries.BLOCK, BCEnergy.MODID);
+    private static final DeferredRegister<Item> bucketRegister = DeferredRegister.create(Registries.ITEM, BCEnergy.MODID);
 
     static {
         IEventBus bus = ((FMLModContainer) ModList.get().getModContainerById(BCEnergy.MODID).get()).getEventBus();
+        fluidTypeRegister.register(bus);
         blockRegister.register(bus);
         fluidRegister.register(bus);
         bucketRegister.register(bus);
@@ -147,10 +153,11 @@ public class BCEnergyFluids {
 //        String fluidTexture = "buildcraftenergy:fluids/" + fullName;
         String fluidTexture = "buildcraftenergy:block/fluid/" + fullName;
         BCFluidRegistryContainer fluidRegistryContainer = new BCFluidRegistryContainer();
+        fluidRegistryContainer.setLighterThanAir(boilAdjustedDensity < 0);
         allFluids.add(fluidRegistryContainer);
 
         // Properties
-        ForgeFlowingFluid.Properties fluidProperties = new ForgeFlowingFluid.Properties(
+        BaseFlowingFluid.Properties fluidProperties = new BaseFlowingFluid.Properties(
                 fluidRegistryContainer::getFluidType,
                 fluidRegistryContainer::getStill,
                 fluidRegistryContainer::getFlowing
@@ -192,11 +199,15 @@ public class BCEnergyFluids {
                 .density(boilAdjustedDensity)
                 // def.setViscosity(tempAdjustedViscosity)
                 .viscosity(tempAdjustedViscosity);
-        fluidRegistryContainer.setFluidType(attributeBuilder.build());
+        RegistryObject<BCFluidAttributes> fluidType = RegistryObject.of(fluidTypeRegister.register(
+                fullName,
+                attributeBuilder::build
+        ));
+        fluidRegistryContainer.setFluidType(fluidType);
 
         // Still
         String stillId = fullName;
-        RegistryObject<BCFluid.Source> still = fluidRegister.register(
+        RegistryObject<BCFluid.Source> still = RegistryObject.of(fluidRegister.register(
                 stillId,
                 () ->
                 {
@@ -206,16 +217,16 @@ public class BCEnergyFluids {
                     );
                     return def;
                 }
-        );
+        ));
         fluidRegistryContainer.setStill(still);
         allStill.add(still);
 
         // Flow
         String flowId = fullName + "_flow";
-        RegistryObject<BCFluid.Flowing> flow = fluidRegister.register(
+        RegistryObject<BCFluid.Flowing> flow = RegistryObject.of(fluidRegister.register(
                 flowId,
                 () -> new BCFluid.Flowing(fluidProperties, fluidRegistryContainer)
-        );
+        ));
         fluidRegistryContainer.setFlowing(flow);
         allFlow.add(flow);
 
@@ -224,13 +235,13 @@ public class BCEnergyFluids {
         Item.Properties bucketProp = new Item.Properties()
                 .stacksTo(1)
                 .craftRemainder(Items.BUCKET);
-        RegistryObject<ItemBucketBC> bucket = bucketRegister.register(
+        RegistryObject<ItemBucketBC> bucket = RegistryObject.of(bucketRegister.register(
                 bucketId,
                 () -> new ItemBucketBC(
                         fluidRegistryContainer::getStill,
                         bucketProp
                 )
-        );
+        ));
         fluidRegistryContainer.setBucket(bucket);
 
         // Block
@@ -250,7 +261,7 @@ public class BCEnergyFluids {
             // def.setFlammable(flammable)
             blockProp.ignitedByLava();
         }
-        RegistryObject<BCFluidBlock> block = blockRegister.register(
+        RegistryObject<BCFluidBlock> block = RegistryObject.of(blockRegister.register(
                 blockId,
                 () -> new BCFluidBlock(
                         fluidRegistryContainer::getStill,
@@ -259,7 +270,7 @@ public class BCEnergyFluids {
                         sticky,
                         fluidRegistryContainer
                 )
-        );
+        ));
         fluidRegistryContainer.setBlock(block);
 
         // TODO Calen setLightOpacity???

@@ -9,7 +9,7 @@ import buildcraft.lib.registry.RegistrationHelper;
 import buildcraft.transport.item.ItemWire;
 import buildcraft.transport.pipe.PipeRegistry;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.registries.RegistryObject;
+import buildcraft.lib.registry.RegistryObject;
 
 import java.util.Map;
 

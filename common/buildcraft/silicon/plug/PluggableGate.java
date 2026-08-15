@@ -53,10 +53,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import buildcraft.api.net.NetworkDirection;
+import buildcraft.api.net.MessageContext;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -203,7 +203,7 @@ public class PluggableGate extends PipePluggable implements IWireEmitter, IBCTil
 
     @Override
 //    public void readPayload(PacketBuffer b, Dist side, MessageContext ctx) throws IOException
-    public void readPayload(FriendlyByteBuf b, NetworkDirection side, CustomPayloadEvent.Context ctx) throws IOException {
+    public void readPayload(FriendlyByteBuf b, NetworkDirection side, MessageContext ctx) throws IOException {
         logic.readPayload(PacketBufferBC.asPacketBufferBc(b), side, ctx);
     }
 

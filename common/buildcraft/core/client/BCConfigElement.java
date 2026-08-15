@@ -6,10 +6,10 @@
 
 package buildcraft.core.client;
 
-//import net.minecraftforge.common.config.ConfigCategory;
-//import net.minecraftforge.common.config.ConfigElement;
-//import net.minecraftforge.common.config.Property;
-//import net.minecraftforge.fml.client.config.IConfigElement;
+//import net.neoforged.neoforge.common.config.ConfigCategory;
+//import net.neoforged.neoforge.common.config.ConfigElement;
+//import net.neoforged.neoforge.common.config.Property;
+//import net.neoforged.fml.client.config.IConfigElement;
 
 //import java.util.ArrayList;
 //import java.util.Iterator;

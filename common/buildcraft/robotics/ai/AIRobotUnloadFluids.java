@@ -12,9 +12,9 @@ import buildcraft.lib.inventory.filter.SimpleFluidFilter;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationAcceptFluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public class AIRobotUnloadFluids extends AIRobot {
 

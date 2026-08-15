@@ -14,7 +14,7 @@ import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndLoadFluids;
 import buildcraft.robotics.ai.AIRobotGotoStationAndUnloadFluids;
 import buildcraft.robotics.statements.ActionRobotFilter;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class BoardRobotFluidCarrier extends RedstoneBoardRobot {
 

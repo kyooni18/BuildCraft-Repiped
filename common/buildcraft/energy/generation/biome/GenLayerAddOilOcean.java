@@ -12,7 +12,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate.Parameter;
 import net.minecraft.world.level.biome.Climate.ParameterPoint;
-import net.minecraftforge.registries.ForgeRegistries;
+import buildcraft.api.compat.registry.ForgeRegistries;
 
 import java.util.Arrays;
 import java.util.List;
