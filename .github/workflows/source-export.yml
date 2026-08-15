@@ -1,0 +1,29 @@
+name: Export source snapshot
+
+on:
+  push:
+    branches:
+      - 1.21.1-NeoForge
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+      - name: Package source
+        run: |
+          tar --exclude=.git --exclude='*/.git' -czf BuildCraft-1.21.1-NeoForge-source.tar.gz .
+      - name: Upload source artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BuildCraft-1.21.1-NeoForge-source
+          path: BuildCraft-1.21.1-NeoForge-source.tar.gz
+          if-no-files-found: error
+          retention-days: 1
