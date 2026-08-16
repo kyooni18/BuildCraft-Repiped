@@ -1,3 +1,9 @@
+# BuildCraft Clanked
+forked version of BuildCraft ported into NeoForge 1.21.1 (21.1.248).
+Any contributions, issues, suggestions, etc. are welcome. 
+
+Below is original BuildCraft README:
+
 ## Welcome to BuildCraft on GitHub
 
 ### Reporting an issue
