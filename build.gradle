@@ -24,7 +24,7 @@ version = mod_version
 group = mod_group_id
 
 base {
-    archivesName = "buildcraft-repiped-${mod_version}-mc${minecraft_version}-neoforge"
+    archivesName = "buildcraft-repiped"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -151,6 +151,7 @@ javadoc {
 }
 
 tasks.named('jar', Jar).configure {
+    archiveFileName = "buildcraft-repiped-${mod_version}-mc${minecraft_version}-neoforge.jar"
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
