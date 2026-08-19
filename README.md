@@ -4,7 +4,7 @@ Any contributions, issues, suggestions, etc. are welcome.
 
 Have favor to provide me a full MC session log if you’ve encountered any type of problems.
 
-You can also contact me as @kyooni18 in discord, or kyoung01122189@gmail.com.
+You can also contact me as @kyooni18 in discord, or kyooni0118@gmail.com.
 
 Below is original BuildCraft README:
 
